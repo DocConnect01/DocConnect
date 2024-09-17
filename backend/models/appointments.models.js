@@ -2,16 +2,37 @@ const { DataTypes } = require('sequelize');
 
 module.exports = (sequelize) => {
   const Appointment = sequelize.define('Appointment', {
-    date: {
+    AppointmentID: {
+      type: DataTypes.INTEGER,
+      primaryKey: true,
+      autoIncrement: true
+    },
+    PatientID: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      references: {
+        model: 'users',
+        key: 'UserID'
+      }
+    },
+    DoctorID: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      references: {
+        model: 'users',
+        key: 'UserID'
+      }
+    },
+    AppointmentDate: {
       type: DataTypes.DATE,
       allowNull: false
     },
-    time: {
-      type: DataTypes.TIME,
+    DurationMinutes: {
+      type: DataTypes.INTEGER,
       allowNull: false
     },
-    status: {
-      type: DataTypes.ENUM('Pending', 'Confirmed', 'Completed'),
+    Status: {
+      type: DataTypes.BOOLEAN,
       allowNull: false
     }
   }, {

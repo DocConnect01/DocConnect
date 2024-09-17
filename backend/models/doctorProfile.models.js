@@ -1,29 +1,38 @@
 const { DataTypes } = require('sequelize');
 
 module.exports = (sequelize) => {
-  const DoctorProfile = sequelize.define('DoctorProfile', {
-    specialization: {
-      type: DataTypes.STRING,
-      allowNull: false
+  const DoctorReview = sequelize.define('DoctorReview', {
+    ReviewID: {
+      type: DataTypes.INTEGER,
+      primaryKey: true,
+      autoIncrement: true
     },
-    qualifications: {
-      type: DataTypes.STRING,
-      allowNull: false
+    DoctorID: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      references: {
+        model: 'users',
+        key: 'UserID'
+      }
     },
-    experience: {
+    PatientID: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      references: {
+        model: 'users',
+        key: 'UserID'
+      }
+    },
+    Rating: {
       type: DataTypes.INTEGER,
       allowNull: false
     },
-    contactInfo: {
-      type: DataTypes.STRING,
-      allowNull: false
+    ReviewText: {
+      type: DataTypes.TEXT,
+      allowNull: true
     },
-    availability: {
-      type: DataTypes.JSON,
-      allowNull: false
-    },
-    location: {
-      type: DataTypes.JSON,
+    ReviewDate: {
+      type: DataTypes.DATE,
       allowNull: false
     }
   }, {
@@ -32,5 +41,5 @@ module.exports = (sequelize) => {
     updatedAt: 'updatedAt'
   });
 
-  return DoctorProfile;
+  return DoctorReview;
 };

@@ -25,26 +25,81 @@ db.Appointment = require('./appointments.models')(sequelize);
 
 
 // Define associations
+ // 1. One-to-Many relationship between User (Patient) and Appointment
+ User.hasMany(Appointment, {
+  foreignKey: 'PatientID',
+  as: 'PatientAppointments'
+});
+Appointment.belongsTo(User, {
+  foreignKey: 'PatientID',
+  as: 'Patient'
+});
 
-// Many-to-Many relationship between Users (Patients and Doctors)
-db.User.belongsToMany(db.User, { as: 'Doctors', through: 'UserConnections', foreignKey: 'patientId' });
-db.User.belongsToMany(db.User, { as: 'Patients', through: 'UserConnections', foreignKey: 'doctorId' });
+// 2. One-to-Many relationship between User (Doctor) and Appointment
+User.hasMany(Appointment, {
+  foreignKey: 'DoctorID',
+  as: 'DoctorAppointments'
+});
+Appointment.belongsTo(User, {
+  foreignKey: 'DoctorID',
+  as: 'Doctor'
+});
 
-// One-to-One relationship between Users and DoctorProfiles
-db.User.hasOne(db.DoctorProfile, { foreignKey: 'userId' });
-db.DoctorProfile.belongsTo(db.User, { foreignKey: 'userId' });
+// 3. One-to-Many relationship between User (Patient) and DoctorReview
+User.hasMany(DoctorReview, {
+  foreignKey: 'PatientID',
+  as: 'PatientReviews'
+});
+DoctorReview.belongsTo(User, {
+  foreignKey: 'PatientID',
+  as: 'Patient'
+});
 
-// One-to-Many relationship between Users (Doctors & Patients) and Appointments
-db.User.hasMany(db.Appointment, { foreignKey: 'doctorId', as: 'DoctorAppointments' });
-db.User.hasMany(db.Appointment, { foreignKey: 'patientId', as: 'PatientAppointments' });
-db.Appointment.belongsTo(db.User, { foreignKey: 'doctorId', as: 'Doctor' });
-db.Appointment.belongsTo(db.User, { foreignKey: 'patientId', as: 'Patient' });
+// 4. One-to-Many relationship between User (Doctor) and DoctorReview
+User.hasMany(DoctorReview, {
+  foreignKey: 'DoctorID',
+  as: 'DoctorReviews'
+});
+DoctorReview.belongsTo(User, {
+  foreignKey: 'DoctorID',
+  as: 'Doctor'
+});
 
-// One-to-Many relationship between Users (Doctors & Patients) and Chat
-db.User.hasMany(db.Chat, { foreignKey: 'doctorId', as: 'DoctorChats' });
-db.User.hasMany(db.Chat, { foreignKey: 'patientId', as: 'PatientChats' });
-db.Chat.belongsTo(db.User, { foreignKey: 'doctorId', as: 'Doctor' });
-db.Chat.belongsTo(db.User, { foreignKey: 'patientId', as: 'Patient' });
+// 5. One-to-Many relationship between User (Patient) and Chatroom
+User.hasMany(Chatroom, {
+  foreignKey: 'PatientID',
+  as: 'PatientChatrooms'
+});
+Chatroom.belongsTo(User, {
+  foreignKey: 'PatientID',
+  as: 'Patient'
+});
+
+// 6. One-to-Many relationship between User (Doctor) and Chatroom
+User.hasMany(Chatroom, {
+  foreignKey: 'DoctorID',
+  as: 'DoctorChatrooms'
+});
+Chatroom.belongsTo(User, {
+  foreignKey: 'DoctorID',
+  as: 'Doctor'
+});
+
+// 7. One-to-Many relationship between Chatroom and ChatroomMessage
+Chatroom.hasMany(ChatroomMessage, {
+  foreignKey: 'ChatroomID',
+  as: 'Messages'
+});
+ChatroomMessage.belongsTo(Chatroom, {
+  foreignKey: 'ChatroomID',
+  as: 'Chatroom'
+});
+
+// 8. One-to-Many relationship between User (Sender) and ChatroomMessage
+User.hasMany(ChatroomMessage, {
+  foreignKey: 'SenderID',
+  as: 'SentMessages'
+});
 
 // sequelize.sync({ alter: true }) // alter to adjust existing tables if needed
 //   .then(() => {

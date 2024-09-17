@@ -1,13 +1,21 @@
 const { DataTypes } = require('sequelize');
 
 module.exports = (sequelize) => {
-  const Chatroom = sequelize.define('Chatroom', {
-    ChatroomID: {
+  const ChatroomMessage = sequelize.define('ChatroomMessage', {
+    MessageID: {
       type: DataTypes.INTEGER,
       primaryKey: true,
       autoIncrement: true
     },
-    PatientID: {
+    ChatroomID: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      references: {
+        model: 'chatrooms',
+        key: 'ChatroomID'
+      }
+    },
+    SenderID: {
       type: DataTypes.INTEGER,
       allowNull: false,
       references: {
@@ -15,21 +23,13 @@ module.exports = (sequelize) => {
         key: 'UserID'
       }
     },
-    DoctorID: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      references: {
-        model: 'users',
-        key: 'UserID'
-      }
-    },
-    StartTime: {
-      type: DataTypes.DATE,
+    MessageText: {
+      type: DataTypes.TEXT,
       allowNull: false
     },
-    EndTime: {
+    SentAt: {
       type: DataTypes.DATE,
-      allowNull: true
+      allowNull: false
     }
   }, {
     timestamps: true,
@@ -37,5 +37,5 @@ module.exports = (sequelize) => {
     updatedAt: 'updatedAt'
   });
 
-  return Chatroom;
+  return ChatroomMessage;
 };
