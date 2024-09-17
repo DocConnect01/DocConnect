@@ -1,19 +1,11 @@
 const { DataTypes } = require('sequelize');
 
 module.exports = (sequelize) => {
-  const Appointment = sequelize.define('Appointment', {
-    AppointmentID: {
+  const DoctorReview = sequelize.define('DoctorReview', {
+    ReviewID: {
       type: DataTypes.INTEGER,
       primaryKey: true,
       autoIncrement: true
-    },
-    PatientID: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      references: {
-        model: 'users',
-        key: 'UserID'
-      }
     },
     DoctorID: {
       type: DataTypes.INTEGER,
@@ -23,16 +15,24 @@ module.exports = (sequelize) => {
         key: 'UserID'
       }
     },
-    AppointmentDate: {
-      type: DataTypes.DATE,
-      allowNull: false
+    PatientID: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      references: {
+        model: 'users',
+        key: 'UserID'
+      }
     },
-    DurationMinutes: {
+    Rating: {
       type: DataTypes.INTEGER,
       allowNull: false
     },
-    Status: {
-      type: DataTypes.BOOLEAN,
+    ReviewText: {
+      type: DataTypes.TEXT,
+      allowNull: true
+    },
+    ReviewDate: {
+      type: DataTypes.DATE,
       allowNull: false
     }
   }, {
@@ -41,9 +41,5 @@ module.exports = (sequelize) => {
     updatedAt: 'updatedAt'
   });
 
-  return Appointment;
+  return DoctorReview;
 };
-
-
-
-
