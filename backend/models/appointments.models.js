@@ -43,3 +43,7 @@ module.exports = (sequelize) => {
 
   return Appointment;
 };
+
+
+
+

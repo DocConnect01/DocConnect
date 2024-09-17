@@ -1,7 +1,7 @@
 const { DataTypes } = require('sequelize');
 
 module.exports = (sequelize) => {
-  const Chatroom = sequelize.define('Chatroom', {
+  const Chatrooms = sequelize.define('chatrooms', {
     ChatroomID: {
       type: DataTypes.INTEGER,
       primaryKey: true,
@@ -37,5 +37,5 @@ module.exports = (sequelize) => {
     updatedAt: 'updatedAt'
   });
 
-  return Chatroom;
+  return Chatrooms;
 };

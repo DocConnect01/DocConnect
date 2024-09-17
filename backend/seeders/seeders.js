@@ -4,52 +4,44 @@ module.exports = {
   async up(queryInterface, Sequelize) {
     try {
       // Seed Users
-      await queryInterface.bulkInsert('Users', [
+      await queryInterface.bulkInsert('users', [
         {
-          username: 'patient1',
-          password: 'hashedpassword1',
-          email: 'patient1@example.com',
-          role: 'Patient',
+          FirstName: 'John',
+          LastName: 'Doe',
+          Username: 'doctor',
+          Password: 'hashedpassword1',
+          Email: 'doctor@example.com',
+          Role: 'Doctor',
+          Speciality: 'Cardiologist',
+          LocationLatitude: 40.712776,
+          LocationLongitude: -74.005974,
+          Bio: 'Experienced cardiologist with over 10 years of practice.',
+          MeetingPrice: 100.00,
           createdAt: new Date(),
           updatedAt: new Date(),
         },
         {
-          username: 'doctor1',
-          password: 'hashedpassword2',
-          email: 'doctor1@example.com',
-          role: 'Doctor',
+          FirstName: 'Jane',
+          LastName: 'Smith',
+          Username: 'patient',
+          Password: 'hashedpassword2',
+          Email: 'patient@example.com',
+          Role: 'Patient',
           createdAt: new Date(),
           updatedAt: new Date(),
         },
         // Add more users as needed
       ]);
-      console.log('Users seeded successfully.');
-
-      // Seed DoctorProfiles
-      await queryInterface.bulkInsert('DoctorProfiles', [
-        {
-          userId: 2, // Adjust according to the actual user ID
-          specialization: 'Cardiologist',
-          qualifications: 'MBBS, MD',
-          experience: 10,
-          contactInfo: '123-456-7890',
-          availability: JSON.stringify({ Monday: '9am-5pm', Tuesday: '9am-5pm' }),
-          location: JSON.stringify({ city: 'New York', zipCode: '10001' }),
-          createdAt: new Date(),
-          updatedAt: new Date(),
-        },
-        // Add more profiles as needed
-      ]);
-      console.log('DoctorProfiles seeded successfully.');
+      console.log('users seeded successfully.');
 
       // Seed Appointments
       await queryInterface.bulkInsert('Appointments', [
         {
-          doctorId: 2, // Adjust according to the actual doctor ID
-          patientId: 1, // Adjust according to the actual patient ID
-          date: new Date('2024-10-01'),
-          time: '10:00:00',
-          status: 'Pending',
+          PatientID: 2, // Adjust according to the actual patient ID
+          DoctorID: 1,  // Adjust according to the actual doctor ID
+          AppointmentDate: new Date('2024-10-01 10:00:00'),
+          DurationMinutes: 60,
+          Status: true,  // Appointment is available
           createdAt: new Date(),
           updatedAt: new Date(),
         },
@@ -57,19 +49,56 @@ module.exports = {
       ]);
       console.log('Appointments seeded successfully.');
 
-      // Seed Chats
-      await queryInterface.bulkInsert('Chats', [
+      // Seed DoctorReviews
+      await queryInterface.bulkInsert('DoctorReviews', [
         {
-          doctorId: 2, // Adjust according to the actual doctor ID
-          patientId: 1, // Adjust according to the actual patient ID
-          message: 'Hello, I need to reschedule my appointment.',
-          timestamp: new Date(),
+          DoctorID: 1, // Adjust according to the actual doctor ID
+          PatientID: 2, // Adjust according to the actual patient ID
+          Rating: 5,
+          ReviewText: 'Excellent doctor, highly recommended!',
+          ReviewDate: new Date(),
           createdAt: new Date(),
           updatedAt: new Date(),
         },
-        // Add more chat messages as needed
+        // Add more reviews as needed
       ]);
-      console.log('Chats seeded successfully.');
+      console.log('DoctorReviews seeded successfully.');
+
+      // Seed Chatrooms
+      await queryInterface.bulkInsert('chatrooms', [
+        {
+          PatientID: 2, // Adjust according to the actual patient ID
+          DoctorID: 1,  // Adjust according to the actual doctor ID
+          StartTime: new Date(),
+          EndTime: new Date(new Date().getTime() + 60 * 60 * 1000), // 1 hour chat duration
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
+        // Add more chatrooms as needed
+      ]);
+      console.log('chatrooms seeded successfully.');
+
+      // Seed ChatroomMessages
+      await queryInterface.bulkInsert('ChatroomMessages', [
+        {
+          ChatroomID: 1, // Adjust according to the actual chatroom ID
+          SenderID: 2,  // Adjust according to the actual sender ID (Patient)
+          MessageText: 'Hello Doctor, I have some questions.',
+          SentAt: new Date(),
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
+        {
+          ChatroomID: 1, // Adjust according to the actual chatroom ID
+          SenderID: 1,  // Adjust according to the actual sender ID (Doctor)
+          MessageText: 'Sure, feel free to ask.',
+          SentAt: new Date(),
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
+        // Add more messages as needed
+      ]);
+      console.log('ChatroomMessages seeded successfully.');
       
     } catch (error) {
       console.error('Error seeding data:', error);
@@ -79,16 +108,19 @@ module.exports = {
   async down(queryInterface, Sequelize) {
     try {
       // Delete all seeded data
-      await queryInterface.bulkDelete('Chats', null, {});
-      console.log('Chats deleted successfully.');
+      await queryInterface.bulkDelete('ChatroomMessages', null, {});
+      console.log('ChatroomMessages deleted successfully.');
+
+      await queryInterface.bulkDelete('Chatrooms', null, {});
+      console.log('Chatrooms deleted successfully.');
+
+      await queryInterface.bulkDelete('DoctorReviews', null, {});
+      console.log('DoctorReviews deleted successfully.');
 
       await queryInterface.bulkDelete('Appointments', null, {});
       console.log('Appointments deleted successfully.');
 
-      await queryInterface.bulkDelete('DoctorProfiles', null, {});
-      console.log('DoctorProfiles deleted successfully.');
-
-      await queryInterface.bulkDelete('Users', null, {});
+      await queryInterface.bulkDelete('users', null, {});
       console.log('Users deleted successfully.');
 
     } catch (error) {
