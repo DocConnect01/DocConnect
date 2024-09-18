@@ -6,7 +6,8 @@ const bodyParser = require('body-parser');
 
 const cors = require('cors');
 const userRoutes = require('./router/auth.router')
-const {authenticate} = require('./middleware/auth.middlware')
+// const {authenticate} = require('./middleware/auth.middlware')
+const doctorRoute = require('./router/doctor.router')
 // Initialize Express app
 const app = express();
 const PORT = process.env.PORT || 5000;
