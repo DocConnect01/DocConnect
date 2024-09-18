@@ -13,8 +13,8 @@ const LoginForm: React.FC = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     console.log("Login form submitted", formState);
-    // Perform login action here
-    navigate("/dashboard"); // Redirect after login
+
+    navigate("/dashboard");
     dispatch(resetForm());
   };
 
