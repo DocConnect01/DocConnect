@@ -1,15 +1,19 @@
-import './App.css';
+import React from "react";
 
-function App() {
+import LoginForm from "../src/components/login/Login";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+
+const App: React.FC = () => {
   return (
-<>
+ 
+<BrowserRouter>
+<Routes>
+  <Route path="/login" element= {<LoginForm/>}/>
+</Routes>
 
+</BrowserRouter>
 
-<div>hello app tsx</div>
-
-
-</>
   );
-}
+};
 
 export default App;
