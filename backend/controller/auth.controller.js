@@ -52,10 +52,10 @@ exports.register = async (req, res) => {
 
 // Login for Admin, Doctor, and Patient
 exports.login = async (req, res) => {
-  const { Username, Password } = req.body;
+  const { Email, Password } = req.body;
 
   try {
-    const user = await db.User.findOne({ where: { Username } });
+    const user = await db.User.findOne({ where: { Email: Email } });
 
     if (!user) {
       return res.status(404).json({ message: "User not found" });
@@ -63,7 +63,6 @@ exports.login = async (req, res) => {
 
     const isMatch = await bcrypt.compare(Password, user.Password);
     if (!isMatch) {
-      console.log(error);
       return res.status(401).json({ message: "Incorrect password" });
     }
 

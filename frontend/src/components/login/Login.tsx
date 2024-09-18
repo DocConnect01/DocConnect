@@ -50,7 +50,7 @@ const LoginForm: React.FC = () => {
           }}
         >
           <img
-            src="https://www.ekathimerini.com/wp-content/uploads/2020/11/doctor-thumb-large-958x600.jpg"
+            src="https://medikit-nextjs.vercel.app/_next/static/media/signup-bg.9daac4a8.jpg"
             alt="Side Image"
             style={{
               maxWidth: "100%",
@@ -66,7 +66,7 @@ const LoginForm: React.FC = () => {
             backgroundColor: "white",
             p: 4,
             flex: 1,
-            height: 345, // Adjust height as needed
+            height: 345,
 
             display: "flex",
             flexDirection: "column",
