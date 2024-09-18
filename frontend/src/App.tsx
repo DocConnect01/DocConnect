@@ -1,15 +1,18 @@
 import React from "react";
-import { Provider } from "react-redux";
-import { store } from "../src/store/store";
+
 import LoginForm from "../src/components/login/Login";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 const App: React.FC = () => {
   return (
-    <Provider store={store}>
-      <div className="App">
-        <LoginForm />
-      </div>
-    </Provider>
+ 
+<BrowserRouter>
+<Routes>
+  <Route path="/login" element= {<LoginForm/>}/>
+</Routes>
+
+</BrowserRouter>
+
   );
 };
 

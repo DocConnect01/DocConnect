@@ -4,10 +4,10 @@ const express = require("express");
 const { sequelize } = require("./models");
 const bodyParser = require("body-parser");
 
-const cors = require("cors");
-const userRoutes = require("./router/auth.router");
+const cors = require('cors');
+const userRoutes = require('./router/auth.router')
+const doctorRoute = require('./router/doctor.router')
 const { authenticate } = require("./middleware/auth.middlware");
-// Initialize Express app
 const app = express();
 const PORT = process.env.PORT || 5000;
 
