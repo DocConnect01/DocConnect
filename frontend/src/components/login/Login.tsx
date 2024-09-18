@@ -7,8 +7,18 @@ import {
   setPassword,
   setConfirmPassword,
   resetForm,
+  setUserType,
 } from "../../features/formSlice";
-import { TextField, Button, Box, Typography, Link, Grid2 } from "@mui/material";
+import {
+  TextField,
+  Button,
+  Box,
+  Typography,
+  Link,
+  Grid2,
+  Select,
+  MenuItem,
+} from "@mui/material";
 
 const LoginForm: React.FC = () => {
   const dispatch = useDispatch();
@@ -80,14 +90,28 @@ const LoginForm: React.FC = () => {
             required
           />
           {isRegister && (
-            <TextField
-              label="Confirm Password"
-              type="password"
-              value={formState.confirmPassword}
-              onChange={(e) => dispatch(setConfirmPassword(e.target.value))}
-              fullWidth
-              required
-            />
+            <>
+              <TextField
+                label="Confirm Password"
+                type="password"
+                value={formState.confirmPassword}
+                onChange={(e) => dispatch(setConfirmPassword(e.target.value))}
+                fullWidth
+                required
+              />
+              <Select
+                label="User Type"
+                value={formState.userType}
+                onChange={(e) =>
+                  dispatch(setUserType(e.target.value as string))
+                }
+                fullWidth
+                required
+              >
+                <MenuItem value="patient">Patient</MenuItem>
+                <MenuItem value="doctor">Doctor</MenuItem>
+              </Select>
+            </>
           )}
           <Button type="submit" variant="contained" fullWidth>
             {isRegister ? "Register" : "Login"}

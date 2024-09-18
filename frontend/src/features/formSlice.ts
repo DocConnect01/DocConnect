@@ -5,6 +5,7 @@ interface FormState {
   email: string;
   password: string;
   confirmPassword: string;
+  userType: string;
 }
 
 const initialState: FormState = {
@@ -12,6 +13,7 @@ const initialState: FormState = {
   email: "",
   password: "",
   confirmPassword: "",
+  userType: "",
 };
 
 const formSlice = createSlice({
@@ -30,6 +32,9 @@ const formSlice = createSlice({
     setConfirmPassword: (state, action: PayloadAction<string>) => {
       state.confirmPassword = action.payload;
     },
+    setUserType: (state, action: PayloadAction<string>) => {
+      state.userType = action.payload;
+    },
     resetForm: () => initialState,
   },
 });
@@ -39,6 +44,7 @@ export const {
   setEmail,
   setPassword,
   setConfirmPassword,
+  setUserType,
   resetForm,
 } = formSlice.actions;
 export default formSlice.reducer;
