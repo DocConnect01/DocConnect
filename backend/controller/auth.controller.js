@@ -1,6 +1,6 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const db = require("../models"); // Adjust the path as needed
+const db = require("../models");
 require("dotenv").config();
 
 // Register Doctor or Patient
@@ -63,6 +63,7 @@ exports.login = async (req, res) => {
 
     const isMatch = await bcrypt.compare(Password, user.Password);
     if (!isMatch) {
+      console.log(error);
       return res.status(401).json({ message: "Incorrect password" });
     }
 
