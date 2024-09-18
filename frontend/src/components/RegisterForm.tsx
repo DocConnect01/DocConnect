@@ -1,20 +1,35 @@
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "../../store/store";
+import { RootState } from "../../src/store/store";
 import { useNavigate } from "react-router-dom";
-import { setEmail, setPassword, resetForm } from "../../features/formSlice";
-import { TextField, Button, Box, Typography, Link } from "@mui/material";
+import {
+  setFirstName,
+  setEmail,
+  setPassword,
+  setConfirmPassword,
+  setUserType,
+  resetForm,
+} from "../../src/features/formSlice";
+import {
+  TextField,
+  Button,
+  Box,
+  Typography,
+  Select,
+  MenuItem,
+  Link,
+} from "@mui/material";
 
-const LoginForm: React.FC = () => {
+const RegisterForm: React.FC = () => {
   const dispatch = useDispatch();
   const formState = useSelector((state: RootState) => state.form);
   const navigate = useNavigate();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Login form submitted", formState);
-    // Perform login action here
-    navigate("/dashboard"); // Redirect after login
+    console.log("Register form submitted", formState);
+    // Perform registration action here
+    navigate("/login"); // Redirect after registration
     dispatch(resetForm());
   };
 
@@ -55,9 +70,16 @@ const LoginForm: React.FC = () => {
           }}
         >
           <Typography variant="h5" align="center">
-            Login Here
+            Register Here
           </Typography>
 
+          <TextField
+            label="First Name"
+            value={formState.firstName}
+            onChange={(e) => dispatch(setFirstName(e.target.value))}
+            fullWidth
+            required
+          />
           <TextField
             label="Your Email"
             type="email"
@@ -74,21 +96,39 @@ const LoginForm: React.FC = () => {
             fullWidth
             required
           />
+          <TextField
+            label="Confirm Password"
+            type="password"
+            value={formState.confirmPassword}
+            onChange={(e) => dispatch(setConfirmPassword(e.target.value))}
+            fullWidth
+            required
+          />
+          <Select
+            label="User Type"
+            value={formState.userType}
+            onChange={(e) => dispatch(setUserType(e.target.value as string))}
+            fullWidth
+            required
+          >
+            <MenuItem value="patient">Patient</MenuItem>
+            <MenuItem value="doctor">Doctor</MenuItem>
+          </Select>
 
           <Button type="submit" variant="contained" fullWidth>
-            Login
+            Register
           </Button>
 
           <Box textAlign="center">
             <Typography variant="body2">
-              Don't have an account yet?
+              Already have an account?
               <Link
                 component="button"
                 variant="body2"
-                onClick={() => navigate("/register")}
+                onClick={() => navigate("/login")}
                 sx={{ ml: 1 }}
               >
-                Register Here
+                Login Here
               </Link>
             </Typography>
           </Box>
@@ -98,4 +138,4 @@ const LoginForm: React.FC = () => {
   );
 };
 
-export default LoginForm;
+export default RegisterForm;
