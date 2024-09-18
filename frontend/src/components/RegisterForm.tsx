@@ -28,8 +28,8 @@ const RegisterForm: React.FC = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     console.log("Register form submitted", formState);
-    // Perform registration action here
-    navigate("/login"); // Redirect after registration
+
+    navigate("/login");
     dispatch(resetForm());
   };
 
