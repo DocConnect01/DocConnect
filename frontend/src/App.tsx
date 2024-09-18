@@ -1,7 +1,9 @@
 import React from "react";
 
-import LoginForm from "../src/components/login/Login";
+
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import LoginForm from "../src/components/login/Login";
+import Home from "./pages/Home";
 
 const App: React.FC = () => {
   return (
@@ -9,6 +11,9 @@ const App: React.FC = () => {
 <BrowserRouter>
 <Routes>
   <Route path="/login" element= {<LoginForm/>}/>
+  <Route path="/home" element= {<Home/>}/>
+
+
 </Routes>
 
 </BrowserRouter>
