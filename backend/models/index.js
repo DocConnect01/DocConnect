@@ -140,13 +140,13 @@ try {
 } catch (error) {User
   console.error('Unable to connect to the database:', error);
 }
-// sequelize.sync({ alter: true }) // alter to adjust existing tables if needed
-//   .then(() => {
-//     console.log('Database synced');
-//   })
-//   .catch((error) => {
-//     console.error('Error syncing database:', error);
-//   });
+sequelize.sync({ alter: true }) // alter to adjust existing tables if needed
+  .then(() => {
+    console.log('Database synced');
+  })
+  .catch((error) => {
+    console.error('Error syncing database:', error);
+  });
 
 
 
