@@ -37,26 +37,37 @@ const LoginForm: React.FC = () => {
   };
 
   return (
-    <Grid2
-      container
-      spacing={2}
-      justifyContent="center"
-      alignItems="center"
-      style={{
-        height: "100vh",
-        backgroundImage: "url(/_next/static/media/signup-bg.9daac4a8.jpg)",
-        backgroundSize: "cover",
-      }}
-    >
-      <Grid2 container>
+    <Box sx={{ height: "100%", padding: 15 }}>
+      <Box
+        display="flex"
+        sx={{ boxShadow: 3, borderRadius: 2, height: "75vh" }}
+      >
+        <Box
+          sx={{
+            flex: 1,
+            paddings: 0,
+            backgroundColor: "primary.main",
+          }}
+        >
+          <img
+            src="https://www.ekathimerini.com/wp-content/uploads/2020/11/doctor-thumb-large-958x600.jpg"
+            alt="Side Image"
+            style={{
+              maxWidth: "100%",
+              height: "100%",
+            }}
+          />
+        </Box>
+
         <Box
           component="form"
           onSubmit={handleSubmit}
           sx={{
             backgroundColor: "white",
             p: 4,
-            borderRadius: 2,
-            boxShadow: 3,
+            flex: 1,
+            height: 345, // Adjust height as needed
+
             display: "flex",
             flexDirection: "column",
             gap: 2,
@@ -133,8 +144,8 @@ const LoginForm: React.FC = () => {
             </Typography>
           </Box>
         </Box>
-      </Grid2>
-    </Grid2>
+      </Box>
+    </Box>
   );
 };
 
