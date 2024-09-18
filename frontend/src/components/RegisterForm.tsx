@@ -4,12 +4,13 @@ import { RootState } from "../../src/store/store";
 import { useNavigate } from "react-router-dom";
 import {
   setFirstName,
-  setEmail,
+  setEmailOrUsername,
   setPassword,
   setConfirmPassword,
   setUserType,
   resetForm,
 } from "../../src/features/formSlice";
+
 import {
   TextField,
   Button,
@@ -83,8 +84,8 @@ const RegisterForm: React.FC = () => {
           <TextField
             label="Your Email"
             type="email"
-            value={formState.email}
-            onChange={(e) => dispatch(setEmail(e.target.value))}
+            value={formState.emailOrUsername}
+            onChange={(e) => dispatch(setEmailOrUsername(e.target.value))}
             fullWidth
             required
           />

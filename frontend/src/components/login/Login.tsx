@@ -1,21 +1,50 @@
-import React from "react";
+import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../store/store";
 import { useNavigate } from "react-router-dom";
-import { setEmail, setPassword, resetForm } from "../../features/formSlice";
+import {
+  setEmailOrUsername,
+  setPassword,
+  resetForm,
+} from "../../features/formSlice";
 import { TextField, Button, Box, Typography, Link } from "@mui/material";
+import axios from "axios";
 
 const LoginForm: React.FC = () => {
   const dispatch = useDispatch();
   const formState = useSelector((state: RootState) => state.form);
   const navigate = useNavigate();
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Login form submitted", formState);
+    setErrorMessage(null);
 
-    navigate("/dashboard");
-    dispatch(resetForm());
+    try {
+      const response = await axios.post(
+        "http://localhost:5000/api/users/login",
+        {
+          EmailOrUsername: formState.emailOrUsername,
+          Password: formState.password,
+        }
+      );
+
+      if (response.status === 200) {
+        localStorage.setItem("token", response.data.token);
+
+        navigate("/dashboard");
+        dispatch(resetForm());
+      }
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response) {
+        const { status, data } = error.response;
+        if (status === 404 || status === 401) {
+          setErrorMessage(data.message);
+        } else {
+          setErrorMessage("An unexpected error occurred.");
+        }
+      }
+    }
   };
 
   return (
@@ -58,14 +87,21 @@ const LoginForm: React.FC = () => {
             Login Here
           </Typography>
 
+          {errorMessage && (
+            <Typography variant="body2" color="error" align="center">
+              {errorMessage}
+            </Typography>
+          )}
+
           <TextField
-            label="Your Email"
-            type="email"
-            value={formState.email}
-            onChange={(e) => dispatch(setEmail(e.target.value))}
+            label="Email or Username"
+            type="text"
+            value={formState.emailOrUsername}
+            onChange={(e) => dispatch(setEmailOrUsername(e.target.value))}
             fullWidth
             required
           />
+
           <TextField
             label="Password"
             type="password"

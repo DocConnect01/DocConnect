@@ -53,7 +53,7 @@ exports.register = async (req, res) => {
 
 // Login for Admin, Doctor, and Patient
 exports.login = async (req, res) => {
-  const { EmailOrUsername, Password } = req.body; // Expecting a single field for either Email or Username
+  const { EmailOrUsername, Password } = req.body;
 
   if (!EmailOrUsername || !Password) {
     return res
