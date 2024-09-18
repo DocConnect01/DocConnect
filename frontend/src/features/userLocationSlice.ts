@@ -1,56 +1,38 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import axios from 'axios';
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
-interface UserLocation {
+interface UserLocationState {
   latitude: number | null;
   longitude: number | null;
-  placeName: string;
   loading: boolean;
   error: string | null;
 }
 
-const initialState: UserLocation = {
+const initialState: UserLocationState = {
   latitude: null,
   longitude: null,
-  placeName: '',
   loading: false,
   error: null,
 };
 
-export const updateUserLocation = createAsyncThunk(
-  'userLocation/updateUserLocation',
-  async (coords: { latitude: number; longitude: number }, { rejectWithValue }) => {
-    try {
-      await axios.put('/api/auth/update-location', coords);
-      const response = await axios.get(`/api/auth/get-place-name?latitude=${coords.latitude}&longitude=${coords.longitude}`);
-      return { ...coords, placeName: response.data.placeName };
-    } catch (error) {
-      return rejectWithValue('Failed to update location');
-    }
-  }
-);
-
 const userLocationSlice = createSlice({
   name: 'userLocation',
   initialState,
-  reducers: {},
-  extraReducers: (builder) => {
-    builder
-      .addCase(updateUserLocation.pending, (state) => {
-        state.loading = true;
-        state.error = null;
-      })
-      .addCase(updateUserLocation.fulfilled, (state, action) => {
-        state.loading = false;
-        state.latitude = action.payload.latitude;
-        state.longitude = action.payload.longitude;
-        state.placeName = action.payload.placeName;
-      })
-      .addCase(updateUserLocation.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload as string;
-      });
+  reducers: {
+    setLocation: (state, action: PayloadAction<{ latitude: number; longitude: number }>) => {
+      state.latitude = action.payload.latitude;
+      state.longitude = action.payload.longitude;
+      state.loading = false;
+      state.error = null;
+    },
+    setLoading: (state, action: PayloadAction<boolean>) => {
+      state.loading = action.payload;
+    },
+    setError: (state, action: PayloadAction<string>) => {
+      state.error = action.payload;
+      state.loading = false;
+    },
   },
 });
 
+export const { setLocation, setLoading, setError } = userLocationSlice.actions;
 export default userLocationSlice.reducer;

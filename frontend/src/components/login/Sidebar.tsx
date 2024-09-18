@@ -1,6 +1,6 @@
 import React from "react";
 import { Box, List, ListItem, ListItemText, ListItemIcon } from "@mui/material";
-import DashboardIcon from "@mui/icons-material/Dashboard";
+// import DashboardIcon from "@mui/icons-material/Dashboard";
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 import PeopleIcon from "@mui/icons-material/People";
 import PaymentIcon from "@mui/icons-material/Payment";
@@ -13,7 +13,7 @@ const Sidebar: React.FC = () => {
     <Box sx={{ height: "100vh", backgroundColor: "#F4F5F7", padding: 2 }}>
       <List>
         {[
-          { text: "Overview", icon: <DashboardIcon /> },
+          // { text: "Overview", icon: <DashboardIcon /> },
           { text: "Appointment", icon: <CalendarTodayIcon /> },
           { text: "My Patients", icon: <PeopleIcon /> },
           { text: "Payments", icon: <PaymentIcon /> },

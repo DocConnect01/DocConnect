@@ -8,6 +8,7 @@ const cors = require('cors');
 const userRoutes = require('./router/auth.router')
 const doctorRoute = require('./router/doctor.router')
 const { authenticate } = require("./middleware/auth.middlware");
+const userRoutesLocation = require('./router/user.router')
 const app = express();
 const PORT = process.env.PORT || 5000;
 
@@ -19,6 +20,8 @@ app.use(cors());
 // Use routes
 
 app.use("/api/users", userRoutes);
+
+app.use("/api/users2", userRoutesLocation);
 // app.use('/api/appointments', appointmentRoutes);
 // app.use('/api/chats', chatRoutes);
 

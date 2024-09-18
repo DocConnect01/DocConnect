@@ -8,7 +8,7 @@ import {
   setConfirmPassword,
   resetForm,
 } from "../../features/formSlice";
-import { TextField, Button, Box, Typography, Link, Grid } from "@mui/material";
+import { TextField, Button, Box, Typography, Link, Grid2 } from "@mui/material";
 
 const LoginForm: React.FC = () => {
   const dispatch = useDispatch();
@@ -27,7 +27,7 @@ const LoginForm: React.FC = () => {
   };
 
   return (
-    <Grid
+    <Grid2
       container
       spacing={2}
       justifyContent="center"
@@ -38,7 +38,7 @@ const LoginForm: React.FC = () => {
         backgroundSize: "cover",
       }}
     >
-      <Grid item xs={12} md={6}>
+      <Grid2 >
         <Box
           component="form"
           onSubmit={handleSubmit}
@@ -109,8 +109,8 @@ const LoginForm: React.FC = () => {
             </Typography>
           </Box>
         </Box>
-      </Grid>
-    </Grid>
+      </Grid2>
+    </Grid2>
   );
 };
 

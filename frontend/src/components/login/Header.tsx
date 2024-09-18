@@ -1,6 +1,6 @@
 import React from "react";
 import { Box, Typography, Avatar, IconButton } from "@mui/material";
-import NotificationsIcon from "@mui/icons-material/Notifications";
+// import NotificationsIcon from "@mui/icons-material/Notifications";
 
 const Header: React.FC = () => {
   return (
@@ -8,7 +8,7 @@ const Header: React.FC = () => {
       <Typography variant="h5">Welcome, Dr. Stephen</Typography>
       <Box display="flex" alignItems="center">
         <IconButton>
-          <NotificationsIcon />
+          {/* <NotificationsIcon /> */}
         </IconButton>
         <Avatar alt="Dr. Stephen Conley" src="/static/images/avatar/1.jpg" />
       </Box>
