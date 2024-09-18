@@ -5,7 +5,8 @@ const { sequelize } = require('./models');
 const bodyParser = require('body-parser');
 
 const cors = require('cors');
-
+const userRoutes = require('./router/auth.router')
+const {authenticate} = require('./middleware/auth.middlware')
 // Initialize Express app
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -13,7 +14,6 @@ const PORT = process.env.PORT || 5000;
 // Middleware
 app.use(bodyParser.json());
 app.use(cors());
-
 
 
 // Use routes
