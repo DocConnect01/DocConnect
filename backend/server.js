@@ -14,13 +14,12 @@ const PORT = process.env.PORT || 5000;
 // Middleware
 app.use(bodyParser.json());
 app.use(cors());
-app.use(authenticate)
 
 
 // Use routes
 
 
-app.use('/api/users', userRoutes);
+// app.use('/api/users', userRoutes);
 // app.use('/api/appointments', appointmentRoutes);
 // app.use('/api/chats', chatRoutes);
 
