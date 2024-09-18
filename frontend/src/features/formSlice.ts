@@ -39,7 +39,6 @@ const formSlice = createSlice({
   },
 });
 
-// Export the actions
 export const {
   setFirstName,
   setEmailOrUsername,
