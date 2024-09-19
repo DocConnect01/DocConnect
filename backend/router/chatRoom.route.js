@@ -8,3 +8,6 @@ router.use(authenticate);
 
 // Create a new chat room
 router.post('/chatroom/:username', chatRoomController.createChatRoom);
+
+// Get all chat rooms for the authenticated user
+router.get('/', chatRoomController.getAllChatRooms);
