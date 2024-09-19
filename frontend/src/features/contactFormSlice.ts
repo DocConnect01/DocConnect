@@ -1,5 +1,14 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-// import { ContactFormState } from '../types/contactForm';
+
+export interface ContactFormState {
+  firstName: string;
+  lastName: string;
+  email: string;
+  phoneNumber: string;
+  topic: string;
+  message: string;
+  acceptTerms: boolean;
+}
 
 const initialState: ContactFormState = {
   firstName: "",
