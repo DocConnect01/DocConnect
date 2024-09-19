@@ -25,7 +25,6 @@ const Sidebar: React.FC = () => {
             <ListItemIcon>{item.icon}</ListItemIcon>
             <ListItemText primary={item.text} />
           </ListItem>
-          
         ))}
       </List>
     </Box>
