@@ -27,6 +27,10 @@ module.exports = (sequelize) => {
       type: DataTypes.DATE,
       allowNull: false
     },
+    StartTime: {
+      type: DataTypes.TIME,
+      allowNull: false
+    },
     DurationMinutes: {
       type: DataTypes.INTEGER,
       allowNull: false

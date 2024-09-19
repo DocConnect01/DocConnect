@@ -5,7 +5,7 @@ import AppointmentCalendar from '../components/Appointment/AppointmentCalendar';
 import TimeSlotSelector from '../components/Appointment/TimeSlotSelector';
 
 const BookAppointment: React.FC = () => {
-    const doctorId = '1'; // Mocked doctor ID
+    const DoctorID = '1'; // Mocked doctor ID
     const patientId = '123'; // Mocked patient ID
 
     return (
@@ -14,11 +14,11 @@ const BookAppointment: React.FC = () => {
             <div className="grid">
                 <div className="card">
                     <h3>Select a Date</h3>
-                    <AppointmentCalendar />
+                    <AppointmentCalendar DoctorID={DoctorID} />
                 </div>
                 <div className="card">
                     <h3>Available Slots</h3>
-                    <TimeSlotSelector doctorId={doctorId} patientId={patientId} />
+                    <TimeSlotSelector doctorId={DoctorID} patientId={patientId} />
                 </div>
             </div>
         </div>

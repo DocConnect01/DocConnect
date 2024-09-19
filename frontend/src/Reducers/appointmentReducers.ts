@@ -9,7 +9,7 @@ interface Appointment {
 
 interface AppointmentState {
     appointments: Appointment[];
-    selectedDate: Date | null;
+    selectedDate: string | null;
     availableSlots: string[];
 }
 
@@ -18,7 +18,6 @@ const initialState: AppointmentState = {
     selectedDate: null,
     availableSlots: [],
 };
-
 const appointmentReducer = (state = initialState, action: ActionTypes): AppointmentState => {
     switch (action.type) {
         case BOOK_APPOINTMENT:
