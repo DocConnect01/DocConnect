@@ -1,18 +1,21 @@
 import React, { useState, useEffect } from 'react';
-import { TextField, List, ListItem, ListItemText, Button } from '@mui/material';
+import { TextField, List, ListItem, ListItemText } from '@mui/material';
 import debounce from 'lodash/debounce';
 
-interface SearchResult {
+export interface SearchResult {
   place_id: number;
   display_name: string;
   lat: string;
   lon: string;
 }
 
-const LocationSearch: React.FC = () => {
+interface LocationSearchProps {
+  onSelectLocation: (result: SearchResult) => void;
+}
+
+const LocationSearch: React.FC<LocationSearchProps> = ({ onSelectLocation }) => {
   const [query, setQuery] = useState('');
   const [results, setResults] = useState<SearchResult[]>([]);
-  const [selectedLocation, setSelectedLocation] = useState<SearchResult | null>(null);
 
   const searchLocation = async (input: string) => {
     if (input.length < 3) return;
@@ -25,9 +28,6 @@ const LocationSearch: React.FC = () => {
     }
   };
 
-
-  
-
   const debouncedSearch = debounce(searchLocation, 300);
 
   useEffect(() => {
@@ -38,32 +38,16 @@ const LocationSearch: React.FC = () => {
   }, [query]);
 
   const handleSelectLocation = (result: SearchResult) => {
-    setSelectedLocation(result);
     setQuery(result.display_name);
     setResults([]);
-  };
-
-  const handleShowCoordinates = async () => {
-    if (selectedLocation) {
-      console.log(`Selected location: ${selectedLocation.display_name}`);
-      console.log(`Latitude: ${selectedLocation.lat}, Longitude: ${selectedLocation.lon}`);
-      alert(`Latitude: ${selectedLocation.lat}, Longitude: ${selectedLocation.lon}`);
-  
-      try {
-        const response = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${selectedLocation.lat}&lon=${selectedLocation.lon}&format=json`);
-        const data = await response.json();
-        console.log('Reverse geocoding result:', data);
-      } catch (error) {
-        console.error('Error fetching reverse geocoding data:', error);
-      }
-    }
+    onSelectLocation(result);
   };
 
   return (
     <div>
       <TextField
         fullWidth
-        label="Search location"
+        label="Address"
         value={query}
         onChange={(e) => setQuery(e.target.value)}
         margin="normal"
@@ -75,11 +59,6 @@ const LocationSearch: React.FC = () => {
           </ListItem>
         ))}
       </List>
-      {selectedLocation && (
-        <Button variant="contained" color="primary" onClick={handleShowCoordinates}>
-          Show Coordinates
-        </Button>
-      )}
     </div>
   );
 };

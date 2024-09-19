@@ -3,7 +3,8 @@ const db = require('../models');
 // Update user's location
 exports.updateUserLocation = async (req, res) => {
   try {
-    const { userId, latitude, longitude } = req.body;
+    const { latitude, longitude } = req.body;
+    const userId = req.user.UserID;
     const updatedUser = await db.User.update(
       { LocationLatitude: latitude, LocationLongitude: longitude },
       { where: { UserID: userId } }
@@ -28,3 +29,35 @@ exports.getPlaceName = async (req, res) => {
     res.status(500).json({ message: 'Error fetching place name', error: error.message });
   }
 };
+
+// Get user's location
+exports.getUserLocation = async (req, res) => {
+  try {
+    const userId = req.user.UserID;
+    const user = await db.User.findByPk(userId, {
+      attributes: ['UserID', 'LocationLatitude', 'LocationLongitude']
+    });
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    res.status(200).json({ 
+      message: 'User location retrieved successfully',
+      location: {
+        latitude: user.LocationLatitude,
+        longitude: user.LocationLongitude
+      }
+    });
+  } catch (error) {
+    res.status(500).json({ message: 'Error retrieving user location', error: error.message });
+  }
+};
+
+
+exports.getAllUsers = async (req, res) => {
+  try {
+    const users = await db.User.findAll();
+    res.status(200).json({ users });
+  } catch (error) {
+    res.status(500).json({ message: 'Error retrieving users', error: error.message });
+  }
+};  

@@ -2,55 +2,72 @@ import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../store/store';
 import { setLocation, setLoading, setError } from '../../features/UserLocationSlice';
-import LocationSearch from './LocationSearch';
+import axios from 'axios';
 
-const UserLocation: React.FC = () => {
+const UserLocation: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
   const dispatch = useDispatch();
   const { latitude, longitude, loading, error } = useSelector((state: RootState) => state.userLocation);
 
   useEffect(() => {
-    console.log("UserLocation component mounted");
-    if (!navigator.geolocation) {
-      dispatch(setError("Geolocation is not supported by your browser"));
-      return;
-    }
+    const updateUserLocation = async () => {
+      console.log('Starting location update process');
+      dispatch(setLoading(true));
+      const token = localStorage.getItem('token');
   
-    dispatch(setLoading(true));
-    console.log("Requesting geolocation...");
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        console.log("Geolocation success:", position);
-        const { latitude, longitude } = position.coords;
-        dispatch(setLocation({ latitude, longitude }));
-        console.log(`Latitude: ${latitude}, Longitude: ${longitude}`);
-      },
-      (error) => {
-        console.error("Error getting location:", error);
-        dispatch(setError(error.message));
-      },
-      { timeout: 10000, enableHighAccuracy: true }
-    );
-  }, [dispatch]);
+      if (!token) {
+        console.log('No authentication token found');
+        dispatch(setError('No authentication token found'));
+        return;
+      }
+  
+      if (!navigator.geolocation) {
+        console.log('Geolocation is not supported by your browser');
+        dispatch(setError('Geolocation is not supported by your browser'));
+        return;
+      }
+  
+      console.log('Requesting user location');
+      navigator.geolocation.getCurrentPosition(
+        async (position) => {
+          const { latitude, longitude } = position.coords;
+          console.log(`Location obtained: Lat ${latitude}, Lon ${longitude}`);
+          dispatch(setLocation({ latitude, longitude }));
+  
+          try {
+            console.log('Sending location update to server');
+            const response = await axios.put(
+              'http://localhost:5000/api/users2/update-location',
+              { latitude, longitude },
+              {
+                headers: {
+                  Authorization: `Bearer ${token}`,
+                },
+              }
+            );
+  
+            console.log('Location update successful:', response.data);
+            onComplete(); // Call the onComplete function after successful update
+          } catch (error) {
+            console.error('Error updating location:', error);
+            dispatch(setError('Failed to update location on server'));
+          } finally {
+            dispatch(setLoading(false));
+            console.log('Location update process completed');
+          }
+        },
+        (error) => {
+          console.error('Error getting location:', error);
+          dispatch(setError(error.message));
+          dispatch(setLoading(false));
+          onComplete(); 
+        }
+      );
+    };
+  
+    updateUserLocation();
+  }, [dispatch, onComplete]);
 
-  console.log("Rendering UserLocation component", { latitude, longitude });
-
-  if (loading) return <p>Loading location...</p>;
-  if (error) return <p>Error: {error}</p>;
-
-  return (
-    <div>
-      <h2>Your Location</h2>
-      {latitude && longitude ? (
-        <>
-          <p>Latitude: {latitude}</p>
-          <p>Longitude: {longitude}</p>
-        </>
-      ) : (
-        <p>Unable to retrieve location</p>
-      )}
-      <h2>Search Location</h2>
-      <LocationSearch />
-    </div>
-  );
+  return null; 
 };
-export default UserLocation
+
+export default UserLocation;

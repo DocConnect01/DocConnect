@@ -20,7 +20,6 @@ app.use(cors());
 // Use routes
 
 app.use("/api/users", userRoutes);
-
 app.use("/api/users2", userRoutesLocation);
 // app.use('/api/appointments', appointmentRoutes);
 // app.use('/api/chats', chatRoutes);

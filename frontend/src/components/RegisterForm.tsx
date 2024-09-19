@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../src/store/store";
 import { useNavigate } from "react-router-dom";
+import LocationSearch, { SearchResult } from './user/LocationSearch';
 import {
   setFirstName,
   setEmailOrUsername,
@@ -31,6 +32,7 @@ const RegisterForm: React.FC = () => {
   const [specialty, setSpecialty] = useState("");
   const [bio, setBio] = useState("");
   const [meetingPrice, setMeetingPrice] = useState("");
+  const [selectedLocation, setSelectedLocation] = useState<SearchResult | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -54,6 +56,8 @@ const RegisterForm: React.FC = () => {
           Specialty: formState.userType === "doctor" ? specialty : "",
           Bio: formState.userType === "doctor" ? bio : "",
           MeetingPrice: formState.userType === "doctor" ? meetingPrice : "",
+          Latitude: selectedLocation ? selectedLocation.lat : "",
+          Longitude: selectedLocation ? selectedLocation.lon : "",
         }
       );
 
@@ -206,6 +210,13 @@ const RegisterForm: React.FC = () => {
               />
             </>
           )}
+
+          <LocationSearch
+            onSelectLocation={(result) => {
+              setSelectedLocation(result);
+              console.log('Selected location:', result);
+            }}
+          />
 
           <Button type="submit" variant="contained" size="large" fullWidth>
             Register

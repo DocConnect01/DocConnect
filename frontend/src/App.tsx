@@ -15,7 +15,7 @@ const App: React.FC = () => {
           
           <Route path="/login" element={<LoginForm />} />
           <Route path="/register" element={<RegisterForm />} />
-
+    
         </Routes>
       </div>
     </BrowserRouter>

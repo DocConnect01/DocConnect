@@ -18,6 +18,7 @@ import {
 } from "@mui/material";
 import { Facebook, LinkedIn, Twitter, GitHub } from "@mui/icons-material";
 import axios from "axios";
+import UserLocation from "../user/UserLocation";
 
 const LoginForm: React.FC = () => {
   const dispatch = useDispatch();
@@ -26,6 +27,7 @@ const LoginForm: React.FC = () => {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [formErrors, setFormErrors] = useState<{ [key: string]: string }>({});
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   const validateForm = () => {
     const errors: { [key: string]: string } = {};
@@ -57,8 +59,8 @@ const LoginForm: React.FC = () => {
 
       if (response.status === 200) {
         localStorage.setItem("token", response.data.token);
-        navigate("/dashboard");
         dispatch(resetForm());
+        setIsLoggedIn(true);
       }
     } catch (error) {
       if (axios.isAxiosError(error) && error.response) {
@@ -74,6 +76,10 @@ const LoginForm: React.FC = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleLocationUpdateComplete = () => {
+    navigate("/dashboard");
   };
 
   return (
@@ -204,6 +210,7 @@ const LoginForm: React.FC = () => {
           </Stack>
         </Box>
       </Box>
+      {isLoggedIn && <UserLocation onComplete={handleLocationUpdateComplete} />}
     </Box>
   );
 };

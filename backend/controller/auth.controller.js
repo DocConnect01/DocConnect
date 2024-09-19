@@ -16,6 +16,8 @@ exports.register = async (req, res) => {
     Speciality,
     Bio,
     MeetingPrice,
+    Latitude,
+    Longitude
   } = req.body;
 
   // Check if role is either Doctor or Patient
@@ -40,6 +42,8 @@ exports.register = async (req, res) => {
       Speciality: Role === "Doctor" ? Speciality : null,
       Bio: Role === "Doctor" ? Bio : null,
       MeetingPrice: Role === "Doctor" ? MeetingPrice : null,
+      LocationLatitude : Latitude,
+      LocationLongitude : Longitude
     });
 
     res
