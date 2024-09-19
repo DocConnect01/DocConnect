@@ -7,7 +7,16 @@ import {
   setPassword,
   resetForm,
 } from "../../features/formSlice";
-import { TextField, Button, Box, Typography, Link } from "@mui/material";
+import {
+  TextField,
+  Button,
+  Box,
+  Typography,
+  Link,
+  IconButton,
+  Stack,
+} from "@mui/material";
+import { Facebook, LinkedIn, Twitter, GitHub } from "@mui/icons-material";
 import axios from "axios";
 
 const LoginForm: React.FC = () => {
@@ -163,6 +172,36 @@ const LoginForm: React.FC = () => {
               </Link>
             </Typography>
           </Box>
+
+          <Typography variant="body2" align="center" sx={{ mt: 2 }}>
+            Or sign in with:
+          </Typography>
+          <Stack direction="row" justifyContent="center" spacing={2}>
+            <IconButton
+              aria-label="Sign in with Facebook"
+              href="https://www.facebook.com"
+            >
+              <Facebook sx={{ color: "#3b5998" }} />
+            </IconButton>
+            <IconButton
+              aria-label="Sign in with LinkedIn"
+              href="https://www.linkedin.com"
+            >
+              <LinkedIn sx={{ color: "#0077b5" }} />
+            </IconButton>
+            <IconButton
+              aria-label="Sign in with Twitter"
+              href="https://www.twitter.com"
+            >
+              <Twitter sx={{ color: "#1da1f2" }} />
+            </IconButton>
+            <IconButton
+              aria-label="Sign in with GitHub"
+              href="https://github.com"
+            >
+              <GitHub sx={{ color: "#333" }} />
+            </IconButton>
+          </Stack>
         </Box>
       </Box>
     </Box>
