@@ -63,3 +63,40 @@ exports.createChatRoom = async (req, res) => {
     res.status(500).json({ message: 'Internal server error', error: error.message });
   }
 };
+exports.getAllChatRooms = async (req, res) => {
+    try {
+      const userId = req.user.UserID;
+      const userRole = req.user.Role;
+  
+      if (!userId) {
+        return res.status(400).json({ message: 'User ID is required' });
+      }
+  
+      let chatRooms;
+  
+      if (userRole === 'Doctor') {
+        chatRooms = await Chatrooms.findAll({
+          where: { DoctorID: userId },
+          include: [
+            { model: User, as: 'Patient', attributes: ['UserID', 'FirstName', 'LastName', 'Email'] }
+          ],
+          order: [['createdAt', 'DESC']]
+        });
+      } else if (userRole === 'Patient') {
+        chatRooms = await Chatrooms.findAll({
+          where: { PatientID: userId },
+          include: [
+            { model: User, as: 'Doctor', attributes: ['UserID', 'FirstName', 'LastName', 'Email'] }
+          ],
+          order: [['createdAt', 'DESC']]
+        });
+      } else {
+        return res.status(403).json({ message: 'Invalid user role' });
+      }
+  
+      res.status(200).json(chatRooms);
+    } catch (error) {
+      console.error('Error fetching user chat rooms:', error);
+      res.status(500).json({ message: 'Internal server error', error: error.message });
+    }
+  };
