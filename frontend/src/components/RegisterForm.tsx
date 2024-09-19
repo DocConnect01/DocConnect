@@ -18,6 +18,8 @@ import {
   Select,
   MenuItem,
   Link,
+  InputLabel,
+  FormControl,
 } from "@mui/material";
 import axios from "axios";
 
@@ -26,11 +28,13 @@ const RegisterForm: React.FC = () => {
   const formState = useSelector((state: RootState) => state.form);
   const navigate = useNavigate();
   const [error, setError] = useState("");
+  const [specialty, setSpecialty] = useState("");
+  const [bio, setBio] = useState("");
+  const [meetingPrice, setMeetingPrice] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
-    console.log("Register form submitted", formState);
 
     if (formState.password !== formState.confirmPassword) {
       setError("Passwords do not match");
@@ -47,6 +51,9 @@ const RegisterForm: React.FC = () => {
           Password: formState.password,
           Email: formState.Username,
           Role: formState.userType === "doctor" ? "Doctor" : "Patient",
+          Specialty: formState.userType === "doctor" ? specialty : "",
+          Bio: formState.userType === "doctor" ? bio : "",
+          MeetingPrice: formState.userType === "doctor" ? meetingPrice : "",
         }
       );
 
@@ -68,24 +75,34 @@ const RegisterForm: React.FC = () => {
   };
 
   return (
-    <Box sx={{ height: "100%", padding: 15 }}>
+    <Box
+      sx={{
+        height: "100%",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        p: 3,
+        backgroundColor: "#f5f5f5",
+      }}
+    >
       <Box
-        display="flex"
-        sx={{ boxShadow: 3, borderRadius: 2, height: "75vh" }}
+        sx={{
+          boxShadow: 3,
+          borderRadius: 2,
+          overflow: "hidden",
+          maxWidth: 1000,
+          display: "flex",
+          backgroundColor: "white",
+        }}
       >
-        <Box
-          sx={{
-            flex: 1,
-            paddings: 0,
-            backgroundColor: "primary.main",
-          }}
-        >
+        <Box sx={{ flex: 1, display: { xs: "none", md: "block" } }}>
           <img
             src="https://medikit-nextjs.vercel.app/_next/static/media/signup-bg.9daac4a8.jpg"
             alt="Side Image"
             style={{
               maxWidth: "100%",
               height: "100%",
+              objectFit: "cover",
             }}
           />
         </Box>
@@ -94,16 +111,15 @@ const RegisterForm: React.FC = () => {
           component="form"
           onSubmit={handleSubmit}
           sx={{
-            backgroundColor: "white",
             p: 4,
             flex: 1,
-            height: 345,
             display: "flex",
             flexDirection: "column",
             gap: 2,
+            justifyContent: "center",
           }}
         >
-          <Typography variant="h5" align="center">
+          <Typography variant="h4" align="center" gutterBottom>
             Register Here
           </Typography>
 
@@ -120,6 +136,7 @@ const RegisterForm: React.FC = () => {
             fullWidth
             required
           />
+
           <TextField
             label="Your Email"
             type="email"
@@ -128,6 +145,7 @@ const RegisterForm: React.FC = () => {
             fullWidth
             required
           />
+
           <TextField
             label="Password"
             type="password"
@@ -136,6 +154,7 @@ const RegisterForm: React.FC = () => {
             fullWidth
             required
           />
+
           <TextField
             label="Confirm Password"
             type="password"
@@ -144,18 +163,51 @@ const RegisterForm: React.FC = () => {
             fullWidth
             required
           />
-          <Select
-            label="User Type"
-            value={formState.userType}
-            onChange={(e) => dispatch(setUserType(e.target.value as string))}
-            fullWidth
-            required
-          >
-            <MenuItem value="patient">Patient</MenuItem>
-            <MenuItem value="doctor">Doctor</MenuItem>
-          </Select>
 
-          <Button type="submit" variant="contained" fullWidth>
+          <FormControl fullWidth variant="outlined" required>
+            <InputLabel id="user-type-label">User Type</InputLabel>
+            <Select
+              labelId="user-type-label"
+              id="user-type-select"
+              value={formState.userType}
+              onChange={(e) => dispatch(setUserType(e.target.value))}
+              label="User Type"
+            >
+              <MenuItem value="patient">Patient</MenuItem>
+              <MenuItem value="doctor">Doctor</MenuItem>
+            </Select>
+          </FormControl>
+
+          {formState.userType === "doctor" && (
+            <>
+              <TextField
+                label="Specialty"
+                value={specialty}
+                onChange={(e) => setSpecialty(e.target.value)}
+                fullWidth
+                required
+              />
+
+              <TextField
+                label="Bio"
+                value={bio}
+                onChange={(e) => setBio(e.target.value)}
+                fullWidth
+                multiline
+                rows={3}
+              />
+
+              <TextField
+                label="Meeting Price"
+                type="number"
+                value={meetingPrice}
+                onChange={(e) => setMeetingPrice(e.target.value)}
+                fullWidth
+              />
+            </>
+          )}
+
+          <Button type="submit" variant="contained" size="large" fullWidth>
             Register
           </Button>
 
