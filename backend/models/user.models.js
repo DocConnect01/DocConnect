@@ -9,11 +9,11 @@ module.exports = (sequelize) => {
     },
     FirstName: {
       type: DataTypes.STRING(50),
-      allowNull: false
+      allowNull: true
     },
     LastName: {
       type: DataTypes.STRING(50),
-      allowNull: false
+      allowNull: true
     },
     Username: {
       type: DataTypes.STRING(50),
