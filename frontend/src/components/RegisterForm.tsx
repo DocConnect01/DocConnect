@@ -42,10 +42,10 @@ const RegisterForm: React.FC = () => {
         "http://localhost:5000/api/users/register",
         {
           FirstName: formState.firstName,
-          LastName: "", // You might want to add a LastName field to your form
+          LastName: "",
           Username: formState.Username,
           Password: formState.password,
-          Email: formState.Username, // Assuming Username is used for email
+          Email: formState.Username,
           Role: formState.userType === "doctor" ? "Doctor" : "Patient",
         }
       );

@@ -1,8 +1,8 @@
 import React from "react";
 
-import LoginForm from "../src/components/login/Login";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import RegisterForm from "./components/RegisterForm";
+import LoginForm from "./components/login/Login";
 import Footer from "./components/login/Footer";
 
 const App: React.FC = () => {

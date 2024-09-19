@@ -15,10 +15,27 @@ const LoginForm: React.FC = () => {
   const formState = useSelector((state: RootState) => state.form);
   const navigate = useNavigate();
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [formErrors, setFormErrors] = useState<{ [key: string]: string }>({});
+
+  const validateForm = () => {
+    const errors: { [key: string]: string } = {};
+    if (!formState.Username) {
+      errors.Username = "Username is required";
+    }
+    if (!formState.password) {
+      errors.password = "Password is required";
+    }
+    setFormErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!validateForm()) return;
+
     setErrorMessage(null);
+    setLoading(true);
 
     try {
       const response = await axios.post(
@@ -31,7 +48,6 @@ const LoginForm: React.FC = () => {
 
       if (response.status === 200) {
         localStorage.setItem("token", response.data.token);
-
         navigate("/dashboard");
         dispatch(resetForm());
       }
@@ -43,7 +59,11 @@ const LoginForm: React.FC = () => {
         } else {
           setErrorMessage("An unexpected error occurred.");
         }
+      } else {
+        setErrorMessage("Network error. Please try again.");
       }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -56,16 +76,18 @@ const LoginForm: React.FC = () => {
         <Box
           sx={{
             flex: 1,
-            paddings: 0,
+            padding: 0,
             backgroundColor: "primary.main",
           }}
         >
           <img
             src="https://medikit-nextjs.vercel.app/_next/static/media/signup-bg.9daac4a8.jpg"
             alt="Side Image"
+            aria-label="Decorative side image"
             style={{
               maxWidth: "100%",
               height: "100%",
+              objectFit: "cover",
             }}
           />
         </Box>
@@ -74,13 +96,17 @@ const LoginForm: React.FC = () => {
           component="form"
           onSubmit={handleSubmit}
           sx={{
-            backgroundColor: "white",
+            backgroundColor: "#fff",
             p: 4,
             flex: 1,
-            height: 345,
+            height: "auto",
             display: "flex",
             flexDirection: "column",
             gap: 2,
+            borderRadius: 2,
+            boxShadow: 3,
+            maxWidth: 400,
+            mx: "auto",
           }}
         >
           <Typography variant="h5" align="center">
@@ -100,6 +126,8 @@ const LoginForm: React.FC = () => {
             onChange={(e) => dispatch(setEmailOrUsername(e.target.value))}
             fullWidth
             required
+            error={!!formErrors.Username}
+            helperText={formErrors.Username}
           />
 
           <TextField
@@ -109,10 +137,17 @@ const LoginForm: React.FC = () => {
             onChange={(e) => dispatch(setPassword(e.target.value))}
             fullWidth
             required
+            error={!!formErrors.password}
+            helperText={formErrors.password}
           />
 
-          <Button type="submit" variant="contained" fullWidth>
-            Login
+          <Button
+            type="submit"
+            variant="contained"
+            fullWidth
+            disabled={loading}
+          >
+            {loading ? "Logging In..." : "Login"}
           </Button>
 
           <Box textAlign="center">
