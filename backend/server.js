@@ -19,7 +19,6 @@ app.use(bodyParser.json());
 app.use(cors());
 // app.use(authenticate);
 // Use routes
-
 app.use("/api/users", userRoutes);
 app.use('/api/appointments', appointmentRoutes)
 app.use("/api/availability", availabilityRoutes);;

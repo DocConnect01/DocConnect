@@ -1,6 +1,6 @@
 // controllers/appointment.controller.js
 const { Appointment } = require('../models');
-const appointmentController = require('../controllers/appointment.controller');
+
 
 
 // Get all appointments
@@ -80,7 +80,7 @@ exports.getAppointmentsByDoctorIdAndDate = async (req, res) => {
     const appointments = await Appointment.findAll({
       where: {
         DoctorID: req.params.id,
-        AppointmentDate: req.params.date
+        AppointmentDate: new Date(req.params.date)
       }
     });
     res.status(200).json(appointments);
