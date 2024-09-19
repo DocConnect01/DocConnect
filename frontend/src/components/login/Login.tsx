@@ -24,7 +24,7 @@ const LoginForm: React.FC = () => {
       const response = await axios.post(
         "http://localhost:5000/api/users/login",
         {
-          EmailOrUsername: formState.emailOrUsername,
+          Username: formState.Username,
           Password: formState.password,
         }
       );
@@ -96,7 +96,7 @@ const LoginForm: React.FC = () => {
           <TextField
             label="Email or Username"
             type="text"
-            value={formState.emailOrUsername}
+            value={formState.Username}
             onChange={(e) => dispatch(setEmailOrUsername(e.target.value))}
             fullWidth
             required

@@ -2,7 +2,7 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 interface FormState {
   firstName: string;
-  emailOrUsername: string;
+  Username: string;
   password: string;
   confirmPassword: string;
   userType: string;
@@ -10,7 +10,7 @@ interface FormState {
 
 const initialState: FormState = {
   firstName: "",
-  emailOrUsername: "",
+  Username: "",
   password: "",
   confirmPassword: "",
   userType: "",
@@ -24,7 +24,7 @@ const formSlice = createSlice({
       state.firstName = action.payload;
     },
     setEmailOrUsername: (state, action: PayloadAction<string>) => {
-      state.emailOrUsername = action.payload;
+      state.Username = action.payload;
     },
     setPassword: (state, action: PayloadAction<string>) => {
       state.password = action.payload;

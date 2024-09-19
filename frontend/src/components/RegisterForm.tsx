@@ -84,7 +84,7 @@ const RegisterForm: React.FC = () => {
           <TextField
             label="Your Email"
             type="email"
-            value={formState.emailOrUsername}
+            value={formState.Username}
             onChange={(e) => dispatch(setEmailOrUsername(e.target.value))}
             fullWidth
             required

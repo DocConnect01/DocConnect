@@ -53,19 +53,18 @@ exports.register = async (req, res) => {
 
 // Login for Admin, Doctor, and Patient
 exports.login = async (req, res) => {
-  const { EmailOrUsername, Password } = req.body;
+  const { Email, Username, Password } = req.body;
 
-  if (!EmailOrUsername || !Password) {
+  if ((!Email && !Username) || !Password) {
     return res
       .status(400)
-      .json({ message: "EmailOrUsername and Password are required" });
+      .json({ message: "Email or Username, and Password are required" });
   }
 
   try {
-    // Search for the user by either Email or Username
     const user = await db.User.findOne({
       where: {
-        [Op.or]: [{ Email: EmailOrUsername }, { Username: EmailOrUsername }],
+        [Op.or]: [{ Email: Email || "" }, { Username: Username || "" }],
       },
     });
 
@@ -73,13 +72,11 @@ exports.login = async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
 
-    // Check if the password matches
     const isMatch = await bcrypt.compare(Password, user.Password);
     if (!isMatch) {
       return res.status(401).json({ message: "Incorrect password" });
     }
 
-    // Generate JWT
     const token = jwt.sign(
       { UserID: user.UserID, Role: user.Role },
       process.env.JWT_SECRET,
