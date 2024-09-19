@@ -20,12 +20,10 @@ const Sidebar: React.FC = () => {
           { text: "Message", icon: <MessageIcon /> },
           { text: "Settings", icon: <SettingsIcon /> },
         ].map((item) => (
-
           <ListItem component={Link} to="/overview" key={item.text}>
             <ListItemIcon>{item.icon}</ListItemIcon>
             <ListItemText primary={item.text} />
           </ListItem>
-          
         ))}
       </List>
     </Box>
