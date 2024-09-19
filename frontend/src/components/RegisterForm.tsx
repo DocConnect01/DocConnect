@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../src/store/store";
 import { useNavigate } from "react-router-dom";
@@ -10,7 +10,6 @@ import {
   setUserType,
   resetForm,
 } from "../../src/features/formSlice";
-
 import {
   TextField,
   Button,
@@ -20,18 +19,52 @@ import {
   MenuItem,
   Link,
 } from "@mui/material";
+import axios from "axios";
 
 const RegisterForm: React.FC = () => {
   const dispatch = useDispatch();
   const formState = useSelector((state: RootState) => state.form);
   const navigate = useNavigate();
+  const [error, setError] = useState("");
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError("");
     console.log("Register form submitted", formState);
 
-    navigate("/login");
-    dispatch(resetForm());
+    if (formState.password !== formState.confirmPassword) {
+      setError("Passwords do not match");
+      return;
+    }
+
+    try {
+      const response = await axios.post(
+        "http://localhost:5000/api/users/register",
+        {
+          FirstName: formState.firstName,
+          LastName: "", // You might want to add a LastName field to your form
+          Username: formState.Username,
+          Password: formState.password,
+          Email: formState.Username, // Assuming Username is used for email
+          Role: formState.userType === "doctor" ? "Doctor" : "Patient",
+        }
+      );
+
+      if (response.status === 201) {
+        console.log("Registration successful");
+        navigate("/login");
+        dispatch(resetForm());
+      }
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response) {
+        setError(
+          error.response.data.message || "An error occurred during registration"
+        );
+      } else {
+        setError("An unexpected error occurred");
+      }
+      console.error("Registration error:", error);
+    }
   };
 
   return (
@@ -73,6 +106,12 @@ const RegisterForm: React.FC = () => {
           <Typography variant="h5" align="center">
             Register Here
           </Typography>
+
+          {error && (
+            <Typography color="error" align="center">
+              {error}
+            </Typography>
+          )}
 
           <TextField
             label="First Name"
