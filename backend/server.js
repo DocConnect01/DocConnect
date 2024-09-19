@@ -20,7 +20,8 @@ app.use(cors());
 
 app.use("/api/users", userRoutes);
 // app.use('/api/appointments', appointmentRoutes);
-// app.use('/api/chats', chatRoutes);
+const chatRoutes=require("./router/chatRoom.route")
+app.use('/api/chats', chatRoutes);
 
 // Test route
 
