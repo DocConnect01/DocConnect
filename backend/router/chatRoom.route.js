@@ -14,3 +14,6 @@ router.get('/', chatRoomController.getAllChatRooms);
 
 // Get a specific chat room by ID
 router.get('/:id', chatRoomController.getChatRoomById);
+
+// Send a message in a chat room
+router.post('/message', chatRoomController.sendMessage);
