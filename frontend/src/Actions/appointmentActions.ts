@@ -1,4 +1,4 @@
-// src/Actions/appointmentActions.ts
+
 import { SET_SELECTED_DATE, BOOK_APPOINTMENT, SET_AVAILABLE_SLOTS } from '../types/types';
 
 export const setSelectedDate = (date: Date | null) => ({

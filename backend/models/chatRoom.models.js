@@ -1,8 +1,8 @@
 const { DataTypes } = require('sequelize');
 
 module.exports = (sequelize) => {
-  const Appointment = sequelize.define('Appointment', {
-    AppointmentID: {
+  const Chatrooms = sequelize.define('chatrooms', {
+    ChatroomID: {
       type: DataTypes.INTEGER,
       primaryKey: true,
       autoIncrement: true
@@ -23,17 +23,13 @@ module.exports = (sequelize) => {
         key: 'UserID'
       }
     },
-    AppointmentDate: {
+    StartTime: {
       type: DataTypes.DATE,
       allowNull: false
     },
-    DurationMinutes: {
-      type: DataTypes.INTEGER,
-      allowNull: false
-    },
-    Status: {
-      type: DataTypes.BOOLEAN,
-      allowNull: false
+    EndTime: {
+      type: DataTypes.DATE,
+      allowNull: true
     }
   }, {
     timestamps: true,
@@ -41,9 +37,5 @@ module.exports = (sequelize) => {
     updatedAt: 'updatedAt'
   });
 
-  return Appointment;
+  return Chatrooms;
 };
-
-
-
-
