@@ -7,6 +7,9 @@ import LoginForm from "./components/login/Login";
 import ChatInterface from "./components/doctorDashboard/Chat";
 import DoctorProfile from "./components/doctorDashboard/Profile";
 // import HealthcareLanding from "./components/landingPage/Landing";
+import RegisterForm from "./components/RegisterForm";
+import Footer from "./components/login/Footer";
+
 const App: React.FC = () => {
   const location = useLocation();
 
@@ -21,6 +24,7 @@ const App: React.FC = () => {
             <Route path="/chat" element={<ChatInterface />} />
             <Route path="/settings" element={<DoctorProfile />} />
             {/* <Route path="/" element={<HealthcareLanding />} /> */}
+            <Route path="/register" element={<RegisterForm />} />
           </Routes>
         </Container>
       </Box>

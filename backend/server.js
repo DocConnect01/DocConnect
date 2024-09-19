@@ -8,7 +8,6 @@ const cors = require('cors');
 const userRoutes = require('./router/auth.router')
 const testRoutes = require('./router/user.route')
 const doctorRoute = require('./router/doctor.router')
-const { authenticate } = require("./middleware/auth.middlware");
 const app = express();
 const PORT = process.env.PORT || 5000;
 

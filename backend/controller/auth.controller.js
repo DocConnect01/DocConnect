@@ -1,6 +1,7 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const db = require("../models");
+const { Op } = require("sequelize");
 require("dotenv").config();
 
 // Register Doctor or Patient
@@ -52,26 +53,30 @@ exports.register = async (req, res) => {
 
 // Login for Admin, Doctor, and Patient
 exports.login = async (req, res) => {
-  const { Username, Password } = req.body;
+  const { Email, Username, Password } = req.body;
+
+  if ((!Email && !Username) || !Password) {
+    return res
+      .status(400)
+      .json({ message: "Email or Username, and Password are required" });
+  }
 
   try {
-    const user = await db.User.findOne({ where: { Username } });
+    const user = await db.User.findOne({
+      where: {
+        [Op.or]: [{ Email: Email || "" }, { Username: Username || "" }],
+      },
+    });
 
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
 
     const isMatch = await bcrypt.compare(Password, user.Password);
-    console.log('Received password:', Password);
-console.log('Stored hash:', user.Password);
+    if (!isMatch) {
+      return res.status(401).json({ message: "Incorrect password" });
+    }
 
-  if (!isMatch) {
-  console.log('Password mismatch error');
-
-  return res.status(401).json({ message: "Incorrect password" });
-}
-
-    // Generate JWT
     const token = jwt.sign(
       { UserID: user.UserID, Role: user.Role },
       process.env.JWT_SECRET,
@@ -80,7 +85,7 @@ console.log('Stored hash:', user.Password);
 
     res.status(200).json({ message: "Login successful", token });
   } catch (error) {
-    res.status(500).json({ message: "Error logging in", error });
-    console.log(error);
+    console.error("Login error:", error);
+    res.status(500).json({ message: "Error logging in", error: error.message });
   }
 };
