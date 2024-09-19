@@ -6,6 +6,7 @@ const bodyParser = require("body-parser");
 
 const cors = require('cors');
 const userRoutes = require('./router/auth.router')
+const testRoutes = require('./router/user.route')
 const doctorRoute = require('./router/doctor.router')
 const { authenticate } = require("./middleware/auth.middlware");
 const app = express();
@@ -19,6 +20,7 @@ app.use(cors());
 // Use routes
 
 app.use("/api/users", userRoutes);
+app.use("/api/patient", testRoutes);
 // app.use('/api/appointments', appointmentRoutes);
 // app.use('/api/chats', chatRoutes);
 

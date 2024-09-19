@@ -32,9 +32,11 @@ module.exports = (sequelize) => {
       allowNull: false
     },
     Status: {
-      type: DataTypes.BOOLEAN,
-      allowNull: false
-    }
+      type: DataTypes.ENUM('pending', 'confirmed', 'rejected'),
+      allowNull: false,
+      defaultValue: 'pending' // Optional: set a default valu,e
+    },
+    
   }, {
     timestamps: true,
     createdAt: 'createdAt',

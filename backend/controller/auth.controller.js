@@ -62,10 +62,14 @@ exports.login = async (req, res) => {
     }
 
     const isMatch = await bcrypt.compare(Password, user.Password);
-    if (!isMatch) {
-      console.log(error);
-      return res.status(401).json({ message: "Incorrect password" });
-    }
+    console.log('Received password:', Password);
+console.log('Stored hash:', user.Password);
+
+  if (!isMatch) {
+  console.log('Password mismatch error');
+
+  return res.status(401).json({ message: "Incorrect password" });
+}
 
     // Generate JWT
     const token = jwt.sign(
