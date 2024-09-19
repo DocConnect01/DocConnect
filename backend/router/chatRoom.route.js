@@ -11,3 +11,6 @@ router.post('/chatroom/:username', chatRoomController.createChatRoom);
 
 // Get all chat rooms for the authenticated user
 router.get('/', chatRoomController.getAllChatRooms);
+
+// Get a specific chat room by ID
+router.get('/:id', chatRoomController.getChatRoomById);
