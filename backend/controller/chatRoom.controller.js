@@ -131,4 +131,46 @@ exports.getAllChatRooms = async (req, res) => {
       res.status(500).json({ message: 'Internal server error', error: error.message });
     }
   };
+  exports.sendMessage = async (req, res) => {
+    try {
+      const { chatroomId, messageText } = req.body;
   
+      // Validate input
+      if (!chatroomId || !messageText) {
+        return res.status(400).json({ message: 'ChatroomID and messageText are required' });
+      }
+  
+      // Ensure chatroom exists and is valid
+      const chatroom = await Chatrooms.findByPk(chatroomId);
+      if (!chatroom) {
+        return res.status(404).json({ message: 'Chatroom not found' });
+      }
+  
+      // Check user access
+      if (chatroom.DoctorID !== req.user.UserID && chatroom.PatientID !== req.user.UserID) {
+        return res.status(403).json({ message: 'Access denied' });
+      }
+  
+      // Create new message
+      const newMessage = await ChatroomMessage.create({
+        ChatroomID: chatroomId,
+        SenderID: req.user.UserID,
+        MessageText: messageText,
+        SentAt: new Date()
+      });
+  
+      // Optionally, you can fetch the created message with associated user data
+      const messageWithUser = await ChatroomMessage.findByPk(newMessage.MessageID, {
+        include: [{ model: User, attributes: ['UserID', 'Username'] }]
+      });
+  
+      res.status(201).json({
+        message: 'Message sent successfully',
+        data: messageWithUser
+      });
+  
+    } catch (error) {
+      console.error('Error in sendMessage:', error);
+      res.status(500).json({ message: 'Internal server error' });
+    }
+  };
