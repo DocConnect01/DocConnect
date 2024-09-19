@@ -174,3 +174,35 @@ exports.getAllChatRooms = async (req, res) => {
       res.status(500).json({ message: 'Internal server error' });
     }
   };
+  exports.getChatRoomMessages = async (req, res) => {
+    try {
+      const { chatroomId } = req.params;
+      const chatroom = await Chatrooms.findByPk(chatroomId);
+  
+      if (!chatroom) {
+        return res.status(404).json({ message: 'Chatroom not found' });
+      }
+  
+      if (chatroom.DoctorID !== req.user.UserID && chatroom.PatientID !== req.user.UserID) {
+        return res.status(403).json({ message: 'Access denied' });
+      }
+  
+      const messages = await ChatroomMessage.findAll({
+        where: { ChatroomID: chatroomId },
+        include: [{ 
+          model: User, 
+          as: 'Sender', 
+          attributes: ['UserID', 'Username', 'FirstName', 'LastName'] 
+        }],
+        order: [['createdAt', 'ASC']],
+      });
+  
+      res.status(200).json(messages);
+    } catch (error) {
+      console.error('Error fetching chat room messages:', error);
+      res.status(500).json({ message: 'Internal server error', error: error.message });
+    }
+  };
+  
+  
+  module.exports = exports;
