@@ -1,18 +1,23 @@
 import React from "react";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import LoginForm from "../src/components/login/Login";
-import Home from "./pages/Home";
-import UserLocation from "./components/user/UserLocation";
+
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import RegisterForm from "./components/RegisterForm";
+import LoginForm from "./components/login/Login";
+import Footer from "./components/login/Footer";
 
 const App: React.FC = () => {
   return (
     <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<Navigate to="/home" replace />} />
-        <Route path="/login" element={<LoginForm/>}/>
-        <Route path="/home" element={<Home/>}/>
-        <Route path="/location" element={<UserLocation/>}/>
-      </Routes>
+      <div
+        style={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}
+      >
+        <Routes>
+          
+          <Route path="/login" element={<LoginForm />} />
+          <Route path="/register" element={<RegisterForm />} />
+
+        </Routes>
+      </div>
     </BrowserRouter>
   );
 };

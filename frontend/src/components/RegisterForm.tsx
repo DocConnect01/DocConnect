@@ -1,69 +1,69 @@
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "../../store/store";
+import { RootState } from "../../src/store/store";
 import { useNavigate } from "react-router-dom";
 import {
+  setFirstName,
   setEmailOrUsername,
   setPassword,
+  setConfirmPassword,
+  setUserType,
   resetForm,
-} from "../../features/formSlice";
-import { TextField, Button, Box, Typography, Link } from "@mui/material";
+} from "../../src/features/formSlice";
+import {
+  TextField,
+  Button,
+  Box,
+  Typography,
+  Select,
+  MenuItem,
+  Link,
+} from "@mui/material";
 import axios from "axios";
 
-const LoginForm: React.FC = () => {
+const RegisterForm: React.FC = () => {
   const dispatch = useDispatch();
   const formState = useSelector((state: RootState) => state.form);
   const navigate = useNavigate();
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [formErrors, setFormErrors] = useState<{ [key: string]: string }>({});
-
-  const validateForm = () => {
-    const errors: { [key: string]: string } = {};
-    if (!formState.Username) {
-      errors.Username = "Username is required";
-    }
-    if (!formState.password) {
-      errors.password = "Password is required";
-    }
-    setFormErrors(errors);
-    return Object.keys(errors).length === 0;
-  };
+  const [error, setError] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!validateForm()) return;
+    setError("");
+    console.log("Register form submitted", formState);
 
-    setErrorMessage(null);
-    setLoading(true);
+    if (formState.password !== formState.confirmPassword) {
+      setError("Passwords do not match");
+      return;
+    }
 
     try {
       const response = await axios.post(
-        "http://localhost:5000/api/users/login",
+        "http://localhost:5000/api/users/register",
         {
+          FirstName: formState.firstName,
+          LastName: "",
           Username: formState.Username,
           Password: formState.password,
+          Email: formState.Username,
+          Role: formState.userType === "doctor" ? "Doctor" : "Patient",
         }
       );
 
-      if (response.status === 200) {
-        localStorage.setItem("token", response.data.token);
-        navigate("/dashboard");
+      if (response.status === 201) {
+        console.log("Registration successful");
+        navigate("/login");
         dispatch(resetForm());
       }
     } catch (error) {
       if (axios.isAxiosError(error) && error.response) {
-        const { status, data } = error.response;
-        if (status === 404 || status === 401) {
-          setErrorMessage(data.message);
-        } else {
-          setErrorMessage("An unexpected error occurred.");
-        }
+        setError(
+          error.response.data.message || "An error occurred during registration"
+        );
       } else {
-        setErrorMessage("Network error. Please try again.");
+        setError("An unexpected error occurred");
       }
-    } finally {
-      setLoading(false);
+      console.error("Registration error:", error);
     }
   };
 
@@ -76,18 +76,16 @@ const LoginForm: React.FC = () => {
         <Box
           sx={{
             flex: 1,
-            padding: 0,
+            paddings: 0,
             backgroundColor: "primary.main",
           }}
         >
           <img
             src="https://medikit-nextjs.vercel.app/_next/static/media/signup-bg.9daac4a8.jpg"
             alt="Side Image"
-            aria-label="Decorative side image"
             style={{
               maxWidth: "100%",
               height: "100%",
-              objectFit: "cover",
             }}
           />
         </Box>
@@ -96,40 +94,40 @@ const LoginForm: React.FC = () => {
           component="form"
           onSubmit={handleSubmit}
           sx={{
-            backgroundColor: "#fff",
+            backgroundColor: "white",
             p: 4,
             flex: 1,
-            height: "auto",
+            height: 345,
             display: "flex",
             flexDirection: "column",
             gap: 2,
-            borderRadius: 2,
-            boxShadow: 3,
-            maxWidth: 400,
-            mx: "auto",
           }}
         >
           <Typography variant="h5" align="center">
-            Login Here
+            Register Here
           </Typography>
 
-          {errorMessage && (
-            <Typography variant="body2" color="error" align="center">
-              {errorMessage}
+          {error && (
+            <Typography color="error" align="center">
+              {error}
             </Typography>
           )}
 
           <TextField
-            label="Email or Username"
-            type="text"
+            label="First Name"
+            value={formState.firstName}
+            onChange={(e) => dispatch(setFirstName(e.target.value))}
+            fullWidth
+            required
+          />
+          <TextField
+            label="Your Email"
+            type="email"
             value={formState.Username}
             onChange={(e) => dispatch(setEmailOrUsername(e.target.value))}
             fullWidth
             required
-            error={!!formErrors.Username}
-            helperText={formErrors.Username}
           />
-
           <TextField
             label="Password"
             type="password"
@@ -137,29 +135,40 @@ const LoginForm: React.FC = () => {
             onChange={(e) => dispatch(setPassword(e.target.value))}
             fullWidth
             required
-            error={!!formErrors.password}
-            helperText={formErrors.password}
           />
-
-          <Button
-            type="submit"
-            variant="contained"
+          <TextField
+            label="Confirm Password"
+            type="password"
+            value={formState.confirmPassword}
+            onChange={(e) => dispatch(setConfirmPassword(e.target.value))}
             fullWidth
-            disabled={loading}
+            required
+          />
+          <Select
+            label="User Type"
+            value={formState.userType}
+            onChange={(e) => dispatch(setUserType(e.target.value as string))}
+            fullWidth
+            required
           >
-            {loading ? "Logging In..." : "Login"}
+            <MenuItem value="patient">Patient</MenuItem>
+            <MenuItem value="doctor">Doctor</MenuItem>
+          </Select>
+
+          <Button type="submit" variant="contained" fullWidth>
+            Register
           </Button>
 
           <Box textAlign="center">
             <Typography variant="body2">
-              Don't have an account yet?
+              Already have an account?
               <Link
                 component="button"
                 variant="body2"
-                onClick={() => navigate("/register")}
+                onClick={() => navigate("/login")}
                 sx={{ ml: 1 }}
               >
-                Register Here
+                Login Here
               </Link>
             </Typography>
           </Box>
@@ -169,4 +178,4 @@ const LoginForm: React.FC = () => {
   );
 };
 
-export default LoginForm;
+export default RegisterForm;

@@ -3,7 +3,7 @@ const jwt = require("jsonwebtoken");
 // Middleware to verify JWT and role
 const authenticate = (req, res, next) => {
   const token = req.headers.authorization?.split(" ")[1];
-  console.log("Token:", token);
+  // console.log("Token:", token);
   if (!token) {
     return res
       .status(401)

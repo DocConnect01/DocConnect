@@ -4,7 +4,12 @@ import { Box, Typography, Avatar, IconButton } from "@mui/material";
 
 const Header: React.FC = () => {
   return (
-    <Box display="flex" justifyContent="space-between" alignItems="center" padding={2}>
+    <Box
+      display="flex"
+      justifyContent="space-between"
+      alignItems="center"
+      padding={2}
+    >
       <Typography variant="h5">Welcome, Dr. Stephen</Typography>
       <Box display="flex" alignItems="center">
         <IconButton>
