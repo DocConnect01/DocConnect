@@ -81,7 +81,7 @@ const ChatRooms: React.FC<ChatRoomsProps> = ({ onClose }) => {
       {/* Chat Messages Section */}
       {selectedRoom ? (
         <Box sx={{ flexGrow: 1 }}>
-          <ChatMessages roomId={selectedRoom.toString()} />
+          <ChatMessages roomId={selectedRoom} />
         </Box>
       ) : (
         <Box sx={{ flexGrow: 1, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>

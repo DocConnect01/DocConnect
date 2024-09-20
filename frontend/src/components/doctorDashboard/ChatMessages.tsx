@@ -3,47 +3,83 @@ import { Box, Typography, TextField, Button, List, ListItem, ListItemText } from
 import axios from 'axios';
 
 interface Message {
-  id: string;
-  sender: string;
-  content: string;
-  timestamp: string;
+  MessageID: number;
+  ChatroomID: number;
+  SenderID: number;
+  MessageText: string;
+  Sender: {
+    UserID: number;
+    Username: string;
+    FirstName: string;
+    // ... other sender properties
+  };
+  SentAt: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 interface ChatMessagesProps {
-  roomId: string;
+  roomId: number;
 }
 
 const ChatMessages: React.FC<ChatMessagesProps> = ({ roomId }) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [newMessage, setNewMessage] = useState('');
 
-  useEffect(() => {
-    const fetchMessages = async () => {
-      try {
-        const response = await axios.get(`http://localhost:5000/api/chats/${roomId}/messages`, {
-          headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
-        });
-        setMessages(response.data);
-      } catch (error) {
-        console.error('Error fetching messages:', error);
-      }
-    };
+  const fetchMessages = async () => {
+    try {
+      const response = await axios.get(`http://localhost:5000/api/chats/${roomId}/messages`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+      });
+      setMessages(response.data);
+    } catch (error) {
+      console.error('Error fetching messages:', error);
+    }
+  };
 
+  useEffect(() => {
     fetchMessages();
   }, [roomId]);
 
   const handleSendMessage = async () => {
+    if (!newMessage.trim() || typeof roomId !== 'number' || isNaN(roomId)) {
+      console.error('Invalid input:', { newMessage, roomId });
+      return;
+    }
+  
+    const data = {
+      ChatroomID: roomId,
+      messageText: newMessage.trim()
+    };
+  
+    const config = {
+      method: 'post',
+      url: 'http://localhost:5000/api/chats/message',
+      headers: { 
+        'Authorization': `Bearer ${localStorage.getItem('token')}`,
+        'Content-Type': 'application/json'
+      },
+      data: data
+    };
+  
+    console.log('Request config:', JSON.stringify(config, null, 2));
+  
     try {
-      await axios.post('http://localhost:5000/api/chats/message', {
-        chatroomId: roomId,
-        content: newMessage
-      }, {
-        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
-      });
-      setNewMessage('');
-      // Refetch messages or add the new message to the list
+      const response = await axios(config);
+      console.log('Message sent successfully:', response.data);
+      setNewMessage("");
+      fetchMessages();
     } catch (error) {
-      console.error('Error sending message:', error);
+      if (axios.isAxiosError(error)) {
+        console.error('Error details:', {
+          message: error.message,
+          response: error.response?.data,
+          status: error.response?.status,
+          headers: error.response?.headers
+        });
+      } else {
+        console.error('Error sending message:', error);
+      }
     }
   };
 
@@ -52,10 +88,10 @@ const ChatMessages: React.FC<ChatMessagesProps> = ({ roomId }) => {
       <Typography variant="h6" sx={{ mb: 2 }}>Messages</Typography>
       <List sx={{ flex: 1, overflow: 'auto' }}>
         {messages.map((message) => (
-          <ListItem key={message.id}>
+          <ListItem key={message.MessageID}>
             <ListItemText 
-              primary={message.content}
-              secondary={`${message.sender} - ${new Date(message.timestamp).toLocaleString()}`}
+              primary={message.MessageText}
+              secondary={`${message.Sender.Username} - ${new Date(message.SentAt).toLocaleString()}`}
             />
           </ListItem>
         ))}

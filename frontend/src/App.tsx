@@ -14,7 +14,7 @@ import ChatMessages from "./components/doctorDashboard/ChatMessages";
 import { useParams } from "react-router-dom";
 const ChatMessagesWrapper = () => {
   const { roomId } = useParams();
-  return <ChatMessages roomId={roomId || ""} />;
+  return <ChatMessages roomId={roomId ? parseInt(roomId, 10) : 0} />;
 };
 const App: React.FC = () => {
   const location = useLocation();
