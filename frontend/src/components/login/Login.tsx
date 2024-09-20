@@ -15,8 +15,10 @@ import {
   Link,
   IconButton,
   Stack,
+  Checkbox,
+  FormControlLabel,
 } from "@mui/material";
-import { Facebook, LinkedIn, Twitter, GitHub } from "@mui/icons-material";
+import { Facebook, LinkedIn, Twitter } from "@mui/icons-material";
 import axios from "axios";
 
 const LoginForm: React.FC = () => {
@@ -57,7 +59,7 @@ const LoginForm: React.FC = () => {
 
       if (response.status === 200) {
         localStorage.setItem("token", response.data.token);
-        navigate("/dashboard");
+        navigate("/");
         dispatch(resetForm());
       }
     } catch (error) {
@@ -77,48 +79,53 @@ const LoginForm: React.FC = () => {
   };
 
   return (
-    <Box sx={{ height: "100%", padding: 15 }}>
+    <Box
+      sx={{
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        height: "100vh",
+        backgroundColor: "#f5f5f5",
+      }}
+    >
       <Box
-        display="flex"
-        sx={{ boxShadow: 3, borderRadius: 2, height: "75vh" }}
+        sx={{
+          display: "flex",
+          boxShadow: 3,
+          borderRadius: 2,
+          width: "75%",
+          maxWidth: "1200px",
+          overflow: "hidden",
+          backgroundColor: "#fff",
+        }}
       >
         <Box
           sx={{
             flex: 1,
-            padding: 0,
-            backgroundColor: "primary.main",
+            display: { xs: "none", md: "block" },
+            backgroundImage: `url('https://medikit-nextjs.vercel.app/_next/static/media/signup-bg.9daac4a8.jpg')`,
+            backgroundSize: "cover",
+            backgroundPosition: "center",
           }}
-        >
-          <img
-            src="https://medikit-nextjs.vercel.app/_next/static/media/signup-bg.9daac4a8.jpg"
-            alt="Side Image"
-            aria-label="Decorative side image"
-            style={{
-              maxWidth: "100%",
-              height: "100%",
-              objectFit: "cover",
-            }}
-          />
-        </Box>
+        />
 
         <Box
           component="form"
           onSubmit={handleSubmit}
           sx={{
-            backgroundColor: "#fff",
-            p: 4,
             flex: 1,
-            height: "auto",
+            p: 4,
             display: "flex",
             flexDirection: "column",
-            gap: 2,
-            borderRadius: 2,
-            boxShadow: 3,
-            maxWidth: 400,
-            mx: "auto",
+            justifyContent: "center",
           }}
         >
-          <Typography variant="h5" align="center">
+          <Typography
+            variant="h4"
+            fontWeight="bold"
+            align="center"
+            gutterBottom
+          >
             Login Here
           </Typography>
 
@@ -129,12 +136,11 @@ const LoginForm: React.FC = () => {
           )}
 
           <TextField
-            label="Email or Username"
-            type="text"
+            label="Your Email"
             value={formState.Username}
             onChange={(e) => dispatch(setEmailOrUsername(e.target.value))}
             fullWidth
-            required
+            margin="normal"
             error={!!formErrors.Username}
             helperText={formErrors.Username}
           />
@@ -145,7 +151,7 @@ const LoginForm: React.FC = () => {
             value={formState.password}
             onChange={(e) => dispatch(setPassword(e.target.value))}
             fullWidth
-            required
+            margin="normal"
             error={!!formErrors.password}
             helperText={formErrors.password}
           />
@@ -155,13 +161,28 @@ const LoginForm: React.FC = () => {
             variant="contained"
             fullWidth
             disabled={loading}
+            sx={{ mt: 2, mb: 2 }}
           >
             {loading ? "Logging In..." : "Login"}
           </Button>
 
-          <Box textAlign="center">
+          <Box
+            display="flex"
+            justifyContent="space-between"
+            alignItems="center"
+          >
+            <FormControlLabel
+              control={<Checkbox name="remember" color="primary" />}
+              label="Remember me"
+            />
+            <Link href="#" variant="body2">
+              Lost your password?
+            </Link>
+          </Box>
+
+          <Box textAlign="center" mt={2}>
             <Typography variant="body2">
-              Don't have an account yet?
+              Didn't you account yet?
               <Link
                 component="button"
                 variant="body2"
@@ -194,12 +215,6 @@ const LoginForm: React.FC = () => {
               href="https://www.twitter.com"
             >
               <Twitter sx={{ color: "#1da1f2" }} />
-            </IconButton>
-            <IconButton
-              aria-label="Sign in with GitHub"
-              href="https://github.com"
-            >
-              <GitHub sx={{ color: "#333" }} />
             </IconButton>
           </Stack>
         </Box>
