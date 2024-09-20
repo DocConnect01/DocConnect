@@ -24,7 +24,7 @@ import {
 } from "@mui/material";
 import axios from "axios";
 
-const RegisterForm: React.FC = () => {
+  const RegisterForm: React.FC = () => {
   const dispatch = useDispatch();
   const formState = useSelector((state: RootState) => state.form);
   const navigate = useNavigate();

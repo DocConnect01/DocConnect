@@ -46,7 +46,7 @@ const UserLocation: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
             );
   
             console.log('Location update successful:', response.data);
-            onComplete(); // Call the onComplete function after successful update
+            onComplete(); 
           } catch (error) {
             console.error('Error updating location:', error);
             dispatch(setError('Failed to update location on server'));

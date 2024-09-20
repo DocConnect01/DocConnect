@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../store/store";
@@ -19,8 +20,10 @@ import {
 import { Facebook, LinkedIn, Twitter, GitHub } from "@mui/icons-material";
 import axios from "axios";
 import UserLocation from "../user/UserLocation";
+import { jwtDecode } from 'jwt-decode';
 
-const LoginForm: React.FC = () => {
+
+  const LoginForm: React.FC = () => {
   const dispatch = useDispatch();
   const formState = useSelector((state: RootState) => state.form);
   const navigate = useNavigate();
@@ -28,6 +31,12 @@ const LoginForm: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [formErrors, setFormErrors] = useState<{ [key: string]: string }>({});
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userRole, setUserRole] = useState<string | null>(null);
+
+  interface DecodedToken {
+    Role: string;
+  }
+
 
   const validateForm = () => {
     const errors: { [key: string]: string } = {};
@@ -44,10 +53,10 @@ const LoginForm: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validateForm()) return;
-
+  
     setErrorMessage(null);
     setLoading(true);
-
+  
     try {
       const response = await axios.post(
         "http://localhost:5000/api/users/login",
@@ -56,11 +65,17 @@ const LoginForm: React.FC = () => {
           Password: formState.password,
         }
       );
-
+  
       if (response.status === 200) {
         localStorage.setItem("token", response.data.token);
+        const role = getUserRoleFromToken();
+        setUserRole(role);
         dispatch(resetForm());
         setIsLoggedIn(true);
+  
+        if (role !== "Patient") {
+          navigate("/dashboard");
+        }
       }
     } catch (error) {
       if (axios.isAxiosError(error) && error.response) {
@@ -81,6 +96,19 @@ const LoginForm: React.FC = () => {
   const handleLocationUpdateComplete = () => {
     navigate("/dashboard");
   };
+
+  function getUserRoleFromToken(): string | null {
+    const token = localStorage.getItem('token');
+    if (!token) return null;
+    try {
+      const decodedToken = jwtDecode<DecodedToken>(token);
+      return decodedToken.Role;
+    } catch (error) {
+      console.error('Error decoding token:', error);
+      return null;
+    }
+  }
+
 
   return (
     <Box sx={{ height: "100%", padding: 15 }}>
@@ -210,9 +238,10 @@ const LoginForm: React.FC = () => {
           </Stack>
         </Box>
       </Box>
-      {isLoggedIn && <UserLocation onComplete={handleLocationUpdateComplete} />}
+      {isLoggedIn && userRole === "Patient" && <UserLocation onComplete={handleLocationUpdateComplete} />}
     </Box>
   );
 };
+
 
 export default LoginForm;
