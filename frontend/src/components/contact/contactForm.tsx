@@ -11,10 +11,12 @@ import {
   InputLabel,
   Box,
   Typography,
+  Avatar,
 } from "@mui/material";
 import { updateField, resetForm } from "../../features/contactFormSlice";
 import { RootState } from "../../store/store";
 import { SelectChangeEvent } from "@mui/material";
+import ContactImage from "../../assets/images/ielts-listening-form-completion_1.webp";
 
 const ContactForm: React.FC = () => {
   const dispatch = useDispatch();
@@ -43,9 +45,25 @@ const ContactForm: React.FC = () => {
     <Box
       component="form"
       onSubmit={handleSubmit}
-      sx={{ maxWidth: 600, margin: "auto", mt: 4 }}
+      sx={{
+        maxWidth: 600,
+        margin: "auto",
+        mt: 4,
+        padding: 2,
+        border: "1px solid #ddd",
+        borderRadius: 2,
+        boxShadow: 3,
+        bgcolor: "background.paper",
+      }}
     >
-      <Typography variant="h4" gutterBottom>
+      <Box sx={{ display: "flex", justifyContent: "center", mb: 3 }}>
+        <Avatar
+          alt="Contact Us"
+          src={ContactImage}
+          sx={{ width: 100, height: 100 }}
+        />
+      </Box>
+      <Typography variant="h4" gutterBottom textAlign="center">
         Contact Us
       </Typography>
       <TextField
