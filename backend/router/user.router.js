@@ -7,4 +7,5 @@ router.put('/update-location', authenticate, userController.updateUserLocation);
 router.get('/get-location', authenticate, userController.getUserLocation);
 router.get('/get-place-name', authenticate, userController.getPlaceName);
 router.get('/get', userController.getAllUsers);
+router.get('/get-user-by-id', authenticate, userController.getUserById);
 module.exports = router;

@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useState , useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../store/store";
 import { useNavigate } from "react-router-dom";
@@ -20,7 +20,7 @@ import {
 import { Facebook, LinkedIn, Twitter, GitHub } from "@mui/icons-material";
 import axios from "axios";
 import UserLocation from "../user/UserLocation";
-import { jwtDecode } from 'jwt-decode';
+
 
 
   const LoginForm: React.FC = () => {
@@ -58,6 +58,7 @@ import { jwtDecode } from 'jwt-decode';
     setLoading(true);
   
     try {
+      console.log("Attempting login...");
       const response = await axios.post(
         "http://localhost:5000/api/users/login",
         {
@@ -66,18 +67,20 @@ import { jwtDecode } from 'jwt-decode';
         }
       );
   
+      console.log("Login response:", response);
+  
       if (response.status === 200) {
+        console.log("Login successful, token received");
         localStorage.setItem("token", response.data.token);
-        const role = getUserRoleFromToken();
+        const role = await getUserRoleFromToken();
+        console.log("User role:", role);
         setUserRole(role);
         dispatch(resetForm());
         setIsLoggedIn(true);
-  
-        if (role !== "Patient") {
-          navigate("/dashboard");
-        }
+        console.log("isLoggedIn set to true");
       }
     } catch (error) {
+      console.error("Login error:", error);
       if (axios.isAxiosError(error) && error.response) {
         const { status, data } = error.response;
         if (status === 404 || status === 401) {
@@ -92,23 +95,45 @@ import { jwtDecode } from 'jwt-decode';
       setLoading(false);
     }
   };
-
   const handleLocationUpdateComplete = () => {
     navigate("/dashboard");
   };
 
-  function getUserRoleFromToken(): string | null {
+  async function getUserRoleFromToken(): Promise<string | null> {
+    console.log("Getting user role from token...");
     const token = localStorage.getItem('token');
-    if (!token) return null;
+    if (!token) {
+      console.log("No token found in localStorage");
+      return null;
+    }
     try {
-      const decodedToken = jwtDecode<DecodedToken>(token);
-      return decodedToken.Role;
+      console.log("Sending request to get user data...");
+      const response = await axios.get('http://localhost:5000/api/users2/get-user-by-id', {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+      
+      console.log("User data response:", response.data);
+      return response.data.user.Role;
     } catch (error) {
-      console.error('Error decoding token:', error);
+      console.error('Error fetching user data:', error);
       return null;
     }
   }
-
+  useEffect(() => {
+    console.log("isLoggedIn changed:", isLoggedIn);
+    console.log("userRole changed:", userRole);
+  
+    if (isLoggedIn && userRole) {
+      if (userRole === "Patient") {
+        console.log("Patient logged in, waiting for location update");
+      } else {
+        console.log("Non-patient logged in, navigating to dashboard");
+        navigate("/dashboard");
+      }
+    }
+  }, [isLoggedIn, userRole, navigate]);
 
   return (
     <Box sx={{ height: "100%", padding: 15 }}>
