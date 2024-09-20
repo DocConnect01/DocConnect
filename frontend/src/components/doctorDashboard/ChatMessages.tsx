@@ -42,46 +42,38 @@ const ChatMessages: React.FC<ChatMessagesProps> = ({ roomId }) => {
   }, [roomId]);
 
   const handleSendMessage = async () => {
-    if (!newMessage.trim() || typeof roomId !== 'number' || isNaN(roomId)) {
-      console.error('Invalid input:', { newMessage, roomId });
-      return;
-    }
+    // if (!newMessage.trim() || typeof roomId !== 'number' || isNaN(roomId)) {
+    //   console.error('Invalid input:', { newMessage, roomId });
+    //   return;
+    // }
   
     const data = {
-      ChatroomID: roomId,
-      messageText: newMessage.trim()
+      chatroomId: roomId,  // Ensure this matches the expected field name
+      messageText: newMessage.trim()  // Ensure this matches the expected field name
     };
+
+    console.log(data);
+    
   
-    const config = {
-      method: 'post',
-      url: 'http://localhost:5000/api/chats/message',
-      headers: { 
-        'Authorization': `Bearer ${localStorage.getItem('token')}`,
-        'Content-Type': 'application/json'
-      },
-      data: data
-    };
-  
-    console.log('Request config:', JSON.stringify(config, null, 2));
+
   
     try {
-      const response = await axios(config);
+      const response = await axios.post("http://localhost:5000/api/chats/message",data,
+        {
+          headers: { 
+        Authorization: `Bearer ${localStorage.getItem('token')}`,
+       'Content-Type': 'application/json'
+      }
+    });
       console.log('Message sent successfully:', response.data);
       setNewMessage("");
-      fetchMessages();
+      fetchMessages();  // Fetch updated messages after sending
     } catch (error) {
-      if (axios.isAxiosError(error)) {
-        console.error('Error details:', {
-          message: error.message,
-          response: error.response?.data,
-          status: error.response?.status,
-          headers: error.response?.headers
-        });
-      } else {
+    
         console.error('Error sending message:', error);
-      }
-    }
+  }
   };
+  
 
   return (
     <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', p: 2 }}>
