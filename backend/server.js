@@ -7,7 +7,6 @@ const bodyParser = require("body-parser");
 const cors = require("cors");
 const userRoutes = require("./router/auth.router");
 
-const { authenticate } = require("./middleware/auth.middlware");
 const userRoutesLocation = require('./router/user.router')
 
 

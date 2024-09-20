@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../src/store/store";
 import { useNavigate } from "react-router-dom";
-import LocationSearch, { SearchResult } from './user/LocationSearch';
 import {
   setFirstName,
   setEmailOrUsername,
@@ -21,10 +20,13 @@ import {
   Link,
   InputLabel,
   FormControl,
+  Checkbox,
+  FormControlLabel,
 } from "@mui/material";
 import axios from "axios";
+import LocationSearch, { SearchResult } from './user/LocationSearch';
 
-  const RegisterForm: React.FC = () => {
+const RegisterForm: React.FC = () => {
   const dispatch = useDispatch();
   const formState = useSelector((state: RootState) => state.form);
   const navigate = useNavigate();
@@ -81,12 +83,12 @@ import axios from "axios";
   return (
     <Box
       sx={{
-        height: "100%",
+        height: "100vh",
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        p: 3,
         backgroundColor: "#f5f5f5",
+        p: 3,
       }}
     >
       <Box
@@ -94,9 +96,10 @@ import axios from "axios";
           boxShadow: 3,
           borderRadius: 2,
           overflow: "hidden",
-          maxWidth: 1000,
           display: "flex",
           backgroundColor: "white",
+          maxWidth: 900,
+          width: "100%",
         }}
       >
         <Box sx={{ flex: 1, display: { xs: "none", md: "block" } }}>
@@ -104,7 +107,7 @@ import axios from "axios";
             src="https://medikit-nextjs.vercel.app/_next/static/media/signup-bg.9daac4a8.jpg"
             alt="Side Image"
             style={{
-              maxWidth: "100%",
+              width: "100%",
               height: "100%",
               objectFit: "cover",
             }}
@@ -119,12 +122,29 @@ import axios from "axios";
             flex: 1,
             display: "flex",
             flexDirection: "column",
-            gap: 2,
             justifyContent: "center",
+            gap: 3,
           }}
         >
-          <Typography variant="h4" align="center" gutterBottom>
+          <Typography
+            variant="h4"
+            fontWeight="bold"
+            align="center"
+            gutterBottom
+          >
             Register Here
+          </Typography>
+
+          <Typography variant="body1" align="center" color="textSecondary">
+            Already have an account?{" "}
+            <Link
+              component="button"
+              variant="body1"
+              onClick={() => navigate("/login")}
+              sx={{ ml: 1, color: "#1976d2" }}
+            >
+              Login Here
+            </Link>
           </Typography>
 
           {error && (
@@ -142,7 +162,7 @@ import axios from "axios";
           />
 
           <TextField
-            label="Your Email"
+            label="Email"
             type="email"
             value={formState.Username}
             onChange={(e) => dispatch(setEmailOrUsername(e.target.value))}
@@ -150,25 +170,26 @@ import axios from "axios";
             required
           />
 
-          <TextField
-            label="Password"
-            type="password"
-            value={formState.password}
-            onChange={(e) => dispatch(setPassword(e.target.value))}
-            fullWidth
-            required
-          />
+          <Box display="flex" gap={2}>
+            <TextField
+              label="Password"
+              type="password"
+              value={formState.password}
+              onChange={(e) => dispatch(setPassword(e.target.value))}
+              fullWidth
+              required
+            />
+            <TextField
+              label="Confirm Password"
+              type="password"
+              value={formState.confirmPassword}
+              onChange={(e) => dispatch(setConfirmPassword(e.target.value))}
+              fullWidth
+              required
+            />
+          </Box>
 
-          <TextField
-            label="Confirm Password"
-            type="password"
-            value={formState.confirmPassword}
-            onChange={(e) => dispatch(setConfirmPassword(e.target.value))}
-            fullWidth
-            required
-          />
-
-          <FormControl fullWidth variant="outlined" required>
+          <FormControl fullWidth required>
             <InputLabel id="user-type-label">User Type</InputLabel>
             <Select
               labelId="user-type-label"
@@ -218,23 +239,37 @@ import axios from "axios";
             }}
           />
 
-          <Button type="submit" variant="contained" size="large" fullWidth>
+          <FormControlLabel
+            control={
+              <Checkbox
+                required
+                name="terms"
+              />
+            }
+            label={
+              <Typography variant="body2">
+                Yes, I agree with all{" "}
+                <Link href="#" target="_blank">
+                  Terms & Conditions
+                </Link>
+              </Typography>
+            }
+          />
+
+          <Button
+            type="submit"
+            variant="contained"
+            size="large"
+            fullWidth
+            sx={{
+              backgroundColor: "#1976d2",
+              "&:hover": {
+                backgroundColor: "#115293",
+              },
+            }}
+          >
             Register
           </Button>
-
-          <Box textAlign="center">
-            <Typography variant="body2">
-              Already have an account?
-              <Link
-                component="button"
-                variant="body2"
-                onClick={() => navigate("/login")}
-                sx={{ ml: 1 }}
-              >
-                Login Here
-              </Link>
-            </Typography>
-          </Box>
         </Box>
       </Box>
     </Box>

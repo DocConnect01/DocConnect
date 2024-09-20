@@ -1,13 +1,13 @@
-
-import React, { useState , useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "../../store/store";
+import { RootState, AppDispatch } from "../../store/store";
 import { useNavigate } from "react-router-dom";
 import {
   setEmailOrUsername,
   setPassword,
   resetForm,
 } from "../../features/formSlice";
+import { login } from "../../features/authSlice";
 import {
   TextField,
   Button,
@@ -16,15 +16,15 @@ import {
   Link,
   IconButton,
   Stack,
+  Checkbox,
+  FormControlLabel,
 } from "@mui/material";
-import { Facebook, LinkedIn, Twitter, GitHub } from "@mui/icons-material";
-import axios from "axios";
+import { Facebook, LinkedIn, Twitter } from "@mui/icons-material";
+import axios from '../../features/axiosConfig';
 import UserLocation from "../user/UserLocation";
 
-
-
-  const LoginForm: React.FC = () => {
-  const dispatch = useDispatch();
+const LoginForm: React.FC = () => {
+  const dispatch = useDispatch<AppDispatch>();
   const formState = useSelector((state: RootState) => state.form);
   const navigate = useNavigate();
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -32,11 +32,6 @@ import UserLocation from "../user/UserLocation";
   const [formErrors, setFormErrors] = useState<{ [key: string]: string }>({});
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userRole, setUserRole] = useState<string | null>(null);
-
-  interface DecodedToken {
-    Role: string;
-  }
-
 
   const validateForm = () => {
     const errors: { [key: string]: string } = {};
@@ -53,131 +48,120 @@ import UserLocation from "../user/UserLocation";
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validateForm()) return;
-  
+
     setErrorMessage(null);
     setLoading(true);
-  
+
     try {
-      console.log("Attempting login...");
-      const response = await axios.post(
-        "http://localhost:5000/api/users/login",
-        {
-          Username: formState.Username,
-          Password: formState.password,
+      console.log("Attempting login with:", { Email: formState.Username, Password: formState.password });
+      const result = await dispatch(login({
+        Email: formState.Username,
+        Password: formState.password
+      })).unwrap();
+
+      if (result.token) {
+        localStorage.setItem("token", result.token);
+        
+        try {
+          const [doctorResponse, patientResponse] = await Promise.all([
+            axios.get('http://localhost:5000/api/users/check-doctor'),
+            axios.get('http://localhost:5000/api/users/check-patient')
+          ]);
+          
+          const isDoctor = doctorResponse.data.isDoctor;
+          const isPatient = patientResponse.data.isPatient;
+          console.log("Is Doctor:", isDoctor);
+          console.log("Is Patient:", isPatient);
+
+          if (isDoctor) {
+            setUserRole("Doctor");
+            setIsLoggedIn(true);
+          } else if (isPatient) {
+            setUserRole("Patient");
+            setIsLoggedIn(true);
+          } else {
+            setErrorMessage("Unknown user role");
+          }
+        } catch (error) {
+          console.error("Error checking user status:", error);
+          setErrorMessage("Error determining user type");
         }
-      );
-  
-      console.log("Login response:", response);
-  
-      if (response.status === 200) {
-        console.log("Login successful, token received");
-        localStorage.setItem("token", response.data.token);
-        const role = await getUserRoleFromToken();
-        console.log("User role:", role);
-        setUserRole(role);
+
         dispatch(resetForm());
-        setIsLoggedIn(true);
-        console.log("isLoggedIn set to true");
-      }
-    } catch (error) {
-      console.error("Login error:", error);
-      if (axios.isAxiosError(error) && error.response) {
-        const { status, data } = error.response;
-        if (status === 404 || status === 401) {
-          setErrorMessage(data.message);
-        } else {
-          setErrorMessage("An unexpected error occurred.");
-        }
       } else {
-        setErrorMessage("Network error. Please try again.");
+        setErrorMessage("Login failed: No token received");
       }
+    } catch (error: any) {
+      console.error("Login error:", error);
+      setErrorMessage(error.message || "An unexpected error occurred.");
     } finally {
       setLoading(false);
     }
   };
+
   const handleLocationUpdateComplete = () => {
-    navigate("/dashboard");
+    navigate("/patientview");
   };
 
-  async function getUserRoleFromToken(): Promise<string | null> {
-    console.log("Getting user role from token...");
-    const token = localStorage.getItem('token');
-    if (!token) {
-      console.log("No token found in localStorage");
-      return null;
-    }
-    try {
-      console.log("Sending request to get user data...");
-      const response = await axios.get('http://localhost:5000/api/users2/get-user-by-id', {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      });
-      
-      console.log("User data response:", response.data);
-      return response.data.user.Role;
-    } catch (error) {
-      console.error('Error fetching user data:', error);
-      return null;
-    }
-  }
   useEffect(() => {
-    console.log("isLoggedIn changed:", isLoggedIn);
-    console.log("userRole changed:", userRole);
-  
     if (isLoggedIn && userRole) {
       if (userRole === "Patient") {
         console.log("Patient logged in, waiting for location update");
-      } else {
-        console.log("Non-patient logged in, navigating to dashboard");
+      } else if (userRole === "Doctor") {
+        console.log("Doctor logged in, navigating to dashboard");
         navigate("/dashboard");
       }
     }
   }, [isLoggedIn, userRole, navigate]);
 
   return (
-    <Box sx={{ height: "100%", padding: 15 }}>
+    <Box
+      sx={{
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        height: "100vh",
+        backgroundColor: "#f5f5f5",
+      }}
+    >
       <Box
-        display="flex"
-        sx={{ boxShadow: 3, borderRadius: 2, height: "75vh" }}
+        sx={{
+          display: "flex",
+          boxShadow: 3,
+          borderRadius: 2,
+          width: "75%",
+          maxWidth: "1200px",
+          overflow: "hidden",
+          backgroundColor: "#fff",
+        }}
       >
         <Box
           sx={{
             flex: 1,
-            padding: 0,
-            backgroundColor: "primary.main",
+            display: { xs: "none", md: "block" },
+            backgroundImage: `url('https://medikit-nextjs.vercel.app/_next/static/media/signup-bg.9daac4a8.jpg')`,
+            backgroundSize: "cover",
+            backgroundPosition: "center",
           }}
-        >
-          <img
-            src="https://medikit-nextjs.vercel.app/_next/static/media/signup-bg.9daac4a8.jpg"
-            alt="Side Image"
-            aria-label="Decorative side image"
-            style={{
-              maxWidth: "100%",
-              height: "100%",
-              objectFit: "cover",
-            }}
-          />
-        </Box>
+        />
 
         <Box
           component="form"
           onSubmit={handleSubmit}
           sx={{
-            backgroundColor: "#fff",
-            p: 4,
             flex: 1,
-            height: "auto",
+            p: 4,
             display: "flex",
             flexDirection: "column",
-            gap: 2,
-            borderRadius: 2,
-            boxShadow: 3,
-            maxWidth: 400,
-            mx: "auto",
+            justifyContent: "center",
           }}
         >
-          <Typography variant="h5" align="center">
+          <Typography
+            variant="h4"
+            fontWeight="bold"
+            align="center"
+            gutterBottom
+          >
             Login Here
           </Typography>
 
@@ -188,12 +172,11 @@ import UserLocation from "../user/UserLocation";
           )}
 
           <TextField
-            label="Email or Username"
-            type="text"
+            label="Your Email"
             value={formState.Username}
             onChange={(e) => dispatch(setEmailOrUsername(e.target.value))}
             fullWidth
-            required
+            margin="normal"
             error={!!formErrors.Username}
             helperText={formErrors.Username}
           />
@@ -204,7 +187,7 @@ import UserLocation from "../user/UserLocation";
             value={formState.password}
             onChange={(e) => dispatch(setPassword(e.target.value))}
             fullWidth
-            required
+            margin="normal"
             error={!!formErrors.password}
             helperText={formErrors.password}
           />
@@ -214,13 +197,28 @@ import UserLocation from "../user/UserLocation";
             variant="contained"
             fullWidth
             disabled={loading}
+            sx={{ mt: 2, mb: 2 }}
           >
             {loading ? "Logging In..." : "Login"}
           </Button>
 
-          <Box textAlign="center">
+          <Box
+            display="flex"
+            justifyContent="space-between"
+            alignItems="center"
+          >
+            <FormControlLabel
+              control={<Checkbox name="remember" color="primary" />}
+              label="Remember me"
+            />
+            <Link href="#" variant="body2">
+              Lost your password?
+            </Link>
+          </Box>
+
+          <Box textAlign="center" mt={2}>
             <Typography variant="body2">
-              Don't have an account yet?
+              Didn't you account yet?
               <Link
                 component="button"
                 variant="body2"
@@ -254,12 +252,6 @@ import UserLocation from "../user/UserLocation";
             >
               <Twitter sx={{ color: "#1da1f2" }} />
             </IconButton>
-            <IconButton
-              aria-label="Sign in with GitHub"
-              href="https://github.com"
-            >
-              <GitHub sx={{ color: "#333" }} />
-            </IconButton>
           </Stack>
         </Box>
       </Box>
@@ -267,6 +259,5 @@ import UserLocation from "../user/UserLocation";
     </Box>
   );
 };
-
 
 export default LoginForm;
