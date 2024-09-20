@@ -136,16 +136,6 @@ const LoginForm: React.FC = () => {
           )}
 
           <TextField
-            label="First Name"
-            value={formState.Username}
-            onChange={(e) => dispatch(setEmailOrUsername(e.target.value))}
-            fullWidth
-            margin="normal"
-            error={!!formErrors.Username}
-            helperText={formErrors.Username}
-          />
-
-          <TextField
             label="Your Email"
             value={formState.Username}
             onChange={(e) => dispatch(setEmailOrUsername(e.target.value))}
