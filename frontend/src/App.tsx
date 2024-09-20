@@ -1,6 +1,5 @@
-// src/App.tsx
 import React from "react";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { Provider } from "react-redux";
 import { store } from "./store/store";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
@@ -9,10 +8,17 @@ import RegisterForm from "./components/RegisterForm";
 import LoginForm from "./components/login/Login";
 import ContactForm from "./components/contact/contactForm";
 import Navbar from "./components/navbar/Navbar";
+import Sidebar from "./components/doctorDashboard/Sidebar";
+import Dashboard from "./components/doctorDashboard/Dashboard";
+import ChatInterface from "./components/doctorDashboard/Chat";
+import DoctorProfile from "./components/doctorDashboard/Profile";
+import Footer from "./components/login/Footer";
 
 const theme = createTheme();
 
 const App: React.FC = () => {
+  // const location = useLocation();
+
   return (
     <Provider store={store}>
       <ThemeProvider theme={theme}>
@@ -34,6 +40,9 @@ const App: React.FC = () => {
               <Route path="/login" element={<LoginForm />} />
               <Route path="/register" element={<RegisterForm />} />
               <Route path="/contact" element={<ContactForm />} />
+              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/chat" element={<ChatInterface />} />
+              <Route path="/settings" element={<DoctorProfile />} />
             </Routes>
           </div>
         </BrowserRouter>

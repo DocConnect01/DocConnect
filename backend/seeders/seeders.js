@@ -1,130 +1,166 @@
-'use strict';
+"use strict";
+
+const { faker } = require("@faker-js/faker");
 
 module.exports = {
   async up(queryInterface, Sequelize) {
     try {
-      // Seed Users
-      await queryInterface.bulkInsert('users', [
-        {
-          FirstName: 'John',
-          LastName: 'Doe',
-          Username: 'doctor',
-          Password: 'hashedpassword1',
-          Email: 'doctor@example.com',
-          Role: 'Doctor',
-          Speciality: 'Cardiologist',
-          LocationLatitude: 40.712776,
-          LocationLongitude: -74.005974,
-          Bio: 'Experienced cardiologist with over 10 years of practice.',
-          MeetingPrice: 100.00,
-          createdAt: new Date(),
-          updatedAt: new Date(),
-        },
-        {
-          FirstName: 'Jane',
-          LastName: 'Smith',
-          Username: 'patient',
-          Password: 'hashedpassword2',
-          Email: 'patient@example.com',
-          Role: 'Patient',
-          createdAt: new Date(),
-          updatedAt: new Date(),
-        },
-        // Add more users as needed
-      ]);
-      console.log('users seeded successfully.');
+      const roles = ["Doctor", "Patient", "Admin"];
+      const statuses = ["pending", "confirmed", "rejected"];
 
-      // Seed Appointments
-      await queryInterface.bulkInsert('Appointments', [
-        {
-          PatientID: 2, // Adjust according to the actual patient ID
-          DoctorID: 1,  // Adjust according to the actual doctor ID
-          AppointmentDate: new Date('2024-10-01 10:00:00'),
-          DurationMinutes: 60,
-          Status: true,  // Appointment is available
-          createdAt: new Date(),
-          updatedAt: new Date(),
-        },
-        // Add more appointments as needed
-      ]);
-      console.log('Appointments seeded successfully.');
+      const users = [];
+      const appointments = [];
+      const doctorReviews = [];
+      const chatrooms = [];
+      const chatroomMessages = [];
+      const availabilitySlots = [];
 
-      // Seed DoctorReviews
-      await queryInterface.bulkInsert('DoctorReviews', [
-        {
-          DoctorID: 1, // Adjust according to the actual doctor ID
-          PatientID: 2, // Adjust according to the actual patient ID
-          Rating: 5,
-          ReviewText: 'Excellent doctor, highly recommended!',
-          ReviewDate: new Date(),
-          createdAt: new Date(),
-          updatedAt: new Date(),
-        },
-        // Add more reviews as needed
-      ]);
-      console.log('DoctorReviews seeded successfully.');
+      const doctorIDs = [];
 
-      // Seed Chatrooms
-      await queryInterface.bulkInsert('chatrooms', [
-        {
-          PatientID: 2, // Adjust according to the actual patient ID
-          DoctorID: 1,  // Adjust according to the actual doctor ID
-          StartTime: new Date(),
-          EndTime: new Date(new Date().getTime() + 60 * 60 * 1000), // 1 hour chat duration
-          createdAt: new Date(),
-          updatedAt: new Date(),
-        },
-        // Add more chatrooms as needed
-      ]);
-      console.log('chatrooms seeded successfully.');
+      for (let i = 1; i <= 10; i++) {
+        const role = faker.helpers.arrayElement(roles);
+        const firstName = faker.person.firstName();
+        const lastName = faker.person.lastName();
+        const email = faker.internet.email(firstName, lastName);
+        const username = faker.internet.userName(firstName, lastName);
+        const password = faker.internet.password();
+        const createdAt = new Date();
+        const updatedAt = new Date();
 
-      // Seed ChatroomMessages
-      await queryInterface.bulkInsert('ChatroomMessages', [
-        {
-          ChatroomID: 1, // Adjust according to the actual chatroom ID
-          SenderID: 2,  // Adjust according to the actual sender ID (Patient)
-          MessageText: 'Hello Doctor, I have some questions.',
-          SentAt: new Date(),
-          createdAt: new Date(),
-          updatedAt: new Date(),
-        },
-        {
-          ChatroomID: 1, // Adjust according to the actual chatroom ID
-          SenderID: 1,  // Adjust according to the actual sender ID (Doctor)
-          MessageText: 'Sure, feel free to ask.',
-          SentAt: new Date(),
-          createdAt: new Date(),
-          updatedAt: new Date(),
-        },
-        // Add more messages as needed
-      ]);
-      console.log('ChatroomMessages seeded successfully.');
-      
+        const user = {
+          FirstName: firstName,
+          LastName: lastName,
+          Username: username,
+          Password: password,
+          Email: email,
+          Role: role,
+          createdAt,
+          updatedAt,
+        };
+
+        if (role === "Doctor") {
+          user.Speciality = faker.helpers.arrayElement([
+            "Cardiologist",
+            "Dermatologist",
+            "Pediatrician",
+          ]);
+          user.LocationLatitude = faker.location.latitude();
+          user.LocationLongitude = faker.location.longitude();
+          user.Bio = faker.lorem.sentences(2);
+          user.MeetingPrice = faker.finance.amount(50, 300, 2);
+
+          doctorIDs.push(i);
+        }
+
+        users.push(user);
+      }
+
+      await queryInterface.bulkInsert("users", users);
+
+      if (doctorIDs.length === 0) {
+        throw new Error("No doctors generated");
+      }
+
+      for (let i = 1; i <= 10; i++) {
+        const user = users[i - 1];
+        if (user.Role === "Patient") {
+          const doctorID = faker.helpers.arrayElement(doctorIDs);
+          const appointment = {
+            PatientID: i,
+            DoctorID: doctorID,
+            AppointmentDate: faker.date.future(),
+            DurationMinutes: faker.number.int({ min: 30, max: 90 }),
+            Status: faker.helpers.arrayElement(statuses),
+            createdAt: new Date(),
+            updatedAt: new Date(),
+          };
+          appointments.push(appointment);
+
+          const review = {
+            DoctorID: doctorID,
+            PatientID: i,
+            Rating: faker.number.int({ min: 1, max: 5 }),
+            ReviewText: faker.lorem.sentences(2),
+            ReviewDate: new Date(),
+            createdAt: new Date(),
+            updatedAt: new Date(),
+          };
+          doctorReviews.push(review);
+
+          const chatroom = {
+            PatientID: i,
+            DoctorID: doctorID,
+            StartTime: new Date(),
+            EndTime: faker.date.soon(),
+            createdAt: new Date(),
+            updatedAt: new Date(),
+          };
+          chatrooms.push(chatroom);
+
+          const chatMessages = [
+            {
+              ChatroomID: chatroom.id || 1,
+              SenderID: i,
+              MessageText: "Hello Doctor, I have some questions.",
+              SentAt: new Date(),
+              createdAt: new Date(),
+              updatedAt: new Date(),
+            },
+            {
+              ChatroomID: chatroom.id || 1,
+              SenderID: doctorID,
+              MessageText: "Sure, feel free to ask.",
+              SentAt: new Date(),
+              createdAt: new Date(),
+              updatedAt: new Date(),
+            },
+          ];
+          chatroomMessages.push(...chatMessages);
+        }
+      }
+
+      for (let doctorID of doctorIDs) {
+        for (let j = 0; j < 5; j++) {
+          const availableDate = faker.date.soon(30);
+          const startTime = faker.date.recent("HH:mm");
+          const endTime = faker.date.soon(1, "HH:mm");
+          const isAvailable = faker.datatype.boolean();
+
+          const availabilitySlot = {
+            DoctorID: doctorID,
+            AvailableDate: availableDate,
+            StartTime: startTime,
+            EndTime: endTime,
+            IsAvailable: isAvailable,
+          };
+          availabilitySlots.push(availabilitySlot);
+        }
+      }
+
+      await queryInterface.bulkInsert("Appointments", appointments);
+      await queryInterface.bulkInsert("DoctorReviews", doctorReviews);
+      await queryInterface.bulkInsert("chatrooms", chatrooms);
+      await queryInterface.bulkInsert("ChatroomMessages", chatroomMessages);
+      await queryInterface.bulkInsert("availability", availabilitySlots);
+
+      console.log("Data seeded successfully.");
     } catch (error) {
-      console.error('Error seeding data:', error);
+      console.error("Error seeding data:", error);
     }
   },
 
   async down(queryInterface, Sequelize) {
     try {
-      // Delete all seeded data
-      await queryInterface.bulkDelete('ChatroomMessages', null, {});
-      console.log('ChatroomMessages deleted successfully.');
+      await queryInterface.bulkDelete("ChatroomMessages", null, {});
+      await queryInterface.bulkDelete("chatrooms", null, {});
+      await queryInterface.bulkDelete("DoctorReviews", null, {});
+      await queryInterface.bulkDelete("Appointments", null, {});
+      await queryInterface.bulkDelete("availability", null, {});
+      await queryInterface.bulkDelete("users", null, {});
 
-      await queryInterface.bulkDelete('Chatrooms', null, {});
-      console.log('Chatrooms deleted successfully.');
-
-      await queryInterface.bulkDelete('DoctorReviews', null, {});
-      console.log('DoctorReviews deleted successfully.');
-
-      await queryInterface.bulkDelete('Appointments', null, {});
-      console.log('Appointments deleted successfully.');
-
-      await queryInterface.bulkDelete('users', null, {});
-      console.log('Users deleted successfully.');
-
+      console.log("Seeded data reverted successfully.");
     } catch (error) {
-      console.error('Error reverting seed data:', error);
+      console.error("Error reverting seed data:", error);
     }
-  }
+  },
 };

@@ -59,7 +59,7 @@ const LoginForm: React.FC = () => {
 
       if (response.status === 200) {
         localStorage.setItem("token", response.data.token);
-        navigate("/dashboard");
+        navigate("/");
         dispatch(resetForm());
       }
     } catch (error) {
