@@ -17,12 +17,9 @@
     "@types/react": "^18.3.7",
     "@types/react-dom": "^18.3.0",
     "axios": "^1.7.7",
-<<<<<<< HEAD
     "jwt-decode": "^4.0.0",
     "lodash": "^4.17.21",
-=======
     "dayjs": "^1.11.13",
->>>>>>> ebe9c30a477c476151f4758a0955d9d291f3beea
     "react": "^18.3.1",
     "react-calendar": "^5.0.0",
     "react-dom": "^18.3.1",

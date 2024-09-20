@@ -1,7 +1,6 @@
-<<<<<<< HEAD
 const db = require('../models');
 
-// Update user's location
+
 exports.updateUserLocation = async (req, res) => {
   try {
     const { latitude, longitude } = req.body;
@@ -76,10 +75,9 @@ exports.getUserById = async (req, res) => {
     res.status(500).json({ message: 'Error retrieving user', error: error.message });
   }
 };
-=======
-const db = require("../models");
 
-const getUsers = async (req, res) => {
+
+exports.getUsers = async (req, res) => {
   try {
     const users = await db.User.findAll({
       where: { role: "PATIENT" },
@@ -104,7 +102,7 @@ const getUsers = async (req, res) => {
   }
 };
 
-const updateStatus = async (req, res) => {
+exports.updateStatus = async (req, res) => {
   const { id, status } = req.body;
   console.log(id, status);
   try {
@@ -128,8 +126,3 @@ const updateStatus = async (req, res) => {
   }
 };
 
-module.exports = {
-  getUsers,
-  updateStatus,
-};
->>>>>>> ebe9c30a477c476151f4758a0955d9d291f3beea

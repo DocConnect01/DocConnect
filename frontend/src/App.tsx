@@ -14,24 +14,6 @@ const App: React.FC = () => {
   const location = useLocation();
 
   return (
-<<<<<<< HEAD
-    <BrowserRouter>
-      <div
-        style={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}
-      >
-        <Routes>
-          
-          <Route path="/login" element={<LoginForm />} />
-          <Route path="/register" element={<RegisterForm />} />
-    
-        </Routes>
-      </div>
-    </BrowserRouter>
-  );
-};
-
-export default App;
-=======
     <Box sx={{ display: "flex" }}>
       {location.pathname === "/dashboard" && <Sidebar />}
       <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
@@ -57,4 +39,3 @@ const AppWrapper: React.FC = () => (
 );
 
 export default AppWrapper;
->>>>>>> ebe9c30a477c476151f4758a0955d9d291f3beea

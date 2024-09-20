@@ -7,8 +7,6 @@ import "./index.css";
 import App from "./App";
 import { store } from "./store/store";
 
-<<<<<<< HEAD
-=======
 // Create Material UI theme
 const theme = createTheme({
   palette: {
@@ -23,7 +21,6 @@ const theme = createTheme({
 });
 
 // Get root element for rendering
->>>>>>> ebe9c30a477c476151f4758a0955d9d291f3beea
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
 );
@@ -37,10 +34,7 @@ root.render(
         <App />
       </ThemeProvider>
     </Provider>
-<<<<<<< HEAD
  
 );
-=======
   </React.StrictMode>
 );
->>>>>>> ebe9c30a477c476151f4758a0955d9d291f3beea
