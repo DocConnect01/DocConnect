@@ -25,7 +25,7 @@ const initialState: AuthState = {
   user: null,
   token: localStorage.getItem("token"),
   isAuthenticated: false,
-  loading: false,
+  loading: true,
   error: null,
 };
 
