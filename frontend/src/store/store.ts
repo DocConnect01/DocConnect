@@ -1,13 +1,18 @@
 import { configureStore } from "@reduxjs/toolkit";
 import formReducer from "../features/formSlice";
+import userLocationReducer from "../features/UserLocationSlice";
+import userReducer from '../features/userSlice'; 
 import contactFormReducer from "../features/contactFormSlice";
-import userReducer from "../features/userSlice";
+
 
 export const store = configureStore({
   reducer: {
     form: formReducer,
+    userLocation: userLocationReducer,
+    users: userReducer, // Add the user reducer to the store
+
     contactForm: contactFormReducer,
-    users: userReducer,
+    
   },
 });
 

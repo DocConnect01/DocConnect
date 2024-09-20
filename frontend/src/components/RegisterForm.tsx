@@ -20,8 +20,11 @@ import {
   Link,
   InputLabel,
   FormControl,
+  Checkbox,
+  FormControlLabel,
 } from "@mui/material";
 import axios from "axios";
+import LocationSearch, { SearchResult } from './user/LocationSearch';
 
 const RegisterForm: React.FC = () => {
   const dispatch = useDispatch();
@@ -31,6 +34,7 @@ const RegisterForm: React.FC = () => {
   const [specialty, setSpecialty] = useState("");
   const [bio, setBio] = useState("");
   const [meetingPrice, setMeetingPrice] = useState("");
+  const [selectedLocation, setSelectedLocation] = useState<SearchResult | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -54,6 +58,8 @@ const RegisterForm: React.FC = () => {
           Specialty: formState.userType === "doctor" ? specialty : "",
           Bio: formState.userType === "doctor" ? bio : "",
           MeetingPrice: formState.userType === "doctor" ? meetingPrice : "",
+          Latitude: selectedLocation ? selectedLocation.lat : "",
+          Longitude: selectedLocation ? selectedLocation.lon : "",
         }
       );
 
@@ -147,15 +153,13 @@ const RegisterForm: React.FC = () => {
             </Typography>
           )}
 
-          <Box display="flex" gap={2}>
-            <TextField
-              label="First Name"
-              value={formState.firstName}
-              onChange={(e) => dispatch(setFirstName(e.target.value))}
-              fullWidth
-              required
-            />
-          </Box>
+          <TextField
+            label="First Name"
+            value={formState.firstName}
+            onChange={(e) => dispatch(setFirstName(e.target.value))}
+            fullWidth
+            required
+          />
 
           <TextField
             label="Email"
@@ -228,21 +232,29 @@ const RegisterForm: React.FC = () => {
             </>
           )}
 
-          <Box display="flex" alignItems="center">
-            <input
-              type="checkbox"
-              id="terms"
-              name="terms"
-              required
-              style={{ marginRight: 8 }}
-            />
-            <Typography variant="body2">
-              Yes, I agree with all{" "}
-              <Link href="#" target="_blank">
-                Terms & Conditions
-              </Link>
-            </Typography>
-          </Box>
+          <LocationSearch
+            onSelectLocation={(result) => {
+              setSelectedLocation(result);
+              console.log('Selected location:', result);
+            }}
+          />
+
+          <FormControlLabel
+            control={
+              <Checkbox
+                required
+                name="terms"
+              />
+            }
+            label={
+              <Typography variant="body2">
+                Yes, I agree with all{" "}
+                <Link href="#" target="_blank">
+                  Terms & Conditions
+                </Link>
+              </Typography>
+            }
+          />
 
           <Button
             type="submit"

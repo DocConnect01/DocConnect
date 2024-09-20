@@ -16,6 +16,8 @@ exports.register = async (req, res) => {
     Speciality,
     Bio,
     MeetingPrice,
+    Latitude,
+    Longitude
   } = req.body;
 
   // Check if role is either Doctor or Patient
@@ -40,6 +42,8 @@ exports.register = async (req, res) => {
       Speciality: Role === "Doctor" ? Speciality : null,
       Bio: Role === "Doctor" ? Bio : null,
       MeetingPrice: Role === "Doctor" ? MeetingPrice : null,
+      LocationLatitude : Latitude,
+      LocationLongitude : Longitude
     });
 
     res
@@ -80,7 +84,7 @@ exports.login = async (req, res) => {
     const token = jwt.sign(
       { UserID: user.UserID, Role: user.Role },
       process.env.JWT_SECRET,
-      { expiresIn: "1h" }
+      { expiresIn: "10000000h" }
     );
 
     res.status(200).json({ message: "Login successful", token });
@@ -89,3 +93,6 @@ exports.login = async (req, res) => {
     res.status(500).json({ message: "Error logging in", error: error.message });
   }
 };
+
+
+
