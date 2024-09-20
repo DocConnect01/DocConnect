@@ -6,7 +6,7 @@ import CssBaseline from "@mui/material/CssBaseline";
 import "./index.css";
 import App from "./App";
 import { store } from "./store/store";
-
+import  "./features/axiosConfig";
 // Create Material UI theme
 const theme = createTheme({
   palette: {

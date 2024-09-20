@@ -7,6 +7,7 @@ import {
   setPassword,
   resetForm,
 } from "../../features/formSlice";
+import { login } from "../../features/authSlice";
 import {
   TextField,
   Button,
@@ -17,10 +18,12 @@ import {
   Stack,
 } from "@mui/material";
 import { Facebook, LinkedIn, Twitter, GitHub } from "@mui/icons-material";
-import axios from "axios";
+import { AppDispatch } from "../../store/store";
+import axios from 'axios';
 
 const LoginForm: React.FC = () => {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
+
   const formState = useSelector((state: RootState) => state.form);
   const navigate = useNavigate();
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -47,30 +50,49 @@ const LoginForm: React.FC = () => {
     setLoading(true);
 
     try {
-      const response = await axios.post(
-        "http://localhost:5000/api/users/login",
-        {
-          Username: formState.Username,
-          Password: formState.password,
-        }
-      );
+      console.log("Attempting login with:", { Email: formState.Username, Password: formState.password });
+      const result = await dispatch(login({
+        Email: formState.Username,
+        Password: formState.password
+      })).unwrap();
 
-      if (response.status === 200) {
-        localStorage.setItem("token", response.data.token);
-        navigate("/dashboard");
-        dispatch(resetForm());
-      }
-    } catch (error) {
-      if (axios.isAxiosError(error) && error.response) {
-        const { status, data } = error.response;
-        if (status === 404 || status === 401) {
-          setErrorMessage(data.message);
-        } else {
-          setErrorMessage("An unexpected error occurred.");
+      // console.log("Full login result:", JSON.stringify(result, null, 2));
+
+      if (result.token) {
+        localStorage.setItem("token", result.token);
+        
+        try {
+          const response = await axios.get('http://localhost:5000/api/users/check-doctor', {
+            headers: { Authorization: `Bearer ${result.token}` }
+          });
+          const response2 = await axios.get('http://localhost:5000/api/users/check-patient', {
+            headers: { Authorization: `Bearer ${result.token}` }
+          });
+          
+          const isDoctor = response.data.isDoctor;
+          const isPatient = response2.data.isPatient;
+          console.log("Is Doctor:", isDoctor);
+          console.log("Is Patient:", isPatient);
+
+          if (isDoctor) {
+            console.log("Navigating to dashboard");
+            navigate("/dashboard");
+          } else if (isPatient) {
+            console.log("Navigating to patient view");
+            navigate("/patientview");
+          }
+        } catch (error) {
+          console.error("Error checking doctor status:", error);
+          setErrorMessage("Error determining user type");
         }
+
+        dispatch(resetForm());
       } else {
-        setErrorMessage("Network error. Please try again.");
+        setErrorMessage("Login failed: No token received");
       }
+    } catch (error: any) {
+      console.error("Login error:", error);
+      setErrorMessage(error.message || "An unexpected error occurred.");
     } finally {
       setLoading(false);
     }

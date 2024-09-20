@@ -1,34 +1,23 @@
 const jwt = require("jsonwebtoken");
 
 // Middleware to verify JWT and role
-<<<<<<< HEAD
-// const authenticate = (req, res, next) => {
-//   const token = req.headers.authorization?.split(" ")[1];
-//   console.log("Token:", token);
-//   if (!token) {
-//     return res
-//       .status(401)
-//       .json({ message: "Authentication failed. Token missing." });
-//   }
-=======
 const authenticate = (req, res, next) => {
   const token = req.headers.authorization?.split(" ")[1];
-  // console.log("Token:", token);
+  console.log("Token:", token);
   if (!token) {
     return res
       .status(401)
       .json({ message: "Authentication failed. Token missing." });
   }
->>>>>>> 87c1facb1e78e1697739273441e4d267d5ee3f15
 
-//   try {
-//     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-//     req.user = decoded;
-//     next();
-//   } catch (error) {
-//     return res.status(401).json({ message: "Invalid token" });
-//   }
-// };
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    req.user = decoded;
+    next();
+  } catch (error) {
+    return res.status(401).json({ message: "Invalid token" });
+  }
+};
 
 // Middleware to allow only Admin
 const isAdmin = (req, res, next) => {
@@ -54,4 +43,4 @@ const isPatient = (req, res, next) => {
   next();
 };
 
-module.exports = {  isAdmin, isDoctor, isPatient };
+module.exports = {  isAdmin, isDoctor, isPatient,authenticate };
