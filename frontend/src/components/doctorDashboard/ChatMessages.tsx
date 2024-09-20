@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Box, Typography, TextField, Button, List, ListItem, ListItemText } from '@mui/material';
 import axios from 'axios';
-
 interface Message {
   MessageID: number;
   ChatroomID: number;
@@ -20,9 +19,11 @@ interface Message {
 
 interface ChatMessagesProps {
   roomId: number;
+  socket? : any;
 }
 
-const ChatMessages: React.FC<ChatMessagesProps> = ({ roomId }) => {
+
+const ChatMessages: React.FC<ChatMessagesProps> = ({ roomId,socket }) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [newMessage, setNewMessage] = useState('');
 
@@ -36,6 +37,17 @@ const ChatMessages: React.FC<ChatMessagesProps> = ({ roomId }) => {
       console.error('Error fetching messages:', error);
     }
   };
+  useEffect(() => {
+    // Listen for incoming messages
+    socket.on('chat_message', (message: Message) => {
+      setMessages(prevMessages => [...prevMessages, message]);
+    });
+
+    // Clean up on unmount
+    return () => {
+      socket.off('message');
+    };
+  }, []);
 
   useEffect(() => {
     fetchMessages();
@@ -58,6 +70,7 @@ const ChatMessages: React.FC<ChatMessagesProps> = ({ roomId }) => {
 
   
     try {
+      // socket.emit('sendMessage', message);
       const response = await axios.post("http://localhost:5000/api/chats/message",data,
         {
           headers: { 
@@ -67,7 +80,7 @@ const ChatMessages: React.FC<ChatMessagesProps> = ({ roomId }) => {
     });
       console.log('Message sent successfully:', response.data);
       setNewMessage("");
-      fetchMessages();  // Fetch updated messages after sending
+      // Fetch updated messages after sending
     } catch (error) {
     
         console.error('Error sending message:', error);

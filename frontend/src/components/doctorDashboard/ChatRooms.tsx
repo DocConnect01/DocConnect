@@ -3,7 +3,7 @@ import { List, ListItem, ListItemButton, ListItemText, Box, Typography, Circular
 import axios from 'axios';
 import ChatMessages from './ChatMessages';
 import CloseIcon from '@mui/icons-material/Close';
-
+import io from 'socket.io-client';
 interface ChatRoom {
   ChatroomID: number;
   Patient: {
@@ -15,13 +15,18 @@ interface ChatRoom {
 interface ChatRoomsProps {
   onClose?: () => void;
 }
+const socket = io('http://localhost:4000');
 
 const ChatRooms: React.FC<ChatRoomsProps> = ({ onClose }) => {
   const [chatRooms, setChatRooms] = useState<ChatRoom[]>([]);
   const [selectedRoom, setSelectedRoom] = useState<number | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+const getrooomAndJoin=(ChatRoom : ChatRoom)=>{
+  setSelectedRoom(ChatRoom.ChatroomID)
+  socket.emit('join',ChatRoom.ChatroomID)
 
+}
   useEffect(() => {
     const fetchChatRooms = async () => {
       try {
@@ -81,7 +86,7 @@ const ChatRooms: React.FC<ChatRoomsProps> = ({ onClose }) => {
       {/* Chat Messages Section */}
       {selectedRoom ? (
         <Box sx={{ flexGrow: 1 }}>
-          <ChatMessages roomId={selectedRoom} />
+          <ChatMessages socket={socket} roomId={selectedRoom} />
         </Box>
       ) : (
         <Box sx={{ flexGrow: 1, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>

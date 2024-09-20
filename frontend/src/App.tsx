@@ -12,10 +12,10 @@ import Footer from "./components/login/Footer";
 import ChatRooms from "./components/doctorDashboard/ChatRooms";
 import ChatMessages from "./components/doctorDashboard/ChatMessages";
 import { useParams } from "react-router-dom";
-const ChatMessagesWrapper = () => {
-  const { roomId } = useParams();
-  return <ChatMessages roomId={roomId ? parseInt(roomId, 10) : 0} />;
-};
+// const ChatMessagesWrapper = () => {
+//   const { roomId } = useParams();
+//   return <ChatMessages roomId={roomId ? parseInt(roomId, 10) : 0} />;
+// };
 const App: React.FC = () => {
   const location = useLocation();
 
@@ -32,7 +32,7 @@ const App: React.FC = () => {
             <Route path="/register" element={<RegisterForm />} />
             <Route path="/patientview" element={<HelloPatient />} />
             <Route path="/chatrooms" element={<ChatRooms />} />
-            <Route path="/chatmessages/:roomId" element={<ChatMessagesWrapper />} />
+            {/* <Route path="/chatmessages/:roomId" element={<ChatMessagesWrapper />} /> */}
           </Routes>
         </Container>
       </Box>
