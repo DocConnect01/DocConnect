@@ -166,17 +166,6 @@ const LoginForm: React.FC = () => {
             helperText={formErrors.password}
           />
 
-          <TextField
-            label="Confirm Password"
-            type="password"
-            value={formState.password}
-            onChange={(e) => dispatch(setPassword(e.target.value))}
-            fullWidth
-            margin="normal"
-            error={!!formErrors.password}
-            helperText={formErrors.password}
-          />
-
           <Button
             type="submit"
             variant="contained"
