@@ -21,7 +21,7 @@ const initialState: ContactFormState = {
 };
 
 const contactFormSlice = createSlice({
-  name: "contactForm",
+  name: "contactFormmiddle",
   initialState,
   reducers: {
     updateField: (state, action: PayloadAction<Partial<ContactFormState>>) => {
