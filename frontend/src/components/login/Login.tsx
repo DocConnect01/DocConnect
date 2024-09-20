@@ -120,7 +120,12 @@ const LoginForm: React.FC = () => {
             justifyContent: "center",
           }}
         >
-          <Typography variant="h5" align="center" gutterBottom>
+          <Typography
+            variant="h4"
+            fontWeight="bold"
+            align="center"
+            gutterBottom
+          >
             Login Here
           </Typography>
 
