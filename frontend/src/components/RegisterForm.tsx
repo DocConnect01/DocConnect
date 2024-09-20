@@ -77,12 +77,12 @@ const RegisterForm: React.FC = () => {
   return (
     <Box
       sx={{
-        height: "100%",
+        height: "100vh",
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        p: 3,
         backgroundColor: "#f5f5f5",
+        p: 3,
       }}
     >
       <Box
@@ -90,9 +90,10 @@ const RegisterForm: React.FC = () => {
           boxShadow: 3,
           borderRadius: 2,
           overflow: "hidden",
-          maxWidth: 1000,
           display: "flex",
           backgroundColor: "white",
+          maxWidth: 900,
+          width: "100%",
         }}
       >
         <Box sx={{ flex: 1, display: { xs: "none", md: "block" } }}>
@@ -100,7 +101,7 @@ const RegisterForm: React.FC = () => {
             src="https://medikit-nextjs.vercel.app/_next/static/media/signup-bg.9daac4a8.jpg"
             alt="Side Image"
             style={{
-              maxWidth: "100%",
+              width: "100%",
               height: "100%",
               objectFit: "cover",
             }}
@@ -115,12 +116,29 @@ const RegisterForm: React.FC = () => {
             flex: 1,
             display: "flex",
             flexDirection: "column",
-            gap: 2,
             justifyContent: "center",
+            gap: 3,
           }}
         >
-          <Typography variant="h4" align="center" gutterBottom>
+          <Typography
+            variant="h4"
+            fontWeight="bold"
+            align="center"
+            gutterBottom
+          >
             Register Here
+          </Typography>
+
+          <Typography variant="body1" align="center" color="textSecondary">
+            Already have an account?{" "}
+            <Link
+              component="button"
+              variant="body1"
+              onClick={() => navigate("/login")}
+              sx={{ ml: 1, color: "#1976d2" }}
+            >
+              Login Here
+            </Link>
           </Typography>
 
           {error && (
@@ -129,16 +147,18 @@ const RegisterForm: React.FC = () => {
             </Typography>
           )}
 
-          <TextField
-            label="First Name"
-            value={formState.firstName}
-            onChange={(e) => dispatch(setFirstName(e.target.value))}
-            fullWidth
-            required
-          />
+          <Box display="flex" gap={2}>
+            <TextField
+              label="First Name"
+              value={formState.firstName}
+              onChange={(e) => dispatch(setFirstName(e.target.value))}
+              fullWidth
+              required
+            />
+          </Box>
 
           <TextField
-            label="Your Email"
+            label="Email"
             type="email"
             value={formState.Username}
             onChange={(e) => dispatch(setEmailOrUsername(e.target.value))}
@@ -146,25 +166,26 @@ const RegisterForm: React.FC = () => {
             required
           />
 
-          <TextField
-            label="Password"
-            type="password"
-            value={formState.password}
-            onChange={(e) => dispatch(setPassword(e.target.value))}
-            fullWidth
-            required
-          />
+          <Box display="flex" gap={2}>
+            <TextField
+              label="Password"
+              type="password"
+              value={formState.password}
+              onChange={(e) => dispatch(setPassword(e.target.value))}
+              fullWidth
+              required
+            />
+            <TextField
+              label="Confirm Password"
+              type="password"
+              value={formState.confirmPassword}
+              onChange={(e) => dispatch(setConfirmPassword(e.target.value))}
+              fullWidth
+              required
+            />
+          </Box>
 
-          <TextField
-            label="Confirm Password"
-            type="password"
-            value={formState.confirmPassword}
-            onChange={(e) => dispatch(setConfirmPassword(e.target.value))}
-            fullWidth
-            required
-          />
-
-          <FormControl fullWidth variant="outlined" required>
+          <FormControl fullWidth required>
             <InputLabel id="user-type-label">User Type</InputLabel>
             <Select
               labelId="user-type-label"
@@ -207,23 +228,36 @@ const RegisterForm: React.FC = () => {
             </>
           )}
 
-          <Button type="submit" variant="contained" size="large" fullWidth>
-            Register
-          </Button>
-
-          <Box textAlign="center">
+          <Box display="flex" alignItems="center">
+            <input
+              type="checkbox"
+              id="terms"
+              name="terms"
+              required
+              style={{ marginRight: 8 }}
+            />
             <Typography variant="body2">
-              Already have an account?
-              <Link
-                component="button"
-                variant="body2"
-                onClick={() => navigate("/login")}
-                sx={{ ml: 1 }}
-              >
-                Login Here
+              Yes, I agree with all{" "}
+              <Link href="#" target="_blank">
+                Terms & Conditions
               </Link>
             </Typography>
           </Box>
+
+          <Button
+            type="submit"
+            variant="contained"
+            size="large"
+            fullWidth
+            sx={{
+              backgroundColor: "#1976d2",
+              "&:hover": {
+                backgroundColor: "#115293",
+              },
+            }}
+          >
+            Register
+          </Button>
         </Box>
       </Box>
     </Box>
