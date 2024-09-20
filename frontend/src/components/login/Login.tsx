@@ -16,7 +16,7 @@ import {
   IconButton,
   Stack,
 } from "@mui/material";
-import { Facebook, LinkedIn, Twitter, GitHub } from "@mui/icons-material";
+import { Facebook, LinkedIn, Twitter } from "@mui/icons-material";
 import axios from "axios";
 
 const LoginForm: React.FC = () => {
@@ -194,12 +194,6 @@ const LoginForm: React.FC = () => {
               href="https://www.twitter.com"
             >
               <Twitter sx={{ color: "#1da1f2" }} />
-            </IconButton>
-            <IconButton
-              aria-label="Sign in with GitHub"
-              href="https://github.com"
-            >
-              <GitHub sx={{ color: "#333" }} />
             </IconButton>
           </Stack>
         </Box>
