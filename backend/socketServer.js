@@ -23,7 +23,19 @@ app.use(
     origin: ["http://localhost:3000"],
   })
 );
+//  msg {
+//     
+//     ChatroomID: number;
+//     MessageText: string;
+//     Sender: {
+//       UserID: number;
+//       Username: string;
+//       FirstName: string;
+//       // ... other sender properties
+//     };
+//     SentAt: string;
 
+//   }
 // const chatNamespace = io.of("/chat");
 io.on("connection", (socket) => {
   console.log("a user connected", socket.id);
@@ -36,7 +48,8 @@ io.on("connection", (socket) => {
   socket.on("chat_message", (msg) => {
     console.log("user message", msg);
     msg.MessageID=uuidv4()
-    socket.to(msg.roomId).emit("chat_message", msg);
+    
+    socket.to(msg.ChatroomID).emit("chat_message", msg);
   });
   socket.on("disconnect", () => {
     console.log("user disconnected", socket.id);

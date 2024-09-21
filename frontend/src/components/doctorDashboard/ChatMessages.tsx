@@ -52,6 +52,7 @@ const ChatMessages: React.FC<ChatMessagesProps> = ({ roomId,socket }) => {
   useEffect(() => {
     fetchMessages();
   }, [roomId]);
+  console.log("ahayaaa",messages)
 
   const handleSendMessage = async () => {
     // if (!newMessage.trim() || typeof roomId !== 'number' || isNaN(roomId)) {

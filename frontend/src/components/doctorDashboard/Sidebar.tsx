@@ -19,6 +19,7 @@ const Sidebar: React.FC = () => {
 
   const handleMessagesClick = () => {
     setShowChatRooms(true);
+    navigate("/chatrooms")
   };
 
   const menuItems = [

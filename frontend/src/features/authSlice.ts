@@ -1,5 +1,5 @@
-import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
-import axios from 'axios';
+import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
+import axios from "axios";
 
 interface User {
   UserID: string;
@@ -7,7 +7,7 @@ interface User {
   LastName: string;
   Username: string;
   Email: string;
-  Role: 'Admin' | 'Doctor' | 'Patient';
+  Role: "Admin" | "Doctor" | "Patient";
   Speciality?: string;
   Bio?: string;
   MeetingPrice?: number;
@@ -23,17 +23,20 @@ interface AuthState {
 
 const initialState: AuthState = {
   user: null,
-  token: localStorage.getItem('token'),
+  token: localStorage.getItem("token"),
   isAuthenticated: false,
   loading: false,
   error: null,
 };
 
 export const register = createAsyncThunk(
-  'auth/register',
+  "auth/register",
   async (userData: Partial<User>, { rejectWithValue }) => {
     try {
-      const response = await axios.post('http://localhost:5000/api/users/register', userData);
+      const response = await axios.post(
+        "http://localhost:5000/api/users/register",
+        userData
+      );
       return response.data;
     } catch (error: any) {
       return rejectWithValue(error.response.data.message);
@@ -42,11 +45,17 @@ export const register = createAsyncThunk(
 );
 
 export const login = createAsyncThunk(
-  'auth/login',
-  async (credentials: { Email?: string; Username?: string; Password: string }, { rejectWithValue }) => {
+  "auth/login",
+  async (
+    credentials: { Email?: string; Username?: string; Password: string },
+    { rejectWithValue }
+  ) => {
     try {
-      const response = await axios.post('http://localhost:5000/api/users/login', credentials);
-      localStorage.setItem('token', response.data.token);
+      const response = await axios.post(
+        "http://localhost:5000/api/users/login",
+        credentials
+      );
+      localStorage.setItem("token", response.data.token);
       return response.data;
     } catch (error: any) {
       return rejectWithValue(error.response.data.message);

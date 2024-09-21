@@ -1,51 +1,56 @@
 import React from "react";
-import { Box, Container } from "@mui/material";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
+import { Provider } from "react-redux";
+import { store } from "./store/store";
+import { ThemeProvider, createTheme } from "@mui/material/styles";
+import CssBaseline from "@mui/material/CssBaseline";
+import { Box, Container } from "@mui/material";
+import RegisterForm from "./components/RegisterForm";
+import LoginForm from "./components/login/Login";
+import ContactForm from "./components/contact/contactForm";
+import Navbar from "./components/navbar/Navbar";
 import Sidebar from "./components/doctorDashboard/Sidebar";
 import Dashboard from "./components/doctorDashboard/Dashboard";
-import LoginForm from "./components/login/Login";
-// import ChatInterface from "./components/doctorDashboard/Chat";
 import DoctorProfile from "./components/doctorDashboard/Profile";
 import HelloPatient from "./components/patientview/View";
-import RegisterForm from "./components/RegisterForm";
 import Footer from "./components/login/Footer";
 import ChatRooms from "./components/doctorDashboard/ChatRooms";
-import ChatMessages from "./components/doctorDashboard/ChatMessages";
-import { useParams } from "react-router-dom";
-// const ChatMessagesWrapper = () => {
-//   const { roomId } = useParams();
-//   return <ChatMessages roomId={roomId ? parseInt(roomId, 10) : 0} />;
-// };
+// import { blue } from '@mui/material/colors';
+const theme = createTheme();
+
 const App: React.FC = () => {
-  const location = useLocation();
+  // const location = useLocation();
 
   return (
-    <Box sx={{ display: "flex" }}>
-      {location.pathname !== "/login" && location.pathname !== "/register" && <Sidebar />}
-      <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
-        <Container maxWidth="xl">
-          <Routes>
-            <Route path="/login" element={<LoginForm />} />
-            <Route path="/dashboard" element={<Dashboard />} />
-            {/* <Route path="/chat" element={<ChatInterface />} /> */}
-            <Route path="/settings" element={<DoctorProfile />} />
-            <Route path="/register" element={<RegisterForm />} />
-            <Route path="/patientview" element={<HelloPatient />} />
-            <Route path="/chatrooms" element={<ChatRooms />} />
-            {/* <Route path="/chatmessages/:roomId" element={<ChatMessagesWrapper />} /> */}
-          </Routes>
-        </Container>
-      </Box>
-    </Box>
+    <Provider store={store}>
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        <BrowserRouter>
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              minHeight: "100vh",
+            }}
+          >
+            <Navbar />
+            <Routes>
+              <Route path="/" element={<div>Home </div>} />
+              <Route path="/services" element={<div>Services </div>} />
+              <Route path="/help" element={<div>Help </div>} />
+              <Route path="/blogs" element={<div>Blogs </div>} />
+              <Route path="/login" element={<LoginForm />} />
+              <Route path="/register" element={<RegisterForm />} />
+              <Route path="/contact" element={<ContactForm />} />
+              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/chat" element={<ChatRooms />} />
+              <Route path="/settings" element={<DoctorProfile />} />
+            </Routes>
+          </div>
+        </BrowserRouter>
+      </ThemeProvider>
+    </Provider>
   );
 };
 
-// ... rest of the file remains unchanged
-
-const AppWrapper: React.FC = () => (
-  <BrowserRouter>
-    <App />
-  </BrowserRouter>
-);
-
-export default AppWrapper;
+export default App;
