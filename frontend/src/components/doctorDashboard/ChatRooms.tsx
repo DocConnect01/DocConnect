@@ -4,17 +4,27 @@ import axios from 'axios';
 import ChatMessages from './ChatMessages';
 import CloseIcon from '@mui/icons-material/Close';
 import io from 'socket.io-client';
+
 interface ChatRoom {
   ChatroomID: number;
-  Patient: {
+  Patient?: {
     FirstName: string;
     LastName: string;
+    UserID?: number;
   };
+  Doctor?: {
+    FirstName: string;
+    LastName: string;
+    UserID?: number;
+  };
+  PatientID?: number;
+  DoctorID?: number;
 }
 
 interface ChatRoomsProps {
   onClose?: () => void;
 }
+
 const socket = io('http://localhost:4000');
 
 const ChatRooms: React.FC<ChatRoomsProps> = ({ onClose }) => {
@@ -22,27 +32,100 @@ const ChatRooms: React.FC<ChatRoomsProps> = ({ onClose }) => {
   const [selectedRoom, setSelectedRoom] = useState<number | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-const getrooomAndJoin=(ChatRoom : ChatRoom)=>{
-  setSelectedRoom(ChatRoom.ChatroomID)
-  socket.emit('join',ChatRoom.ChatroomID)
+  const [isDoctor, setIsDoctor] = useState<boolean | null>(null);
 
-}
+  const getrooomAndJoin = (ChatRoom: ChatRoom) => {
+    setSelectedRoom(ChatRoom.ChatroomID);
+    socket.emit('join', ChatRoom.ChatroomID);
+  };
+
+  useEffect(() => {
+    const checkUserRole = async () => {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        setError('No token found. Please log in again.');
+        setLoading(false);
+        return;
+      }
+
+      try {
+        const doctorResponse = await axios.get('http://localhost:5000/api/users/check-doctor', {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        if (doctorResponse.data.isDoctor) {
+          setIsDoctor(true);
+          return;
+        }
+
+        const patientResponse = await axios.get('http://localhost:5000/api/users/check-patient', {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        if (patientResponse.data.isPatient) {
+          setIsDoctor(false);
+          return;
+        }
+
+        setError('User role could not be determined.');
+      } catch (error) {
+        console.error('Error checking user role:', error);
+        setError('Error checking user role. Please try again.');
+      }
+    };
+
+    checkUserRole();
+  }, []);
+
   useEffect(() => {
     const fetchChatRooms = async () => {
+      if (isDoctor === null) return; // Wait until we know the user role
+
       try {
         const response = await axios.get('http://localhost:5000/api/chats', {
           headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
         });
+        console.log('API response:', response.data);
         setChatRooms(response.data);
         setLoading(false);
       } catch (error) {
+        console.error('Error fetching chat rooms:', error);
         setError('Error fetching chat rooms. Please try again.');
         setLoading(false);
       }
     };
 
-    fetchChatRooms();
-  }, []);
+    if (isDoctor !== null) {
+      fetchChatRooms();
+    }
+  }, [isDoctor]);
+
+  const getDisplayName = (room: ChatRoom) => {
+    console.log('Room data:', room);
+    if (isDoctor) {
+      if (room.Patient) {
+        return `${room.Patient.FirstName} ${room.Patient.LastName}`;
+      } else if (room.PatientID) {
+        return `Patient ID: ${room.PatientID}`;
+      } else {
+        return 'Unknown Patient';
+      }
+    } else {
+      if (room.Doctor) {
+        return `Dr. ${room.Doctor.FirstName} ${room.Doctor.LastName}`;
+      } else if (room.DoctorID) {
+        return `Doctor ID: ${room.DoctorID}`;
+      } else {
+        return 'Unknown Doctor';
+      }
+    }
+  };
+
+  if (isDoctor === null) {
+    return (
+      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
+        <CircularProgress />
+      </Box>
+    );
+  }
 
   return (
     <Box sx={{ display: 'flex', height: '100%' }}>
@@ -69,13 +152,15 @@ const getrooomAndJoin=(ChatRoom : ChatRoom)=>{
             {chatRooms.map((room) => (
               <ListItem 
                 disablePadding 
-                key={room.ChatroomID} // Using ChatroomID as the key
+                key={room.ChatroomID}
               >
                 <ListItemButton
-                  onClick={() => setSelectedRoom(room.ChatroomID)}
+                  onClick={() => getrooomAndJoin(room)}
                   selected={selectedRoom === room.ChatroomID}
                 >
-                  <ListItemText primary={`${room.Patient.FirstName} ${room.Patient.LastName}`} />
+                  <ListItemText 
+                    primary={getDisplayName(room)}
+                  />
                 </ListItemButton>
               </ListItem>
             ))}

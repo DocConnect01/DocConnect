@@ -20,7 +20,7 @@ const io = new Server(server, {
 });
 app.use(
   cors({
-    origin: ["http://localhost:3000"],
+    origin: ["http://localhost:3000"]
   })
 );
 //  msg {
@@ -47,7 +47,7 @@ io.on("connection", (socket) => {
 
   socket.on("chat_message", (msg) => {
     console.log("user message", msg);
-    msg.MessageID=uuidv4()
+    msg.MessageID=v4()
     
     socket.to(msg.ChatroomID).emit("chat_message", msg);
   });
