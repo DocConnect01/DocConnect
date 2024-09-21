@@ -13,6 +13,8 @@ import Dashboard from "./components/doctorDashboard/Dashboard";
 import ChatInterface from "./components/doctorDashboard/Chat";
 import DoctorProfile from "./components/doctorDashboard/Profile";
 import Footer from "./components/login/Footer";
+import Home from "./components/Home/Home";
+
 
 const theme = createTheme();
 
@@ -33,7 +35,8 @@ const App: React.FC = () => {
           >
             <Navbar />
             <Routes>
-              <Route path="/" element={<div>Home </div>} />
+              <Route path="/" element={<Home />} />
+              {/* <Route path="/" element={<div>Home </div>} /> */}
               <Route path="/services" element={<div>Services </div>} />
               <Route path="/help" element={<div>Help </div>} />
               <Route path="/blogs" element={<div>Blogs </div>} />
@@ -52,3 +55,13 @@ const App: React.FC = () => {
 };
 
 export default App;
+
+
+
+
+
+
+
+
+
+
