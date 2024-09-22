@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "../../store/store";
+import { RootState, AppDispatch } from "../../store/store";
 import { useNavigate } from "react-router-dom";
 import {
   setEmailOrUsername,
@@ -8,7 +8,7 @@ import {
   resetForm,
 } from "../../features/formSlice";
 import { login } from "../../features/authSlice";
-
+import UserLocation from "../user/UserLocation";
 import {
   TextField,
   Button,
@@ -21,7 +21,7 @@ import {
   FormControlLabel,
 } from "@mui/material";
 import { Facebook, LinkedIn, Twitter } from "@mui/icons-material";
-import { AppDispatch } from "../../store/store";
+// import { AppDispatch } from "../../store/store";
 import axios from "axios";
 
 const LoginForm: React.FC = () => {
@@ -32,6 +32,8 @@ const LoginForm: React.FC = () => {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [formErrors, setFormErrors] = useState<{ [key: string]: string }>({});
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userRole, setUserRole] = useState<string | null>(null);
 
   const validateForm = () => {
     const errors: { [key: string]: string } = {};
@@ -100,6 +102,21 @@ const LoginForm: React.FC = () => {
       setLoading(false);
     }
   };
+
+  const handleLocationUpdateComplete = () => {
+    navigate("/patientview");
+  };
+
+  useEffect(() => {
+    if (isLoggedIn && userRole) {
+      if (userRole === "Patient") {
+        console.log("Patient logged in, waiting for location update");
+      } else if (userRole === "Doctor") {
+        console.log("Doctor logged in, navigating to dashboard");
+        navigate("/dashboard");
+      }
+    }
+  }, [isLoggedIn, userRole, navigate]);
 
   return (
     <Box
@@ -242,6 +259,7 @@ const LoginForm: React.FC = () => {
           </Stack>
         </Box>
       </Box>
+      {isLoggedIn && userRole === "Patient" && <UserLocation onComplete={handleLocationUpdateComplete} />}
     </Box>
   );
 };

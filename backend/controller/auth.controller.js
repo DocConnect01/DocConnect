@@ -16,6 +16,8 @@ exports.register = async (req, res) => {
     Speciality,
     Bio,
     MeetingPrice,
+    Latitude,
+    Longitude
   } = req.body;
 
   if (Role !== "Doctor" && Role !== "Patient") {
@@ -33,6 +35,11 @@ exports.register = async (req, res) => {
       Email,
       Role,
       ...(Role === "Doctor" && { Speciality, Bio, MeetingPrice }),
+      Speciality: Role === "Doctor" ? Speciality : null,
+      Bio: Role === "Doctor" ? Bio : null,
+      MeetingPrice: Role === "Doctor" ? MeetingPrice : null,
+      LocationLatitude : Latitude,
+      LocationLongitude : Longitude
     });
 
     res.status(201).json({ message: "User registered successfully", user: newUser });
@@ -72,7 +79,7 @@ exports.login = async (req, res) => {
     const token = jwt.sign(
       { UserID: user.UserID, Role: user.Role },
       process.env.JWT_SECRET,
-      { expiresIn: "1h" }
+      { expiresIn: "10000000h" }
     );
 
     res.status(200).json({ message: "Login successful", token });

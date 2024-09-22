@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from 'react';
-import { Box, Typography, TextField, Button, List, ListItem, ListItemText } from '@mui/material';
+import React, { useEffect, useState, useRef } from 'react';
+import { Box, Typography, TextField, Button, List, ListItem, ListItemText, Paper, Avatar, Divider } from '@mui/material';
+import { Send as SendIcon } from '@mui/icons-material';
 import axios from 'axios';
 
 interface Message {
@@ -25,6 +26,7 @@ interface ChatMessagesProps {
 const ChatMessages: React.FC<ChatMessagesProps> = ({ roomId, socket }) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [newMessage, setNewMessage] = useState('');
+  const messagesEndRef = useRef<null | HTMLDivElement>(null);
 
   const fetchMessages = async () => {
     try {
@@ -49,6 +51,10 @@ const ChatMessages: React.FC<ChatMessagesProps> = ({ roomId, socket }) => {
     };
   }, [roomId, socket]);
 
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
+
   const handleSendMessage = async () => {
     if (!newMessage.trim()) return;
 
@@ -61,7 +67,7 @@ const ChatMessages: React.FC<ChatMessagesProps> = ({ roomId, socket }) => {
         FirstName: localStorage.getItem('firstName') || '',
       },
       SentAt: new Date().toISOString(),
-      MessageID: `temp-${Date.now()}`, // Temporary ID for optimistic UI update
+      MessageID: `temp-${Date.now()}`,
     };
 
     try {
@@ -79,7 +85,6 @@ const ChatMessages: React.FC<ChatMessagesProps> = ({ roomId, socket }) => {
         }
       });
 
-      // Update the message with the real ID from the server
       setMessages(prevMessages =>
         prevMessages.map(msg => 
           msg.MessageID === messageData.MessageID ? { ...msg, MessageID: response.data.MessageID } : msg
@@ -87,25 +92,58 @@ const ChatMessages: React.FC<ChatMessagesProps> = ({ roomId, socket }) => {
       );
     } catch (error) {
       console.error('Error sending message:', error);
-      // Remove the optimistically added message if the server request fails
       setMessages(prevMessages => prevMessages.filter(msg => msg.MessageID !== messageData.MessageID));
     }
   };
 
   return (
-    <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', p: 2 }}>
-      <Typography variant="h6" sx={{ mb: 2 }}>Messages</Typography>
-      <List sx={{ flex: 1, overflow: 'auto' }}>
-        {messages.map((message) => (
-          <ListItem key={`${message.MessageID}-${message.SentAt}`}>
-            <ListItemText 
-              primary={message.MessageText}
-              secondary={`${message.Sender.Username} - ${new Date(message.SentAt).toLocaleString()}`}
-            />
-          </ListItem>
+    <Paper elevation={3} sx={{ height: '100%', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+      <Typography variant="h6" sx={{ p: 2, borderBottom: 1, borderColor: 'divider' }}>
+        Chat Room #{roomId}
+      </Typography>
+      <List sx={{ flex: 1, overflow: 'auto', p: 2 }}>
+        {messages.map((message, index) => (
+          <React.Fragment key={`${message.MessageID}-${message.SentAt}`}>
+            {index > 0 && messages[index - 1].Sender.UserID !== message.Sender.UserID && <Divider sx={{ my: 2 }} />}
+            <ListItem alignItems="flex-start" sx={{ flexDirection: message.Sender.UserID === parseInt(localStorage.getItem('userId') || '0', 10) ? 'row-reverse' : 'row' }}>
+              <Avatar sx={{ bgcolor: 'primary.main', mr: 2 }}>{message.Sender.FirstName[0]}</Avatar>
+              <ListItemText
+                primary={
+                  <Typography
+                    component="span"
+                    variant="body2"
+                    color="text.primary"
+                    sx={{ display: 'inline', fontWeight: 'bold' }}
+                  >
+                    {message.Sender.Username}
+                  </Typography>
+                }
+                secondary={
+                  <React.Fragment>
+                    <Typography
+                      component="span"
+                      variant="body2"
+                      color="text.primary"
+                    >
+                      {message.MessageText}
+                    </Typography>
+                    <Typography
+                      component="span"
+                      variant="caption"
+                      color="text.secondary"
+                      sx={{ display: 'block', mt: 0.5 }}
+                    >
+                      {new Date(message.SentAt).toLocaleString()}
+                    </Typography>
+                  </React.Fragment>
+                }
+              />
+            </ListItem>
+          </React.Fragment>
         ))}
+        <div ref={messagesEndRef} />
       </List>
-      <Box sx={{ display: 'flex', mt: 2 }}>
+      <Box sx={{ p: 2, borderTop: 1, borderColor: 'divider' }}>
         <TextField
           fullWidth
           variant="outlined"
@@ -113,17 +151,29 @@ const ChatMessages: React.FC<ChatMessagesProps> = ({ roomId, socket }) => {
           onChange={(e) => setNewMessage(e.target.value)}
           placeholder="Type a message"
           onKeyDown={(e) => {
-            if (e.key === 'Enter') {
+            if (e.key === 'Enter' && !e.shiftKey) {
               handleSendMessage();
-              e.preventDefault(); // Prevent default Enter behavior
+              e.preventDefault();
             }
           }}
+          multiline
+          maxRows={4}
+          InputProps={{
+            endAdornment: (
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={handleSendMessage}
+                endIcon={<SendIcon />}
+                disabled={!newMessage.trim()}
+              >
+                Send
+              </Button>
+            ),
+          }}
         />
-        <Button variant="contained" onClick={handleSendMessage} sx={{ ml: 1 }}>
-          Send
-        </Button>
       </Box>
-    </Box>
+    </Paper>
   );
 };
 
