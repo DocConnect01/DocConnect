@@ -8,7 +8,6 @@ import SearchResults from './SearchResults';
 import LocationSearch, { SearchResult } from '../user/LocationSearch';
 import { setSearchedLocation, clearSearchedLocation } from '../../features/UserLocationSlice';
 
-
 interface FindDoctorProps {
   onToggleReference: () => void;
 }
@@ -16,6 +15,7 @@ interface FindDoctorProps {
 const FindDoctor: React.FC<FindDoctorProps> = ({ onToggleReference }) => {
   const dispatch = useDispatch<AppDispatch>();
   const { name, speciality, available, nearMe, perimeter } = useSelector((state: RootState) => state.findDoctor);
+  const { latitude, longitude } = useSelector((state: RootState) => state.userLocation);
   const [localPerimeter, setLocalPerimeter] = useState(perimeter.toString());
   const [hasSearched, setHasSearched] = useState(false);
   const [showResults, setShowResults] = useState(false);
@@ -30,6 +30,10 @@ const FindDoctor: React.FC<FindDoctorProps> = ({ onToggleReference }) => {
       perimeter: nearMe ? 20 : (localPerimeter === '' ? null : parseInt(localPerimeter) || null),
       latitude: selectedLocation?.lat ? parseFloat(selectedLocation.lat) : undefined,
       longitude: selectedLocation?.lon ? parseFloat(selectedLocation.lon) : undefined,
+      coords: {
+        LocationLatitude: latitude ?? 0,
+        LocationLongitude: longitude ?? 0
+      }
     }));
     if (selectedLocation) {
       dispatch(setSearchedLocation({
@@ -131,12 +135,7 @@ const FindDoctor: React.FC<FindDoctorProps> = ({ onToggleReference }) => {
                 </Grid>
               </>
             )}
-
-
-
-
-            
-<Grid item xs={12} sm={6} md={2}>
+            <Grid item xs={12} sm={6} md={2}>
               <Box display="flex" justifyContent="space-between">
                 <Button
                   variant="contained"
@@ -148,14 +147,14 @@ const FindDoctor: React.FC<FindDoctorProps> = ({ onToggleReference }) => {
                   Search
                 </Button>
                 <Button
-  variant="contained"
-  color="error"
-  size="small"
-  onClick={onToggleReference}
-  sx={{ height: '36px', borderRadius: 2, minWidth: '80px', px: 1 }}
->
-  Refrence
-</Button>
+                  variant="contained"
+                  color="error"
+                  size="small"
+                  onClick={onToggleReference}
+                  sx={{ height: '36px', borderRadius: 2, minWidth: '80px', px: 1 }}
+                >
+                  Reference
+                </Button>
               </Box>
             </Grid>
           </Grid>

@@ -41,6 +41,7 @@ export const searchDoctors = createAsyncThunk(
     perimeter: number | null;
     latitude?: number;
     longitude?: number;
+    coords: { LocationLatitude: number; LocationLongitude: number };
   }, { rejectWithValue }) => {
     try {
       const token = localStorage.getItem('token');

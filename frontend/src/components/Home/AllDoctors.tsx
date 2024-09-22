@@ -63,7 +63,7 @@ const AllDoctors: React.FC = () => {
         </TitleWrapper>
         <Grid container spacing={4}>
         {currentDoctors.map((doctor) => {
-  console.log('Doctor data:', doctor);
+ 
   return (
     <Grid item key={doctor.UserID} xs={12} sm={6} md={3}>
       <DoctorCard
