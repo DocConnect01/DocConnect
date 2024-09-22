@@ -1,5 +1,4 @@
 
-import './BookApp.css'
 import React from 'react';
 import AppointmentCalendar from '../components/Appointment/AppointmentCalendar';
 import TimeSlotSelector from '../components/Appointment/TimeSlotSelector';

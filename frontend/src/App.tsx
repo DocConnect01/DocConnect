@@ -3,11 +3,9 @@ import React from "react";
 import ConfirmationModal from "./components/Appointment/ConfirmationModal"; 
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import LoginForm from "../src/components/login/Login";
-import Home from "./pages/Home";
 import AppointmentCalendar from "./components/Appointment/AppointmentCalendar";
 import RegisterForm from "./components/RegisterForm";
-import Footer from "./components/login/Footer";
-
+import BookAppointment from "./pages/BookAppointment";
 
 const App: React.FC = () => {
   return (
@@ -21,9 +19,8 @@ const App: React.FC = () => {
 
 <Route path="/login" element={<LoginForm />} />
 <Route path="/register" element={<RegisterForm />} />
-  <Route path="/home" element= {<Home/>}/>
   <Route path="/appointment" element={<AppointmentCalendar DoctorID="1" />} />
-      
+  <Route path="/" element={<BookAppointment />} />   
   <Route path="/appointment/confirmation" element={
    <ConfirmationModal
    open={true} 
