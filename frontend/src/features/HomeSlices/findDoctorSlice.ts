@@ -4,12 +4,16 @@ interface FindDoctorState {
   name: string;
   speciality: string;
   available: boolean;
+  nearMe: boolean;
+  perimeter: number;
 }
 
 const initialState: FindDoctorState = {
   name: '',
   speciality: '',
   available: false,
+  nearMe: false,
+  perimeter: 15,
 };
 
 const findDoctorSlice = createSlice({
@@ -25,8 +29,14 @@ const findDoctorSlice = createSlice({
     setAvailable: (state, action: PayloadAction<boolean>) => {
       state.available = action.payload;
     },
+    setNearMe: (state, action: PayloadAction<boolean>) => {
+      state.nearMe = action.payload;
+    },
+    setPerimeter: (state, action: PayloadAction<number>) => {
+      state.perimeter = action.payload;
+    },
   },
 });
 
-export const { setName, setSpeciality, setAvailable } = findDoctorSlice.actions;
+export const { setName, setSpeciality, setAvailable, setNearMe, setPerimeter } = findDoctorSlice.actions;
 export default findDoctorSlice.reducer;

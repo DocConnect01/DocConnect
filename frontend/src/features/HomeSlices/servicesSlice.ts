@@ -19,7 +19,7 @@ const initialState: ServicesState = {
       description: 'Comprehensive health check-ups and consultations.',
       image: '/path-to-general-consultation-image.jpg',
     },
-    
+    // Add more services here
   ],
 };
 
@@ -27,7 +27,7 @@ const servicesSlice = createSlice({
   name: 'services',
   initialState,
   reducers: {
-   
+    // Add reducers if needed
   },
 });
 

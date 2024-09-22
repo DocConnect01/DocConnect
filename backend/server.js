@@ -11,8 +11,8 @@ const userRoutesLocation = require('./router/user.router')
 
 
 const testRoutes = require('./router/user.route')
-const doctorRoute = require('./router/doctor.router')
-
+// const doctorRoute = require('./router/doctor.router')
+const doctor2Routes = require('./router/doctor2.router')
 const app = express();
 const PORT = process.env.PORT || 5000;
 
@@ -22,6 +22,7 @@ app.use(bodyParser.json());
 app.use(cors());
 // app.use(authenticate);
 // Use routes
+app.use("/api/doctor2" , doctor2Routes)
 
 app.use("/api/users", userRoutes);
 app.use("/api/users2", userRoutesLocation);

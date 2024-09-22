@@ -1,31 +1,96 @@
 import React from 'react';
-import { Card, CardContent, Typography, CardMedia, Button } from '@mui/material';
+import { Card, CardContent, Typography, CardMedia, Button, Box } from '@mui/material';
+import { useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import { setSelectedDoctor, SelectedDoctor } from '../../features/HomeSlices/selectedDoctorSlice';
+import { styled } from '@mui/system';
+import MapIcon from '@mui/icons-material/Map';
+import { setSelectedDoctorLocation } from '../../features/UserLocationSlice';
+
 
 interface DoctorProps {
-  name: string;
-  specialty: string;
+  UserID: number;
+  FirstName: string;
+  LastName: string;
+  Speciality: string;
+  Bio: string;
   imageUrl: string;
+  LocationLatitude: number;
+  LocationLongitude: number;
 }
 
-const DoctorCard: React.FC<DoctorProps> = ({ name, specialty, imageUrl }) => {
+const StyledCard = styled(Card)(({ theme }) => ({
+  width: '100%',
+  height: 400,
+  display: 'flex',
+  flexDirection: 'column',
+  transition: 'transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out',
+  '&:hover': {
+    transform: 'translateY(-5px)',
+    boxShadow: '0 4px 20px 0 rgba(0,0,0,0.12)',
+  },
+}));
+
+const StyledCardMedia = styled(CardMedia)({
+  height: 250,
+  objectFit: 'cover',
+}) as typeof CardMedia;
+
+const DoctorCard: React.FC<DoctorProps> = ({ UserID, FirstName, LastName, Speciality, imageUrl, Bio, LocationLatitude, LocationLongitude }) => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const handleClick = () => {
+    const doctor: SelectedDoctor = {
+      UserID,
+      FirstName,
+      LastName,
+      Speciality,
+      Bio,
+      imageUrl,
+      LocationLatitude,
+      LocationLongitude,
+    };
+    dispatch(setSelectedDoctor(doctor));
+    navigate('/doctor-details');
+  };
+
+  const handleGPSClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    console.log('Dispatching setSelectedDoctorLocation:', { latitude: LocationLatitude, longitude: LocationLongitude });
+    dispatch(setSelectedDoctorLocation({ latitude: LocationLatitude, longitude: LocationLongitude }));
+    
+  
+    // Scroll to the map
+    const mapElement = document.getElementById('user-location-map');
+    if (mapElement) {
+      mapElement.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
   return (
-    <Card sx={{ maxWidth: 345, height: '100%', display: 'flex', flexDirection: 'column' }}>
-      <CardMedia
+    <StyledCard onClick={handleClick}>
+      <StyledCardMedia
         component="img"
-        height="140"
         image={imageUrl}
-        alt={name}
+        alt={`${FirstName} ${LastName}`}
       />
       <CardContent sx={{ flexGrow: 1 }}>
-        <Typography gutterBottom variant="h5" component="div">
-          {name}
+        <Typography gutterBottom variant="h5" component="div" sx={{ fontWeight: 'bold' }}>
+          {`${FirstName} ${LastName}`}
         </Typography>
-        <Typography variant="body2" color="text.secondary">
-          {specialty}
+        <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+          {Speciality}
         </Typography>
       </CardContent>
-      <Button size="small" color="primary">Book Appointment</Button>
-    </Card>
+      <Box sx={{ p: 2, mt: 'auto', display: 'flex', justifyContent: 'space-between' }}>
+        <Button size="small" color="primary" variant="contained" sx={{ flexGrow: 1, mr: 1 }}>
+          Book Appointment
+        </Button>
+        <Button size="small" color="secondary" variant="contained" onClick={handleGPSClick}>
+          <MapIcon />
+        </Button>
+      </Box>
+    </StyledCard>
   );
 };
 

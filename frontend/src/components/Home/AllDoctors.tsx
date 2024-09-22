@@ -1,7 +1,10 @@
-import React from 'react';
-import { Box, Container, Grid, Typography } from '@mui/material';
+import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { Box, Container, Grid, Typography, CircularProgress, Pagination } from '@mui/material';
 import { styled } from '@mui/system';
 import DoctorCard from './DoctorCard';
+import { fetchDoctors } from '../../features/HomeSlices/doctorsSlice';
+import { RootState, AppDispatch } from '../../store/store';
 
 const DoctorsWrapper = styled(Box)(({ theme }) => ({
   backgroundColor: theme.palette.background.paper,
@@ -22,12 +25,33 @@ const GradientTitle = styled(Typography)(({ theme }) => ({
 }));
 
 const AllDoctors: React.FC = () => {
-  const doctors = [
-    { name: 'Dr. John Doe', specialty: 'Cardiologist', imageUrl: '/path/to/image1.jpg' },
-    { name: 'Dr. Jane Smith', specialty: 'Pediatrician', imageUrl: '/path/to/image2.jpg' },
-    { name: 'Dr. Mike Johnson', specialty: 'Neurologist', imageUrl: '/path/to/image3.jpg' },
-    { name: 'Dr. Sarah Brown', specialty: 'Dermatologist', imageUrl: '/path/to/image4.jpg' },
-  ];
+  const dispatch = useDispatch<AppDispatch>();
+  const { allDoctors, status, error } = useSelector((state: RootState) => state.doctors);
+  const [page, setPage] = useState(1);
+  const doctorsPerPage = 4;
+
+  useEffect(() => {
+    if (status === 'idle') {
+      dispatch(fetchDoctors());
+    }
+  }, [status, dispatch]);
+
+  if (status === 'loading') {
+    return <CircularProgress />;
+  }
+
+  if (status === 'failed') {
+    return <Typography color="error">{error}</Typography>;
+  }
+
+  const indexOfLastDoctor = page * doctorsPerPage;
+  const indexOfFirstDoctor = indexOfLastDoctor - doctorsPerPage;
+  const currentDoctors = allDoctors.slice(indexOfFirstDoctor, indexOfLastDoctor);
+  const pageCount = Math.ceil(allDoctors.length / doctorsPerPage);
+
+  const handleChangePage = (event: React.ChangeEvent<unknown>, value: number) => {
+    setPage(value);
+  };
 
   return (
     <DoctorsWrapper>
@@ -38,12 +62,33 @@ const AllDoctors: React.FC = () => {
           </GradientTitle>
         </TitleWrapper>
         <Grid container spacing={4}>
-          {doctors.map((doctor, index) => (
-            <Grid item key={index} xs={12} sm={6} md={3}>
-              <DoctorCard name={doctor.name} specialty={doctor.specialty} imageUrl={doctor.imageUrl} />
-            </Grid>
-          ))}
+        {currentDoctors.map((doctor) => {
+  console.log('Doctor data:', doctor);
+  return (
+    <Grid item key={doctor.UserID} xs={12} sm={6} md={3}>
+      <DoctorCard
+        UserID={doctor.UserID}
+        FirstName={doctor.FirstName}
+        LastName={doctor.LastName}
+        Speciality={doctor.Speciality}
+        imageUrl={doctor.imageUrl || "https://via.placeholder.com/150"}
+        Bio={doctor.Bio}
+        LocationLatitude={doctor.LocationLatitude || 0}
+        LocationLongitude={doctor.LocationLongitude || 0}
+      />
+    </Grid>
+  );
+})}
+
         </Grid>
+        <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
+          <Pagination
+            count={pageCount}
+            page={page}
+            onChange={handleChangePage}
+            color="primary"
+          />
+        </Box>
       </Container>
     </DoctorsWrapper>
   );

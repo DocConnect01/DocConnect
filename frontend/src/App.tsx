@@ -14,9 +14,11 @@ import ChatInterface from "./components/doctorDashboard/Chat";
 import DoctorProfile from "./components/doctorDashboard/Profile";
 import Footer from "./components/login/Footer";
 import Home from "./components/Home/Home";
-
+import DoctorDetails from './components/Home/DoctorDetails';
+import ServiceDetails from './components/Home/ServiceDetails';
 
 const theme = createTheme();
+
 
 const App: React.FC = () => {
   // const location = useLocation();
@@ -35,7 +37,10 @@ const App: React.FC = () => {
           >
             <Navbar />
             <Routes>
+
               <Route path="/" element={<Home />} />
+              <Route path="/doctor-details" element={<DoctorDetails />} />
+              <Route path="/service-details" element={<ServiceDetails />} />
               {/* <Route path="/" element={<div>Home </div>} /> */}
               <Route path="/services" element={<div>Services </div>} />
               <Route path="/help" element={<div>Help </div>} />
@@ -47,6 +52,8 @@ const App: React.FC = () => {
               <Route path="/chat" element={<ChatInterface />} />
               <Route path="/settings" element={<DoctorProfile />} />
             </Routes>
+
+          
           </div>
         </BrowserRouter>
       </ThemeProvider>
@@ -55,13 +62,3 @@ const App: React.FC = () => {
 };
 
 export default App;
-
-
-
-
-
-
-
-
-
-

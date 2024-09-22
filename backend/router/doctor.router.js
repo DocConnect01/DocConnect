@@ -1,11 +1,11 @@
-// const express = require('express');
-// const router = express.Router();
-// // const {isAdmin } = require('../middlewares/auth');
-// const doctorController = require('../controller/doctor.controller');
+const express = require('express');
+const router = express.Router();
+// const {isAdmin } = require('../middlewares/auth');
+const doctorController = require('../controller/doctor.controller');
 
 
 
-// // Create a new doctor profile (Admin only)
+// Create a new doctor profile (Admin only)
 // router.post('/', authenticate, isAdmin, doctorController.createDoctorProfile);
 
 // // Get all doctor profiles (Admin only)
@@ -21,5 +21,6 @@
 // router.delete('/:id', authenticate, isAdmin, doctorController.deleteDoctorProfile);
 
 
+router.get('/getAllDoctorsForHome', doctorController.getAllDoctorsForHome);
 
-// module.exports = router;
+module.exports = router;

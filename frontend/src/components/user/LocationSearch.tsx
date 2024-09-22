@@ -28,7 +28,7 @@ const LocationSearch: React.FC<LocationSearchProps> = ({ onSelectLocation }) => 
     }
   };
 
-  const debouncedSearch = debounce(searchLocation, 300);
+  const debouncedSearch = debounce(searchLocation, 150);
 
   useEffect(() => {
     debouncedSearch(query);
