@@ -15,6 +15,7 @@ import {
   CardMedia,
   Button,
   CardActions,
+  Box,
 } from "@mui/material";
 
 const imageMap = {
@@ -30,12 +31,23 @@ const Services = () => {
   const services = useSelector((state: RootState) => state.services.services);
 
   return (
-    <div style={{ padding: "40px 20px", backgroundColor: "#f4f6f8" }}>
+    <Box
+      sx={{
+        padding: "60px 30px",
+        background: "linear-gradient(135deg, #f4f6f8, #e0f7fa)",
+      }}
+    >
       <Typography
         variant="h4"
         gutterBottom
         align="center"
-        sx={{ fontWeight: "bold", color: "#1976d2" }}
+        sx={{
+          fontWeight: "bold",
+          color: "#1976d2",
+          letterSpacing: "1.5px",
+          textTransform: "uppercase",
+          marginBottom: "10px",
+        }}
       >
         Services We Provide
       </Typography>
@@ -43,10 +55,17 @@ const Services = () => {
         variant="body1"
         paragraph
         align="center"
-        sx={{ marginBottom: "40px", color: "#607d8b" }}
+        sx={{
+          marginBottom: "50px",
+          color: "#607d8b",
+          maxWidth: "800px",
+          margin: "0 auto",
+          lineHeight: 1.7,
+        }}
       >
         We offer a wide range of medical services to meet all your healthcare
-        needs.
+        needs. Our professional and experienced staff ensure that you get the
+        best care possible. Here are some of the services we provide:
       </Typography>
       <Grid container spacing={4} justifyContent="center">
         {services.map((service) => (
@@ -55,10 +74,13 @@ const Services = () => {
               sx={{
                 maxWidth: 345,
                 margin: "auto",
-                boxShadow: "0px 4px 20px rgba(0, 0, 0, 0.1)",
-                transition: "transform 0.3s ease-in-out",
+                boxShadow: "0px 8px 24px rgba(0, 0, 0, 0.15)",
+                transition: "transform 0.3s ease-in-out, box-shadow 0.3s",
+                background: "#fff",
+                borderRadius: "15px",
                 "&:hover": {
                   transform: "translateY(-10px)",
+                  boxShadow: "0px 12px 30px rgba(0, 0, 0, 0.2)",
                 },
               }}
             >
@@ -67,25 +89,53 @@ const Services = () => {
                 height="180"
                 image={imageMap[service.title as keyof typeof imageMap]}
                 alt={service.title}
-                sx={{ objectFit: "cover" }}
+                sx={{
+                  objectFit: "cover",
+                  borderRadius: "15px 15px 0 0",
+                }}
               />
-              <CardContent>
+              <CardContent sx={{ padding: "24px" }}>
                 <Typography
                   gutterBottom
                   variant="h6"
                   component="div"
-                  sx={{ fontWeight: "bold" }}
+                  sx={{
+                    fontWeight: "bold",
+                    color: "#1976d2",
+                    textAlign: "center",
+                    marginBottom: "12px",
+                  }}
                 >
                   {service.title}
                 </Typography>
-                <Typography variant="body2" color="text.secondary">
+                <Typography
+                  variant="body2"
+                  color="text.secondary"
+                  sx={{ textAlign: "center" }}
+                >
                   {service.description}
                 </Typography>
               </CardContent>
-              <CardActions>
+              <CardActions
+                sx={{
+                  display: "flex",
+                  justifyContent: "center",
+                  paddingBottom: "16px",
+                }}
+              >
                 <Button
                   size="small"
-                  sx={{ color: "#1976d2", fontWeight: "bold" }}
+                  sx={{
+                    background: "linear-gradient(45deg, #1976d2, #42a5f5)",
+                    color: "#fff",
+                    fontWeight: "bold",
+                    padding: "8px 16px",
+                    borderRadius: "8px",
+                    transition: "background 0.3s ease-in-out",
+                    "&:hover": {
+                      background: "linear-gradient(45deg, #1565c0, #1e88e5)",
+                    },
+                  }}
                 >
                   Learn more
                 </Button>
@@ -94,7 +144,7 @@ const Services = () => {
           </Grid>
         ))}
       </Grid>
-    </div>
+    </Box>
   );
 };
 

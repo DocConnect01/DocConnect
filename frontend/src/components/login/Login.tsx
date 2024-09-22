@@ -20,7 +20,7 @@ import {
   FormControlLabel,
 } from "@mui/material";
 import { Facebook, LinkedIn, Twitter } from "@mui/icons-material";
-import axios from '../../features/axiosConfig';
+import axios from "../../features/axiosConfig";
 import UserLocation from "../user/UserLocation";
 
 const LoginForm: React.FC = () => {
@@ -53,21 +53,26 @@ const LoginForm: React.FC = () => {
     setLoading(true);
 
     try {
-      console.log("Attempting login with:", { Email: formState.Username, Password: formState.password });
-      const result = await dispatch(login({
+      console.log("Attempting login with:", {
         Email: formState.Username,
-        Password: formState.password
-      })).unwrap();
+        Password: formState.password,
+      });
+      const result = await dispatch(
+        login({
+          Email: formState.Username,
+          Password: formState.password,
+        })
+      ).unwrap();
 
       if (result.token) {
         localStorage.setItem("token", result.token);
-        
+
         try {
           const [doctorResponse, patientResponse] = await Promise.all([
-            axios.get('http://localhost:5000/api/users/check-doctor'),
-            axios.get('http://localhost:5000/api/users/check-patient')
+            axios.get("http://localhost:5000/api/users/check-doctor"),
+            axios.get("http://localhost:5000/api/users/check-patient"),
           ]);
-          
+
           const isDoctor = doctorResponse.data.isDoctor;
           const isPatient = patientResponse.data.isPatient;
           console.log("Is Doctor:", isDoctor);
@@ -255,7 +260,9 @@ const LoginForm: React.FC = () => {
           </Stack>
         </Box>
       </Box>
-      {isLoggedIn && userRole === "Patient" && <UserLocation onComplete={handleLocationUpdateComplete} />}
+      {isLoggedIn && userRole === "Patient" && (
+        <UserLocation onComplete={handleLocationUpdateComplete} />
+      )}
     </Box>
   );
 };

@@ -24,7 +24,7 @@ import {
   FormControlLabel,
 } from "@mui/material";
 import axios from "axios";
-import LocationSearch, { SearchResult } from './user/LocationSearch';
+import LocationSearch, { SearchResult } from "./user/LocationSearch";
 
 const RegisterForm: React.FC = () => {
   const dispatch = useDispatch();
@@ -34,7 +34,9 @@ const RegisterForm: React.FC = () => {
   const [specialty, setSpecialty] = useState("");
   const [bio, setBio] = useState("");
   const [meetingPrice, setMeetingPrice] = useState("");
-  const [selectedLocation, setSelectedLocation] = useState<SearchResult | null>(null);
+  const [selectedLocation, setSelectedLocation] = useState<SearchResult | null>(
+    null
+  );
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -235,20 +237,15 @@ const RegisterForm: React.FC = () => {
           <LocationSearch
             onSelectLocation={(result) => {
               setSelectedLocation(result);
-              console.log('Selected location:', result);
+              console.log("Selected location:", result);
             }}
           />
 
           <FormControlLabel
-            control={
-              <Checkbox
-                required
-                name="terms"
-              />
-            }
+            control={<Checkbox required name="terms" />}
             label={
               <Typography variant="body2">
-                Yes, I agree with all{" "}
+                Yes, I agree with all
                 <Link href="#" target="_blank">
                   Terms & Conditions
                 </Link>
