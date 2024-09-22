@@ -8,6 +8,7 @@ import {
   resetForm,
 } from "../../features/formSlice";
 import { login } from "../../features/authSlice";
+import UserLocation from "../user/UserLocation";
 import {
   TextField,
   Button,
@@ -20,11 +21,12 @@ import {
   FormControlLabel,
 } from "@mui/material";
 import { Facebook, LinkedIn, Twitter } from "@mui/icons-material";
-import axios from '../../features/axiosConfig';
-import UserLocation from "../user/UserLocation";
+// import { AppDispatch } from "../../store/store";
+import axios from "axios";
 
 const LoginForm: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
+
   const formState = useSelector((state: RootState) => state.form);
   const navigate = useNavigate();
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -59,31 +61,33 @@ const LoginForm: React.FC = () => {
         Password: formState.password
       })).unwrap();
 
+      // console.log("Full login result:", JSON.stringify(result, null, 2));
+
       if (result.token) {
         localStorage.setItem("token", result.token);
         
         try {
-          const [doctorResponse, patientResponse] = await Promise.all([
-            axios.get('http://localhost:5000/api/users/check-doctor'),
-            axios.get('http://localhost:5000/api/users/check-patient')
-          ]);
+          const response = await axios.get('http://localhost:5000/api/users/check-doctor', {
+            headers: { Authorization: `Bearer ${result.token}` }
+          });
+          const response2 = await axios.get('http://localhost:5000/api/users/check-patient', {
+            headers: { Authorization: `Bearer ${result.token}` }
+          });
           
-          const isDoctor = doctorResponse.data.isDoctor;
-          const isPatient = patientResponse.data.isPatient;
+          const isDoctor = response.data.isDoctor;
+          const isPatient = response2.data.isPatient;
           console.log("Is Doctor:", isDoctor);
           console.log("Is Patient:", isPatient);
 
           if (isDoctor) {
-            setUserRole("Doctor");
-            setIsLoggedIn(true);
+            console.log("Navigating to dashboard");
+            navigate("/dashboard");
           } else if (isPatient) {
-            setUserRole("Patient");
-            setIsLoggedIn(true);
-          } else {
-            setErrorMessage("Unknown user role");
+            console.log("Navigating to patient view");
+            navigate("/patientview");
           }
         } catch (error) {
-          console.error("Error checking user status:", error);
+          console.error("Error checking doctor status:", error);
           setErrorMessage("Error determining user type");
         }
 

@@ -25,12 +25,10 @@ module.exports = (sequelize) => {
     },
     StartTime: {
       type: DataTypes.DATE,
-      allowNull: false
+      allowNull: false,
+      defaultValue: DataTypes.NOW, // Set default value to current timestamp
     },
-    EndTime: {
-      type: DataTypes.DATE,
-      allowNull: true
-    }
+   
   }, {
     timestamps: true,
     createdAt: 'createdAt',
