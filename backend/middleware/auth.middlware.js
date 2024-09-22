@@ -1,6 +1,6 @@
 const jwt = require("jsonwebtoken");
 
-// Middleware to verify JWT and role
+
 const authenticate = (req, res, next) => {
   const token = req.headers.authorization?.split(" ")[1];
   // console.log("Token:", token);
@@ -43,4 +43,5 @@ const isPatient = (req, res, next) => {
   next();
 };
 
-module.exports = { authenticate, isAdmin, isDoctor, isPatient };
+module.exports = {  isAdmin, isDoctor, isPatient , authenticate };
+

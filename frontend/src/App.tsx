@@ -1,40 +1,53 @@
 import React from "react";
-
-import ConfirmationModal from "./components/Appointment/ConfirmationModal"; 
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import LoginForm from "../src/components/login/Login";
-import AppointmentCalendar from "./components/Appointment/AppointmentCalendar";
+import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
+import { Provider } from "react-redux";
+import { store } from "./store/store";
+import { ThemeProvider, createTheme } from "@mui/material/styles";
+import CssBaseline from "@mui/material/CssBaseline";
 import RegisterForm from "./components/RegisterForm";
-import BookAppointment from "./pages/BookAppointment";
+import LoginForm from "./components/login/Login";
+import ContactForm from "./components/contact/contactForm";
+import Navbar from "./components/navbar/Navbar";
+import Sidebar from "./components/doctorDashboard/Sidebar";
+import Dashboard from "./components/doctorDashboard/Dashboard";
+import ChatInterface from "./components/doctorDashboard/Chat";
+import DoctorProfile from "./components/doctorDashboard/Profile";
+
+
+const theme = createTheme();
 
 const App: React.FC = () => {
+  // const location = useLocation();
+
   return (
- 
-<BrowserRouter>
-<div
-        style={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}
-      >
-
-<Routes>
-
-<Route path="/login" element={<LoginForm />} />
-<Route path="/register" element={<RegisterForm />} />
-  <Route path="/appointment" element={<AppointmentCalendar DoctorID="1" />} />
-  <Route path="/" element={<BookAppointment />} />   
-  <Route path="/appointment/confirmation" element={
-   <ConfirmationModal
-   open={true} 
-   onClose={() => {}}
-   onConfirm={() => {}}
-   appointmentDetails={{ doctorId: '1', patientId: '123', slot: '10:00 AM' }}
-/>
-  } />
-
-
-</Routes>
-</div>
-</BrowserRouter>
-
+    <Provider store={store}>
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        <BrowserRouter>
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              minHeight: "100vh",
+            }}
+          >
+            <Navbar />
+            <Routes>
+              <Route path="/" element={<div>Home </div>} />
+              <Route path="/services" element={<div>Services </div>} />
+              <Route path="/help" element={<div>Help </div>} />
+              <Route path="/blogs" element={<div>Blogs </div>} />
+              <Route path="/login" element={<LoginForm />} />
+              <Route path="/register" element={<RegisterForm />} />
+              <Route path="/contact" element={<ContactForm />} />
+              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/chat" element={<ChatInterface />} />
+              <Route path="/settings" element={<DoctorProfile />} />
+            </Routes>
+          </div>
+        </BrowserRouter>
+      </ThemeProvider>
+    </Provider>
   );
 };
 
