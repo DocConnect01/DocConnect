@@ -9,7 +9,7 @@ const userRoutes = require('./router/auth.router')
 const doctorRoute = require('./router/doctor.router')
 const appointmentRoutes = require('./router/appointment.router');
 const availabilityRoutes = require('./router/availability.router');
-const { authenticate } = require("./middleware/auth.middlware");
+
 const app = express();
 const PORT = process.env.PORT || 5000;
 
