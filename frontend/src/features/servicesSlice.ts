@@ -4,7 +4,6 @@ interface Service {
   id: number;
   title: string;
   description: string;
-  image: string;
 }
 
 interface ServicesState {
@@ -16,38 +15,32 @@ const initialState: ServicesState = {
     {
       id: 1,
       title: "Dental treatments",
-      description: "Lorem ipsum...",
-      image: "dental.jpg",
+      description: "Comprehensive dental care for all ages.",
     },
     {
       id: 2,
       title: "Bones treatments",
-      description: "Lorem ipsum...",
-      image: "bones.jpg",
+      description: "Advanced treatments for bone health and injuries.",
     },
     {
       id: 3,
       title: "Diagnosis",
-      description: "Lorem ipsum...",
-      image: "diagnosis.jpg",
+      description: "Accurate diagnostics for various health conditions.",
     },
     {
       id: 4,
       title: "Cardiology",
-      description: "Lorem ipsum...",
-      image: "cardiology.jpg",
+      description: "Expert heart care and cardiology services.",
     },
     {
       id: 5,
       title: "Surgery",
-      description: "Lorem ipsum...",
-      image: "surgery.jpg",
+      description: "State-of-the-art surgical procedures and care.",
     },
     {
       id: 6,
       title: "Eye care",
-      description: "Lorem ipsum...",
-      image: "eye.jpg",
+      description: "Comprehensive eye exams and treatments.",
     },
   ],
 };
