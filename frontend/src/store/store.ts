@@ -12,6 +12,8 @@ import selectedDoctorReducer from '../features/HomeSlices/selectedDoctorSlice';
 import selectedServiceReducer from '../features/HomeSlices/selectedServiceSlice';
 import doctorsSlice from '../features/HomeSlices/doctorsSlice';
 
+// import chatReducer from './slices/chatSlice';
+// import authReducer from './slices/authSlice';
 export const store = configureStore({
   reducer: {
     form: formReducer,

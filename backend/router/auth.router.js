@@ -9,7 +9,7 @@ router.get('/check-doctor', authenticate, (req, res) => {
   });
   router.get('/check-patient', authenticate, (req, res) => {
     res.json({ isPatient: req.user.Role === 'Patient' });
-  });
+  });   
 // Login for Admin, Doctor, and Patient
 router.post("/login", login);
 

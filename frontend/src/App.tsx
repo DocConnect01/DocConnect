@@ -4,19 +4,22 @@ import { Provider } from "react-redux";
 import { store } from "./store/store";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
+import { Box, Container } from "@mui/material";
 import RegisterForm from "./components/RegisterForm";
 import LoginForm from "./components/login/Login";
 import ContactForm from "./components/contact/contactForm";
 import Navbar from "./components/navbar/Navbar";
 import Sidebar from "./components/doctorDashboard/Sidebar";
 import Dashboard from "./components/doctorDashboard/Dashboard";
-import ChatInterface from "./components/doctorDashboard/Chat";
 import DoctorProfile from "./components/doctorDashboard/Profile";
+import HelloPatient from "./components/patientview/View";
 import Footer from "./components/login/Footer";
 import Home from "./components/Home/Home";
 import DoctorDetails from './components/Home/DoctorDetails';
 import ServiceDetails from './components/Home/ServiceDetails';
 
+import ChatRooms from "./components/doctorDashboard/ChatRooms";
+// import { blue } from '@mui/material/colors';
 const theme = createTheme();
 
 
@@ -49,7 +52,7 @@ const App: React.FC = () => {
               <Route path="/register" element={<RegisterForm />} />
               <Route path="/contact" element={<ContactForm />} />
               <Route path="/dashboard" element={<Dashboard />} />
-              <Route path="/chat" element={<ChatInterface />} />
+              <Route path="/chat" element={<ChatRooms />} />
               <Route path="/settings" element={<DoctorProfile />} />
             </Routes>
 
