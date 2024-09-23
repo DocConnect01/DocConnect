@@ -102,45 +102,58 @@ const ChatMessages: React.FC<ChatMessagesProps> = ({ roomId, socket }) => {
         Chat Room #{roomId}
       </Typography>
       <List sx={{ flex: 1, overflow: 'auto', p: 2 }}>
-        {messages.map((message, index) => (
-          <React.Fragment key={`${message.MessageID}-${message.SentAt}`}>
-            {index > 0 && messages[index - 1].Sender.UserID !== message.Sender.UserID && <Divider sx={{ my: 2 }} />}
-            <ListItem alignItems="flex-start" sx={{ flexDirection: message.Sender.UserID === parseInt(localStorage.getItem('userId') || '0', 10) ? 'row-reverse' : 'row' }}>
-              <Avatar sx={{ bgcolor: 'primary.main', mr: 2 }}>{message.Sender.FirstName[0]}</Avatar>
-              <ListItemText
-                primary={
-                  <Typography
-                    component="span"
-                    variant="body2"
-                    color="text.primary"
-                    sx={{ display: 'inline', fontWeight: 'bold' }}
-                  >
-                    {message.Sender.Username}
-                  </Typography>
-                }
-                secondary={
-                  <React.Fragment>
-                    <Typography
-                      component="span"
-                      variant="body2"
-                      color="text.primary"
-                    >
-                      {message.MessageText}
-                    </Typography>
-                    <Typography
-                      component="span"
-                      variant="caption"
-                      color="text.secondary"
-                      sx={{ display: 'block', mt: 0.5 }}
-                    >
-                      {new Date(message.SentAt).toLocaleString()}
-                    </Typography>
-                  </React.Fragment>
-                }
-              />
-            </ListItem>
-          </React.Fragment>
-        ))}
+        {messages.map((message, index) => {
+          const isSender = message.Sender.UserID === parseInt(localStorage.getItem('userId') || '0', 10);
+
+          return (
+            <React.Fragment key={`${message.MessageID}-${message.SentAt}`}>
+              {index > 0 && messages[index - 1].Sender.UserID !== message.Sender.UserID && <Divider sx={{ my: 2 }} />}
+              <ListItem
+                alignItems="flex-start"
+                sx={{
+                  justifyContent: isSender ? 'flex-end' : 'flex-start',
+                  flexDirection: isSender ? 'row-reverse' : 'row',
+                }}
+              >
+                <Avatar sx={{ bgcolor: 'primary.main', mr: isSender ? 0 : 2, ml: isSender ? 2 : 0 }}>
+                  {message.Sender.FirstName[0]}
+                </Avatar>
+                <Box
+                  sx={{
+                    bgcolor: isSender ? 'primary.light' : 'grey.200',
+                    color: isSender ? 'white' : 'black',
+                    p: 1.5,
+                    borderRadius: 2,
+                    maxWidth: '70%',
+                  }}
+                >
+                  <ListItemText
+                    primary={
+                      <Typography component="span" variant="body2" fontWeight="bold">
+                        {message.Sender.Username}
+                      </Typography>
+                    }
+                    secondary={
+                      <>
+                        <Typography component="span" variant="body2">
+                          {message.MessageText}
+                        </Typography>
+                        <Typography
+                          component="span"
+                          variant="caption"
+                          color="text.secondary"
+                          sx={{ display: 'block', mt: 0.5 }}
+                        >
+                          {new Date(message.SentAt).toLocaleString()}
+                        </Typography>
+                      </>
+                    }
+                  />
+                </Box>
+              </ListItem>
+            </React.Fragment>
+          );
+        })}
         <div ref={messagesEndRef} />
       </List>
       <Box sx={{ p: 2, borderTop: 1, borderColor: 'divider' }}>
@@ -158,7 +171,7 @@ const ChatMessages: React.FC<ChatMessagesProps> = ({ roomId, socket }) => {
           }}
           multiline
           maxRows={4}
-          InputProps={{
+          inputProps={{
             endAdornment: (
               <Button
                 variant="contained"

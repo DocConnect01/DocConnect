@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { setSelectedDoctor, SelectedDoctor } from '../../features/HomeSlices/selectedDoctorSlice';
 import { styled } from '@mui/system';
 import MapIcon from '@mui/icons-material/Map';
-import { setSelectedDoctorLocation } from '../../features/UserLocationSlice';
+import { setSelectedDoctorLocation } from '../../features/userLocationSlice';
 
 
 interface DoctorProps {

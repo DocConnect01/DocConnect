@@ -1,6 +1,6 @@
 import { configureStore } from "@reduxjs/toolkit";
 import formReducer from "../features/formSlice";
-import userLocationReducer from "../features/UserLocationSlice";
+import userLocationReducer from "../features/userLocationSlice";
 import userReducer from '../features/userSlice'; 
 import contactFormReducer from "../features/contactFormSlice";
 import authReducer from '../features/authSlice';

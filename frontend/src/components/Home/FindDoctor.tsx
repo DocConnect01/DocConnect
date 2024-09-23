@@ -6,7 +6,7 @@ import { setName, setSpeciality, setAvailable, setNearMe, setPerimeter } from '.
 import { searchDoctors } from '../../features/HomeSlices/doctorsSlice';
 import SearchResults from './SearchResults';
 import LocationSearch, { SearchResult } from '../user/LocationSearch';
-import { setSearchedLocation, clearSearchedLocation } from '../../features/UserLocationSlice';
+import { setSearchedLocation, clearSearchedLocation } from '../../features/userLocationSlice';
 
 interface FindDoctorProps {
   onToggleReference: () => void;
