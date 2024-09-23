@@ -1,12 +1,14 @@
 import { configureStore } from "@reduxjs/toolkit";
 import formReducer from "../features/formSlice";
-import userLocationReducer from "../features/UserLocationSlice";
-import userReducer from '../features/userSlice'; 
+import userReducer from '../features/userSlice'; // Import your user slice
+import doctorReducer from '../features/doctorSlice'; // Import your doctor slice
+import userLocationReducer from "../features/userLocationSlice";
 import contactFormReducer from "../features/contactFormSlice";
-import authReducer from '../features/authSlice';
+import authReducer from "../features/authSlice"; // Import your auth slice
+import sessionReducer from '../features/sessionSlice'; // Import your session slice
+import appointmentsReducer from '../features/appointmentSlice'; // Adjust the import path as necessary
 import findDoctorReducer from '../features/HomeSlices/findDoctorSlice';
 import servicesReducer from '../features/HomeSlices/servicesSlice';
-// import doctorsReducer from '../features/doctorsSlice';
 import testimonialsReducer from '../features/HomeSlices/testimonialsSlice';
 import selectedDoctorReducer from '../features/HomeSlices/selectedDoctorSlice';
 import selectedServiceReducer from '../features/HomeSlices/selectedServiceSlice';
@@ -17,9 +19,13 @@ import doctorsSlice from '../features/HomeSlices/doctorsSlice';
 export const store = configureStore({
   reducer: {
     form: formReducer,
-    userLocation: userLocationReducer,
     users: userReducer, // Add the user reducer to the store
+    doctor: doctorReducer,
     contactForm: contactFormReducer,
+    userLocation: userLocationReducer,
+    Auth: authReducer, // Add the auth reducer to the store
+    session: sessionReducer,
+    appointments: appointmentsReducer,
     auth: authReducer,
     findDoctor: findDoctorReducer,
     services: servicesReducer,
