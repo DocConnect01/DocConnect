@@ -13,6 +13,9 @@ const userRoutes = require('./router/user.route')
 const userRoutesLocation = require('./router/user.router')
 
 
+const testRoutes = require('./router/user.route')
+// const doctorRoute = require('./router/doctor.router')
+const doctor2Routes = require('./router/doctor2.router')
 // const testRoutes = require('./router/user.route')
 // const doctorRoute = require('./router/doctor.router')
 
@@ -25,6 +28,7 @@ app.use(bodyParser.json());
 app.use(cors());
 // app.use(authenticate);
 // Use routes
+app.use("/api/doctor2" , doctor2Routes)
 
 app.use("/api/users", authRoutes);
 // app.use("/api/patient", userRoutes);

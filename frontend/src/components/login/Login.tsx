@@ -47,6 +47,12 @@ const LoginForm: React.FC = () => {
     return Object.keys(errors).length === 0;
   };
 
+  const [isLocationUpdated, setIsLocationUpdated] = useState(false);
+
+  const handleLocationUpdateComplete = () => {
+    setIsLocationUpdated(true);
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validateForm()) return;
@@ -60,8 +66,6 @@ const LoginForm: React.FC = () => {
         Email: formState.Username,
         Password: formState.password
       })).unwrap();
-
-      // console.log("Full login result:", JSON.stringify(result, null, 2));
 
       if (result.token) {
         localStorage.setItem("token", result.token);
@@ -79,15 +83,11 @@ const LoginForm: React.FC = () => {
           console.log("Is Doctor:", isDoctor);
           console.log("Is Patient:", isPatient);
 
-          if (isDoctor) {
-            console.log("Navigating to dashboard");
-            navigate("/dashboard");
-          } else if (isPatient) {
-            console.log("Navigating to patient view");
-            navigate("/patientview");
-          }
+          setIsLoggedIn(true);
+          setUserRole(isDoctor ? "Doctor" : "Patient");
+
         } catch (error) {
-          console.error("Error checking doctor status:", error);
+          console.error("Error checking user status:", error);
           setErrorMessage("Error determining user type");
         }
 
@@ -95,29 +95,25 @@ const LoginForm: React.FC = () => {
       } else {
         setErrorMessage("Login failed: No token received");
       }
-    } catch (error: any) {
+    } catch (error) {
       console.error("Login error:", error);
-      setErrorMessage(error.message || "An unexpected error occurred.");
+      setErrorMessage("Login failed. Please check your credentials and try again.");
     } finally {
       setLoading(false);
     }
   };
 
-  const handleLocationUpdateComplete = () => {
-    navigate("/patientview");
-  };
-
   useEffect(() => {
-    if (isLoggedIn && userRole) {
+    if (isLoggedIn && isLocationUpdated) {
       if (userRole === "Patient") {
-        console.log("Patient logged in, waiting for location update");
+        console.log("Patient logged in, navigating to patient view");
+        navigate("/patientview");
       } else if (userRole === "Doctor") {
         console.log("Doctor logged in, navigating to dashboard");
         navigate("/dashboard");
       }
     }
-  }, [isLoggedIn, userRole, navigate]);
-
+  }, [isLoggedIn, isLocationUpdated, userRole, navigate]);
   return (
     <Box
       sx={{
@@ -259,7 +255,7 @@ const LoginForm: React.FC = () => {
           </Stack>
         </Box>
       </Box>
-      {isLoggedIn && userRole === "Patient" && <UserLocation onComplete={handleLocationUpdateComplete} />}
+      {isLoggedIn && <UserLocation onComplete={handleLocationUpdateComplete} />}
     </Box>
   );
 };
