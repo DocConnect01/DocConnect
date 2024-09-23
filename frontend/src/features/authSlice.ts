@@ -64,14 +64,14 @@ export const login = createAsyncThunk(
 );
 
 const authSlice = createSlice({
-  name: "auth",
+  name: 'auth',
   initialState,
   reducers: {
     logout: (state) => {
       state.user = null;
       state.token = null;
       state.isAuthenticated = false;
-      localStorage.removeItem("token");
+      localStorage.removeItem('token');
     },
   },
   extraReducers: (builder) => {
@@ -80,13 +80,10 @@ const authSlice = createSlice({
         state.loading = true;
         state.error = null;
       })
-      .addCase(
-        register.fulfilled,
-        (state, action: PayloadAction<{ user: User }>) => {
-          state.loading = false;
-          state.user = action.payload.user;
-        }
-      )
+      .addCase(register.fulfilled, (state, action: PayloadAction<{ user: User }>) => {
+        state.loading = false;
+        state.user = action.payload.user;
+      })
       .addCase(register.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;
@@ -95,14 +92,11 @@ const authSlice = createSlice({
         state.loading = true;
         state.error = null;
       })
-      .addCase(
-        login.fulfilled,
-        (state, action: PayloadAction<{ token: string }>) => {
-          state.loading = false;
-          state.token = action.payload.token;
-          state.isAuthenticated = true;
-        }
-      )
+      .addCase(login.fulfilled, (state, action: PayloadAction<{ token: string }>) => {
+        state.loading = false;
+        state.token = action.payload.token;
+        state.isAuthenticated = true;
+      })
       .addCase(login.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;

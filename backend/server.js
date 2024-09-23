@@ -4,14 +4,17 @@ const express = require("express");
 const { sequelize } = require("./models");
 const bodyParser = require("body-parser");
 
-const cors = require("cors");
-const userRoutes = require("./router/auth.router");
+const cors = require('cors');
+const authRoutes = require('./router/auth.router')
+const userRoutes = require('./router/user.route')
+// const cors = require("cors");
+// const userRoutes = require("./router/auth.router");
 
 const userRoutesLocation = require('./router/user.router')
 
 
-const testRoutes = require('./router/user.route')
-const doctorRoute = require('./router/doctor.router')
+// const testRoutes = require('./router/user.route')
+// const doctorRoute = require('./router/doctor.router')
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -22,11 +25,15 @@ app.use(bodyParser.json());
 app.use(cors());
 // app.use(authenticate);
 // Use routes
+
+app.use("/api/users", authRoutes);
+// app.use("/api/patient", userRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/users2", userRoutesLocation);
-app.use("/api/patient", testRoutes);
+// app.use("/api/patient", testRoutes);
 // app.use('/api/appointments', appointmentRoutes);
-// app.use('/api/chats', chatRoutes);
+const chatRoutes=require("./router/chatRoom.route")
+app.use('/api/chats', chatRoutes);
 
 // Test route
 
