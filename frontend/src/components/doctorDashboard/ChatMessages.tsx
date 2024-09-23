@@ -63,8 +63,8 @@ const ChatMessages: React.FC<ChatMessagesProps> = ({ roomId, socket }) => {
       MessageText: newMessage.trim(),
       Sender: {
         UserID: parseInt(localStorage.getItem('userId') || '0', 10),
-        Username: localStorage.getItem('username') || '',
-        FirstName: localStorage.getItem('firstName') || '',
+        Username: localStorage.getItem('Username') || '',
+        FirstName: localStorage.getItem('FirstName') || '',
       },
       SentAt: new Date().toISOString(),
       MessageID: `temp-${Date.now()}`,
