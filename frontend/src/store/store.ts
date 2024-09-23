@@ -4,6 +4,7 @@ import userLocationReducer from "../../src/features/userLocationSlice";
 import contactFormReducer from "../features/contactFormSlice";
 import userReducer from "../features/userSlice";
 import servicesReducer from "../features/servicesSlice";
+import profileReducer from "../features/profileSlice";
 
 export const store = configureStore({
   reducer: {
@@ -12,6 +13,7 @@ export const store = configureStore({
     users: userReducer,
     contactForm: contactFormReducer,
     services: servicesReducer,
+    profile: profileReducer,
   },
 });
 
