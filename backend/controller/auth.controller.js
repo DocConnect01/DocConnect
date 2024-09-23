@@ -17,7 +17,7 @@ exports.register = async (req, res) => {
     Bio,
     MeetingPrice,
     Latitude,
-    Longitude
+    Longitude,
   } = req.body;
 
   if (Role !== "Doctor" && Role !== "Patient") {
@@ -38,8 +38,8 @@ exports.register = async (req, res) => {
       Speciality: Role === "Doctor" ? Speciality : null,
       Bio: Role === "Doctor" ? Bio : null,
       MeetingPrice: Role === "Doctor" ? MeetingPrice : null,
-      LocationLatitude : Latitude,
-      LocationLongitude : Longitude
+      LocationLatitude: Latitude,
+      LocationLongitude: Longitude,
     });
 
     res.status(201).json({ message: "User registered successfully", user: newUser });
@@ -86,5 +86,22 @@ exports.login = async (req, res) => {
   } catch (error) {
     console.error("Login error:", error);
     res.status(500).json({ message: "Error logging in", error: error.message });
+  }
+};
+
+exports.session = async (req, res) => {
+  try {
+    const { authorization } = req.headers;
+    const token = authorization.split(" ")[1];
+
+    if (!token) {
+      return res.status(400).json({ message: "Token required" });
+    }
+
+    const session = jwt.decode(token, process.env.JWT_SECRET);
+
+    res.status(200).json(session);
+  } catch (error) {
+    console.log(error);
   }
 };

@@ -1,0 +1,138 @@
+const db = require("../models"); // Make sure the correct path is used
+
+// Create a new Appointment
+exports.createAppointment = async (req, res) => {
+  try {
+    const { PatientID, DoctorID, AppointmentDate, DurationMinutes, Status } =
+      req.body;
+
+    // Ensure the DoctorID is valid and corresponds to a user with the role 'Doctor'
+    const doctor = await db.User.findOne({
+      where: { UserID: DoctorID, Role: "Doctor" },
+    });
+    if (!doctor) {
+      return res.status(404).json({ message: "Doctor not found" });
+    }
+
+    // Ensure the PatientID is valid and corresponds to a user with the role 'Patient'
+    const patient = await db.User.findOne({
+      where: { UserID: PatientID, Role: "Patient" },
+    });
+    if (!patient) {
+      return res.status(404).json({ message: "Patient not found" });
+    }
+
+    // Create the appointment
+    const newAppointment = await db.Appointment.create({
+      PatientID,
+      DoctorID,
+      AppointmentDate,
+      DurationMinutes,
+      Status,
+    });
+
+    // Return the newly created appointment
+    return res.status(201).json(newAppointment);
+  } catch (error) {
+    // Handle any errors and send a response with the error message
+    return res
+      .status(500)
+      .json({ message: "Error creating appointment", error });
+  }
+};
+
+// Get all Appointments
+exports.getAppointments = async (req, res) => {
+  try {
+    const appointments = await db.Appointment.findAll();
+    return res.status(200).json(appointments);
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ message: "Error retrieving appointments", error });
+  }
+};
+
+// Get a single Appointment by ID
+exports.getAppointmentById = async (req, res) => {
+  try {
+    const appointment = await db.Appointment.findByPk(req.params.id);
+    if (!appointment) {
+      return res.status(404).json({ message: "Appointment not found" });
+    }
+    return res.status(200).json(appointment);
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ message: "Error retrieving appointment", error });
+  }
+};
+
+// Update an Appointment by ID
+exports.updateAppointment = async (req, res) => {
+  try {
+    const { PatientID, DoctorID, AppointmentDate, DurationMinutes, Status } =
+      req.body;
+    const appointment = await db.Appointment.findByPk(req.params.id);
+
+    if (!appointment) {
+      return res.status(404).json({ message: "Appointment not found" });
+    }
+
+    appointment.PatientID = PatientID;
+    appointment.DoctorID = DoctorID;
+    appointment.AppointmentDate = AppointmentDate;
+    appointment.DurationMinutes = DurationMinutes;
+    appointment.Status = Status;
+
+    await appointment.save();
+    return res.status(200).json(appointment);
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ message: "Error updating appointment", error });
+  }
+};
+
+// Delete an Appointment by ID
+exports.deleteAppointment = async (req, res) => {
+  try {
+    const appointment = await db.Appointment.findByPk(req.params.id);
+
+    if (!appointment) {
+      return res.status(404).json({ message: "Appointment not found" });
+    }
+
+    await appointment.destroy();
+    return res
+      .status(204)
+      .json({ message: "Appointment deleted successfully" });
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ message: "Error deleting appointment", error });
+  }
+};
+
+exports.getAppointmentsByUserId = async (req, res) => {
+  const userId = req.body.id;
+  console.log(userId);
+  try {
+    const appointments = await db.Appointment.findAll({
+      where: { doctorId: userId },
+      include: [
+        {
+          model: db.User,
+          as: "Patient",
+        },
+      ],
+    });
+
+    return res.status(200).json(appointments);
+  } catch (error) {
+    console.log(error);
+    return res
+      .status(500)
+      .json({ message: "Error getting appointments", error });
+  }
+};
