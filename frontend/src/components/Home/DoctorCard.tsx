@@ -1,12 +1,12 @@
 import React from 'react';
-import { Card, CardContent, Typography, CardMedia, Button, Box } from '@mui/material';
 import { useDispatch } from 'react-redux';
+import { Card, CardContent, Typography, CardMedia, Button, Box } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { setSelectedDoctor, SelectedDoctor } from '../../features/HomeSlices/selectedDoctorSlice';
 import { styled } from '@mui/system';
 import MapIcon from '@mui/icons-material/Map';
 import { setSelectedDoctorLocation } from '../../features/UserLocationSlice';
-
+import { setShowMap } from '../../features/HomeSlices/mapSlice';
 
 interface DoctorProps {
   UserID: number;
@@ -59,14 +59,17 @@ const DoctorCard: React.FC<DoctorProps> = ({ UserID, FirstName, LastName, Specia
     e.stopPropagation();
     console.log('Dispatching setSelectedDoctorLocation:', { latitude: LocationLatitude, longitude: LocationLongitude });
     dispatch(setSelectedDoctorLocation({ latitude: LocationLatitude, longitude: LocationLongitude }));
-    
-  
-    // Scroll to the map
-    const mapElement = document.getElementById('user-location-map');
-    if (mapElement) {
-      mapElement.scrollIntoView({ behavior: 'smooth' });
-    }
+    dispatch(setShowMap(true));
+
+
+    setTimeout(() => {
+      const mapElement = document.getElementById('user-location-map');
+      if (mapElement) {
+        mapElement.scrollIntoView({ behavior: 'smooth' });
+      }
+    }, 100);
   };
+
   return (
     <StyledCard onClick={handleClick}>
       <StyledCardMedia

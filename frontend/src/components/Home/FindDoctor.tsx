@@ -7,15 +7,18 @@ import { searchDoctors } from '../../features/HomeSlices/doctorsSlice';
 import SearchResults from './SearchResults';
 import LocationSearch, { SearchResult } from '../user/LocationSearch';
 import { setSearchedLocation, clearSearchedLocation } from '../../features/UserLocationSlice';
+import { setShowMap } from '../../features/HomeSlices/mapSlice';
 
 interface FindDoctorProps {
   onToggleReference: () => void;
+  onToggleMap: () => void;
 }
 
-const FindDoctor: React.FC<FindDoctorProps> = ({ onToggleReference }) => {
+const FindDoctor: React.FC<FindDoctorProps> = ({ onToggleReference, onToggleMap }) => {
   const dispatch = useDispatch<AppDispatch>();
   const { name, speciality, available, nearMe, perimeter } = useSelector((state: RootState) => state.findDoctor);
   const { latitude, longitude } = useSelector((state: RootState) => state.userLocation);
+  const showMap = useSelector((state: RootState) => state.map.showMap);
   const [localPerimeter, setLocalPerimeter] = useState(perimeter.toString());
   const [hasSearched, setHasSearched] = useState(false);
   const [showResults, setShowResults] = useState(false);
@@ -78,6 +81,10 @@ const FindDoctor: React.FC<FindDoctorProps> = ({ onToggleReference }) => {
     setSelectedLocation(result);
     setLastTypedLocation(result.display_name);
     setLastSelectedCoords({ lat: result.lat, lon: result.lon });
+  };
+
+  const handleToggleMap = () => {
+    dispatch(setShowMap(!showMap));
   };
 
   return (
@@ -172,6 +179,17 @@ const FindDoctor: React.FC<FindDoctorProps> = ({ onToggleReference }) => {
                   Reference
                 </Button>
               </Box>
+            </Grid>
+            <Grid item xs={12} sm={6} md={2}>
+              <Button
+                variant="contained"
+                color="secondary"
+                fullWidth
+                sx={{ height: '36px', borderRadius: 2 }}
+                onClick={handleToggleMap}
+              >
+                {showMap ? 'Hide Map' : 'Show Map'}
+              </Button>
             </Grid>
           </Grid>
         </Box>

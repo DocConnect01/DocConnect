@@ -11,7 +11,7 @@ import testimonialsReducer from '../features/HomeSlices/testimonialsSlice';
 import selectedDoctorReducer from '../features/HomeSlices/selectedDoctorSlice';
 import selectedServiceReducer from '../features/HomeSlices/selectedServiceSlice';
 import doctorsSlice from '../features/HomeSlices/doctorsSlice';
-
+import mapReducer from '../features/HomeSlices/mapSlice';
 // import chatReducer from './slices/chatSlice';
 // import authReducer from './slices/authSlice';
 export const store = configureStore({
@@ -28,6 +28,7 @@ export const store = configureStore({
     selectedDoctor: selectedDoctorReducer,
     selectedService: selectedServiceReducer,
     doctors: doctorsSlice,
+    map: mapReducer,
   },
 });
 
