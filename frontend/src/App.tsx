@@ -14,7 +14,7 @@ import ChatInterface from "./components/doctorDashboard/Chat";
 import DoctorProfile from "./components/doctorDashboard/Profile";
 import Services from "./components/Services";
 import PatientProfile from "./components/userProfile/PatientProfile";
-import Footer from "./components/login/Footer";
+// import Footer from "./components/login/Footer";
 
 const theme = createTheme();
 

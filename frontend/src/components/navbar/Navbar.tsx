@@ -38,7 +38,6 @@ const Navbar: React.FC = () => {
         </Button>
         <Button color="inherit" component={Link} to="/profile">
           Profile
-          {/*  */}
         </Button>
       </Toolbar>
     </AppBar>
