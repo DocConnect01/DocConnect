@@ -64,6 +64,7 @@ const PatientProfile: React.FC = () => {
   const handleDeleteProfile = async () => {
     try {
       await axios.delete(`/api/users/${userId}`);
+      //
       localStorage.removeItem("userId");
       navigate("/register");
     } catch (error) {
