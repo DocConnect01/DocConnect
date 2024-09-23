@@ -8,6 +8,7 @@ interface ProfileState {
 const initialState: ProfileState = {
   firstName: "",
   email: "",
+  //
 };
 
 const profileSlice = createSlice({
