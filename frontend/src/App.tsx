@@ -14,9 +14,14 @@ import Dashboard from "./components/doctorDashboard/Dashboard";
 import DoctorProfile from "./components/doctorDashboard/Profile";
 import HelloPatient from "./components/patientview/View";
 import Footer from "./components/login/Footer";
+import Home from "./components/Home/Home";
+import DoctorDetails from './components/Home/DoctorDetails';
+import ServiceDetails from './components/Home/ServiceDetails';
+
 import ChatRooms from "./components/doctorDashboard/ChatRooms";
 // import { blue } from '@mui/material/colors';
 const theme = createTheme();
+
 
 const App: React.FC = () => {
   // const location = useLocation();
@@ -35,7 +40,11 @@ const App: React.FC = () => {
           >
             <Navbar />
             <Routes>
-              <Route path="/" element={<div>Home </div>} />
+
+              <Route path="/" element={<Home />} />
+              <Route path="/doctor-details" element={<DoctorDetails />} />
+              <Route path="/service-details" element={<ServiceDetails />} />
+              {/* <Route path="/" element={<div>Home </div>} /> */}
               <Route path="/services" element={<div>Services </div>} />
               <Route path="/help" element={<div>Help </div>} />
               <Route path="/blogs" element={<div>Blogs </div>} />
@@ -46,6 +55,8 @@ const App: React.FC = () => {
               <Route path="/chat" element={<ChatRooms />} />
               <Route path="/settings" element={<DoctorProfile />} />
             </Routes>
+
+          
           </div>
         </BrowserRouter>
       </ThemeProvider>
