@@ -20,30 +20,44 @@ const FindDoctor: React.FC<FindDoctorProps> = ({ onToggleReference }) => {
   const [hasSearched, setHasSearched] = useState(false);
   const [showResults, setShowResults] = useState(false);
   const [selectedLocation, setSelectedLocation] = useState<SearchResult | null>(null);
+  const [lastTypedLocation, setLastTypedLocation] = useState('');
+  const [lastSelectedCoords, setLastSelectedCoords] = useState<{ lat: string; lon: string } | null>(null);
 
   const handleSearch = () => {
+    let searchLatitude = selectedLocation?.lat ? parseFloat(selectedLocation.lat) : undefined;
+    let searchLongitude = selectedLocation?.lon ? parseFloat(selectedLocation.lon) : undefined;
+
+    if (!selectedLocation && lastTypedLocation && lastSelectedCoords) {
+      const currentLocationInput = document.querySelector('input[aria-label="Address"]') as HTMLInputElement;
+      if (currentLocationInput && currentLocationInput.value.trim().toLowerCase() === lastTypedLocation.trim().toLowerCase()) {
+        searchLatitude = parseFloat(lastSelectedCoords.lat);
+        searchLongitude = parseFloat(lastSelectedCoords.lon);
+      }
+    }
+
     dispatch(searchDoctors({
       name,
       speciality,
       available,
       nearMe,
       perimeter: nearMe ? 20 : (localPerimeter === '' ? null : parseInt(localPerimeter) || null),
-      latitude: selectedLocation?.lat ? parseFloat(selectedLocation.lat) : undefined,
-      longitude: selectedLocation?.lon ? parseFloat(selectedLocation.lon) : undefined,
+      latitude: searchLatitude,
+      longitude: searchLongitude,
       coords: {
         LocationLatitude: latitude ?? 0,
         LocationLongitude: longitude ?? 0
       }
     }));
-    if (selectedLocation) {
+
+    if (searchLatitude && searchLongitude) {
       dispatch(setSearchedLocation({
-        latitude: parseFloat(selectedLocation.lat),
-        longitude: parseFloat(selectedLocation.lon)
+        latitude: searchLatitude,
+        longitude: searchLongitude
       }));
     }
+
     setHasSearched(true);
     setShowResults(true);
-    setSelectedLocation(null);
   };
 
   const handleNearMeToggle = (checked: boolean) => {
@@ -62,6 +76,8 @@ const FindDoctor: React.FC<FindDoctorProps> = ({ onToggleReference }) => {
 
   const handleLocationSelect = (result: SearchResult) => {
     setSelectedLocation(result);
+    setLastTypedLocation(result.display_name);
+    setLastSelectedCoords({ lat: result.lat, lon: result.lon });
   };
 
   return (
@@ -119,7 +135,7 @@ const FindDoctor: React.FC<FindDoctorProps> = ({ onToggleReference }) => {
             {!nearMe && (
               <>
                 <Grid item xs={12} sm={6} md={4}>
-                  <LocationSearch onSelectLocation={handleLocationSelect} />
+                  <LocationSearch onSelectLocation={handleLocationSelect} initialValue={lastTypedLocation} />
                 </Grid>
                 <Grid item xs={12} sm={6} md={3}>
                   <TextField
