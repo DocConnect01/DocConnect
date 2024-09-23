@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import {
   setFirstName,
   setEmail,
-  //   resetProfile,:
+  resetProfile,
 } from "../../features/profileSlice";
 import {
   Box,
