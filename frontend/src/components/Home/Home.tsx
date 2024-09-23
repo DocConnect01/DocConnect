@@ -15,8 +15,7 @@ import Statistics from './Statistics';
 import SocialMedia from './SocialMedia';
 import FindDoctor from './FindDoctor';
 import { setLocation } from '../../features/UserLocationSlice';
-import 'leaflet-routing-machine';
-import RoutingMachine from './RoutingMachine';
+
 // Fix for default marker icon
 import icon from 'leaflet/dist/images/marker-icon.png';
 import iconShadow from 'leaflet/dist/images/marker-shadow.png';
@@ -28,8 +27,8 @@ let DefaultIcon = L.icon({
   iconAnchor: [12, 41]
 });
 
-const GreenIcon = new L.Icon({
-  iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-black.png',
+let GreenIcon = L.icon({
+  iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png',
   shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
   iconSize: [25, 41],
   iconAnchor: [12, 41],
@@ -99,7 +98,6 @@ const Home: React.FC = () => {
   const { latitude: searchedLatitude, longitude: searchedLongitude } = useSelector((state: RootState) => state.userLocation.searchedLocation);
   const [mapCenter, setMapCenter] = useState<[number, number] | null>(null);
   const [showReference, setShowReference] = useState(true);
-  const [routingControl, setRoutingControl] = useState<L.Routing.Control | null>(null);
 
   useEffect(() => {
     const storedLocation = localStorage.getItem('userLocation');
@@ -117,26 +115,8 @@ const Home: React.FC = () => {
   }, [latitude, longitude]);
 
   useEffect(() => {
-    if (mapCenter && doctorLatitude && doctorLongitude) {
-      if (routingControl) {
-        routingControl.setWaypoints([
-          L.latLng(mapCenter[0], mapCenter[1]),
-          L.latLng(doctorLatitude, doctorLongitude)
-        ]);
-      } else {
-        const newRoutingControl = L.Routing.control({
-          waypoints: [
-            L.latLng(mapCenter[0], mapCenter[1]),
-            L.latLng(doctorLatitude, doctorLongitude)
-          ],
-          routeWhileDragging: true,
-          showAlternatives: true,
-          fitSelectedRoutes: true
-        });
-        setRoutingControl(newRoutingControl);
-      }
-    }
-  }, [mapCenter, doctorLatitude, doctorLongitude]);
+    console.log('Selected doctor location changed:', { doctorLatitude, doctorLongitude });
+  }, [doctorLatitude, doctorLongitude]);
 
   const handleToggleReference = () => {
     setShowReference(!showReference);
@@ -152,6 +132,7 @@ const Home: React.FC = () => {
       <Container maxWidth="xl">
       {mapCenter && (
         <MapWrapper id="user-location-map">
+       
           <MapContainer center={mapCenter} zoom={13}>
             <TileLayer
               url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -177,7 +158,6 @@ const Home: React.FC = () => {
                 <Popup>Searched location</Popup>
               </Marker>
             )}
-            {routingControl && <RoutingMachine control={routingControl} />}
           </MapContainer>
         </MapWrapper>
       )}
