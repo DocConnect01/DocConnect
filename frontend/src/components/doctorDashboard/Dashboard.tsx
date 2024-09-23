@@ -1,16 +1,40 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Grid, Typography, Paper, Box } from '@mui/material';
+import { useSelector, useDispatch } from 'react-redux';
+import { RootState, AppDispatch } from '../../store/store';
+import { login } from '../../features/authSlice';
 import StatCard from './StatCard';
 import AppointmentList from './AppointmentList';
 import PatientChart from './PatientChart';
 import RecentPatients from './RecentPatients';
 
 const Dashboard: React.FC = () => {
-  return (
+  const dispatch = useDispatch<AppDispatch>();
+  const { user, loading, isAuthenticated } = useSelector((state: RootState) => state.Auth);
+
+  useEffect(() => {
+    console.log('Auth State:', { user, loading, isAuthenticated });
     
+    // If there's a token in localStorage but user is not authenticated, try to log in
+    const token = localStorage.getItem('token');
+    if (token && !isAuthenticated && !loading) {
+      dispatch(login({ token })).unwrap().catch(console.error);
+    }
+  }, [dispatch, isAuthenticated, loading]);
+
+  const getWelcomeMessage = () => {
+    if (loading) return 'Loading...';
+    if (!isAuthenticated || !user) return 'Welcome, Doctor';
+    
+    console.log('User object:', user); // Debug: Log the entire user object
+    
+    const doctorName = user.LastName ||  'Doctor';
+    return `Welcome, Dr. ${doctorName}`;
+  };
+  return (
     <Box sx={{ flexGrow: 1 }}>
       <Typography variant="h4" gutterBottom>
-        Welcome, Dr. Stephen
+        {getWelcomeMessage()}
       </Typography>
       <Typography variant="subtitle1" gutterBottom>
         Have a nice day at great work!

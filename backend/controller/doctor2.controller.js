@@ -6,7 +6,7 @@ const getAllDoctorsForHome = async (req, res) => {
   try {
     const doctors = await db.User.findAll({
       where: { Role: 'Doctor' },
-      attributes: ['UserID', 'FirstName', 'LastName', 'Speciality', 'Bio', 'LocationLatitude', 'LocationLongitude'],
+      attributes: ['UserID', 'FirstName', 'LastName', 'Speciality', 'Bio', 'LocationLatitude', 'LocationLongitude', 'Email'],
     });
     return res.status(200).json(doctors);
   } catch (error) {

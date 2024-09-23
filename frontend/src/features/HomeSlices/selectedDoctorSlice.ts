@@ -10,6 +10,7 @@ export interface SelectedDoctor {
   imageUrl: string;
   LocationLatitude: number;
   LocationLongitude: number;
+  Email: any;
 }
 
 
@@ -22,7 +23,8 @@ const initialState: SelectedDoctor = {
   Bio: '',
   imageUrl: '',
   LocationLatitude: 0,
-  LocationLongitude: 0
+  LocationLongitude: 0,
+  Email: '',
 };
 
 const selectedDoctorSlice = createSlice({

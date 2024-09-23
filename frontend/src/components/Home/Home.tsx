@@ -6,6 +6,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '../../store/store';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import L from 'leaflet';
+
 import 'leaflet/dist/leaflet.css';
 import HeroSection from './HeroSection';
 import AllServices from './AllServices';
@@ -20,21 +21,32 @@ import { setLocation } from '../../features/userLocationSlice';
 import icon from 'leaflet/dist/images/marker-icon.png';
 import iconShadow from 'leaflet/dist/images/marker-shadow.png';
 
+// Default icon
 let DefaultIcon = L.icon({
   iconUrl: icon,
   shadowUrl: iconShadow,
   iconSize: [25, 41],
-  iconAnchor: [12, 41]
+  iconAnchor: [12, 41],
 });
 
+// Green icon for current location
 let GreenIcon = L.icon({
   iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png',
-  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+  shadowUrl: iconShadow,
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+});
+
+// Custom red icon for searched location
+const customRedIcon = new L.Icon({
+  iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
+  shadowUrl: iconShadow,
   iconSize: [25, 41],
   iconAnchor: [12, 41],
   popupAnchor: [1, -34],
-  shadowSize: [41, 41]
+  shadowSize: [41, 41],
 });
+
 L.Marker.prototype.options.icon = DefaultIcon;
 
 const GradientBackground = styled(Box)(({ theme }) => ({
@@ -130,37 +142,29 @@ const Home: React.FC = () => {
         <Statistics />
       </Section>
       <Container maxWidth="xl">
-      {mapCenter && (
-        <MapWrapper id="user-location-map">
-       
-          <MapContainer center={mapCenter} zoom={13}>
-            <TileLayer
-              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-            />
-            <Marker position={mapCenter} icon={GreenIcon}>
-              <Popup>Your current location</Popup>
-            </Marker>
-            {doctorLatitude && doctorLongitude && (
-              <Marker position={[doctorLatitude, doctorLongitude]}>
-                <Popup>Doctor's location</Popup>
+        {mapCenter && (
+          <MapWrapper id="user-location-map">
+            <MapContainer center={mapCenter} zoom={13}>
+              <TileLayer
+                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+              />
+              <Marker position={mapCenter} icon={GreenIcon}>
+                <Popup>Your current location</Popup>
               </Marker>
-            )}
-            {searchedLatitude && searchedLongitude && showReference && (
-              <Marker position={[searchedLatitude, searchedLongitude]} icon={new L.Icon({
-                iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
-                shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
-                iconSize: [25, 41],
-                iconAnchor: [12, 41],
-                popupAnchor: [1, -34],
-                shadowSize: [41, 41]
-              })}>
-                <Popup>Searched location</Popup>
-              </Marker>
-            )}
-          </MapContainer>
-        </MapWrapper>
-      )}
+              {doctorLatitude && doctorLongitude && (
+                <Marker position={[doctorLatitude, doctorLongitude]}>
+                  <Popup>Doctor's location</Popup>
+                </Marker>
+              )}
+              {searchedLatitude && searchedLongitude && showReference && (
+                <Marker position={[searchedLatitude, searchedLongitude]} icon={customRedIcon}>
+                  <Popup>Searched location</Popup>
+                </Marker>
+              )}
+            </MapContainer>
+          </MapWrapper>
+        )}
         <FocusedSection>
           <FindDoctor onToggleReference={handleToggleReference} />
         </FocusedSection>

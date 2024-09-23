@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Drawer, List, ListItemButton, ListItemIcon, ListItemText, Typography, Box, IconButton } from '@mui/material';
 import DashboardIcon from '@mui/icons-material/Dashboard';
+// import PeopleIcon from '@mui/icons-material/People';
 import EventIcon from '@mui/icons-material/Event';
 import PaymentIcon from '@mui/icons-material/Payment';
 import MessageIcon from '@mui/icons-material/Message';
@@ -61,57 +62,66 @@ const Sidebar: React.FC = () => {
           </Typography>
         </Box>
 
-        {/* Menu Items */}
-        <List>
-          {menuItems.map((item) => (
-            <ListItemButton
-              key={item.text}
-              sx={{
-                padding: '12px',
-                borderRadius: '8px',
-                marginBottom: '10px',
-                '&:hover': {
-                  backgroundColor: '#000',
-                  color: '#fff',
-                },
-                '&.Mui-selected': {
-                  backgroundColor: '#000',
-                  color: '#fff',
-                },
-              }}
-              onClick={item.onClick}
-            >
-              <ListItemIcon sx={{ color: 'inherit' }}>{item.icon}</ListItemIcon>
-              <ListItemText primary={item.text} />
-            </ListItemButton>
-          ))}
-        </List>
-      </Drawer>
+      {/* Menu Items */}
+      <List>
+        {[
+          { text: 'Overview', icon: <DashboardIcon />, onClick: () => navigate('/dashboard') },
+          { text: 'Appointment', icon: <EventIcon />, onClick: () => navigate('/appointments') },
+          { text: 'My Patients', icon: <PersonIcon /> },
+          { text: 'Schedule Timings', icon: <EventIcon />,onClick: () => navigate('/doctorAvailability') },
+          { text: 'Payments', icon: <PaymentIcon /> },
+          { text: 'Message', icon: <MessageIcon />, onClick: () => navigate('/chat') },
+          { text: 'Blog', icon: <ArticleIcon /> },        // New Blog item
+          { text: 'Settings', icon: <SettingsIcon />, onClick: () => navigate('/settings') },
+        ].map((item, index) => (
+          <ListItemButton
+            key={item.text}
+            sx={{
+              padding: '12px',
+              borderRadius: '8px',
+              marginBottom: '10px',
+              '&:hover': {
+                backgroundColor: '#000',  // Black background on hover
+                color: '#fff',            // White text on hover
+              },
+              '&.Mui-selected': {
+                backgroundColor: '#000',  // Black background for selected item
+                color: '#fff',            // White text for selected item
+              },
+            }}
+            onClick={item.onClick} 
+          >
+            <ListItemIcon sx={{ color: 'inherit' }}>{item.icon}</ListItemIcon>
+            <ListItemText primary={item.text} />
+          </ListItemButton>
+        ))}
+      </List>
+    </Drawer>
 
-      {/* ChatRooms Section */}
-      {showChatRooms && (
-        <Box
-          sx={{
-            position: 'fixed',
-            left: drawerWidth,
-            top: 0,
-            bottom: 0,
-            right: 0,
-            backgroundColor: 'white',
-            zIndex: 1200,
-          }}
-        >
-          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', p: 2 }}>
-            <Typography variant="h6">Chat Rooms</Typography>
-            <IconButton onClick={() => setShowChatRooms(false)}>
-              <CloseIcon />
-            </IconButton>
-          </Box>
-          <ChatRooms onClose={() => setShowChatRooms(false)} />
+    {/* ChatRooms Section */}
+    {showChatRooms && (
+      <Box
+        sx={{
+          position: 'fixed',
+          left: drawerWidth,
+          top: 0,
+          bottom: 0,
+          right: 0,
+          backgroundColor: 'white',
+          zIndex: 1200,
+        }}
+      >
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', p: 2 }}>
+          <Typography variant="h6">Chat Rooms</Typography>
+          <IconButton onClick={() => setShowChatRooms(false)}>
+            <CloseIcon />
+          </IconButton>
         </Box>
-      )}
-    </>
-  );
+        <ChatRooms onClose={() => setShowChatRooms(false)} />
+      </Box>
+    )}
+  </>
+);
 };
 
 export default Sidebar;

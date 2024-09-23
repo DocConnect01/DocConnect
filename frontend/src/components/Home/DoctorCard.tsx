@@ -17,6 +17,7 @@ interface DoctorProps {
   imageUrl: string;
   LocationLatitude: number;
   LocationLongitude: number;
+  Email: any;
 }
 
 const StyledCard = styled(Card)(({ theme }) => ({
@@ -36,7 +37,7 @@ const StyledCardMedia = styled(CardMedia)({
   objectFit: 'cover',
 }) as typeof CardMedia;
 
-const DoctorCard: React.FC<DoctorProps> = ({ UserID, FirstName, LastName, Speciality, imageUrl, Bio, LocationLatitude, LocationLongitude }) => {
+const DoctorCard: React.FC<DoctorProps> = ({ UserID, FirstName, LastName, Speciality, imageUrl, Bio, LocationLatitude, LocationLongitude, Email }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -50,6 +51,7 @@ const DoctorCard: React.FC<DoctorProps> = ({ UserID, FirstName, LastName, Specia
       imageUrl,
       LocationLatitude,
       LocationLongitude,
+      Email,
     };
     dispatch(setSelectedDoctor(doctor));
     navigate('/doctor-details');

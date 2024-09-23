@@ -45,8 +45,10 @@ const FindDoctor: React.FC<FindDoctorProps> = ({ onToggleReference }) => {
       longitude: searchLongitude,
       coords: {
         LocationLatitude: latitude ?? 0,
-        LocationLongitude: longitude ?? 0
-      }
+        LocationLongitude: longitude ?? 0,
+        
+      },
+      Email:""
     }));
 
     if (searchLatitude && searchLongitude) {
