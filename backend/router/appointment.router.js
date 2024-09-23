@@ -9,8 +9,10 @@ const {
   getAppointmentsByUserId,
 } = require("../controller/appointment.controller");
 
+
+const { authenticate } = require("../middleware/auth.middlware");
 // Create a new appointment
-router.post("/", createAppointment);
+router.post("/",authenticate, createAppointment);
 
 // Get all appointments
 router.get("/", getAppointments);

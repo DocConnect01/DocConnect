@@ -3,23 +3,22 @@ const db = require("../models"); // Make sure the correct path is used
 // Create a new Appointment
 exports.createAppointment = async (req, res) => {
   try {
-    const { PatientID, DoctorID, AppointmentDate, DurationMinutes, Status } =
-      req.body;
+    console.log('Received appointment data:', req.body);
+    const { DoctorID, AppointmentDate, DurationMinutes } = req.body;
+    const PatientID = req.user.UserID; // Fixed PatientID for testing
 
-    // Ensure the DoctorID is valid and corresponds to a user with the role 'Doctor'
+    // Validate input
+    if (!DoctorID || !AppointmentDate || !DurationMinutes) {
+      return res.status(400).json({ message: "Missing required fields" });
+    }
+
+    // Ensure the DoctorID is valid and corresponds to a user with the role "Doctor"
     const doctor = await db.User.findOne({
       where: { UserID: DoctorID, Role: "Doctor" },
     });
     if (!doctor) {
+      console.log('Doctor not found:', DoctorID);
       return res.status(404).json({ message: "Doctor not found" });
-    }
-
-    // Ensure the PatientID is valid and corresponds to a user with the role 'Patient'
-    const patient = await db.User.findOne({
-      where: { UserID: PatientID, Role: "Patient" },
-    });
-    if (!patient) {
-      return res.status(404).json({ message: "Patient not found" });
     }
 
     // Create the appointment
@@ -28,19 +27,20 @@ exports.createAppointment = async (req, res) => {
       DoctorID,
       AppointmentDate,
       DurationMinutes,
-      Status,
+      Status: 'pending' 
     });
 
+    console.log('Appointment created successfully:', newAppointment);
     // Return the newly created appointment
     return res.status(201).json(newAppointment);
   } catch (error) {
-    // Handle any errors and send a response with the error message
-    return res
-      .status(500)
-      .json({ message: "Error creating appointment", error });
+    console.error('Error creating appointment:', error);
+    return res.status(500).json({ 
+      message: "Error creating appointment", 
+      error: error.message
+    });
   }
 };
-
 // Get all Appointments
 exports.getAppointments = async (req, res) => {
   try {
@@ -136,3 +136,6 @@ exports.getAppointmentsByUserId = async (req, res) => {
       .json({ message: "Error getting appointments", error });
   }
 };
+
+
+
