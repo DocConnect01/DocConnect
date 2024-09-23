@@ -14,6 +14,7 @@ export const store = configureStore({
     contactForm: contactFormReducer,
     services: servicesReducer,
     profile: profileReducer,
+    //
   },
 });
 
