@@ -27,10 +27,6 @@ module.exports = (sequelize) => {
       type: DataTypes.DATE,
       allowNull: false
     },
-    StartTime: {
-      type: DataTypes.TIME,
-      allowNull: false
-    },
     DurationMinutes: {
       type: DataTypes.INTEGER,
       allowNull: false
@@ -38,7 +34,7 @@ module.exports = (sequelize) => {
     Status: {
       type: DataTypes.ENUM('pending', 'confirmed', 'rejected'),
       allowNull: false,
-      defaultValue: 'pending' // Optional: set a default valu,e
+      defaultValue: 'pending' 
     },
     
   }, {

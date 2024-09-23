@@ -11,10 +11,11 @@ export interface SearchResult {
 
 interface LocationSearchProps {
   onSelectLocation: (result: SearchResult) => void;
+  initialValue?: string;
 }
 
-const LocationSearch: React.FC<LocationSearchProps> = ({ onSelectLocation }) => {
-  const [query, setQuery] = useState('');
+const LocationSearch: React.FC<LocationSearchProps> = ({ onSelectLocation, initialValue = '' }) => {
+  const [query, setQuery] = useState(initialValue);
   const [results, setResults] = useState<SearchResult[]>([]);
 
   const searchLocation = async (input: string) => {
@@ -28,7 +29,7 @@ const LocationSearch: React.FC<LocationSearchProps> = ({ onSelectLocation }) => 
     }
   };
 
-  const debouncedSearch = debounce(searchLocation, 300);
+  const debouncedSearch = debounce(searchLocation, 150);
 
   useEffect(() => {
     debouncedSearch(query);
@@ -45,13 +46,13 @@ const LocationSearch: React.FC<LocationSearchProps> = ({ onSelectLocation }) => 
 
   return (
     <div>
-      <TextField
-        fullWidth
-        label="Address"
-        value={query}
-        onChange={(e) => setQuery(e.target.value)}
-        margin="normal"
-      />
+     <TextField
+  fullWidth
+  label="Address"
+  value={query}
+  onChange={(e) => setQuery(e.target.value)}
+  margin="normal"
+/>
       <List>
         {results.map((result) => (
           <ListItem key={result.place_id} onClick={() => handleSelectLocation(result)} sx={{ cursor: 'pointer' }}>
