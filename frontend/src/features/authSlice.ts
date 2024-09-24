@@ -47,17 +47,35 @@ export const register = createAsyncThunk(
 export const login = createAsyncThunk(
   "auth/login",
   async (
-    credentials: { Email?: string; Username?: string; Password: string },
+    credentials: {
+      Email?: string;
+      Username?: string;
+      Password?: string;
+      token?: string;
+    },
     { rejectWithValue }
   ) => {
     try {
-      const response = await axios.post(
-        "http://localhost:5000/api/users/login",
-        credentials
-      );
-      localStorage.setItem("token", response.data.token);
+      let response;
+      if (credentials.token) {
+        // If a token is provided, verify it
+        response = await axios.get("http://localhost:5000/api/users/session", {
+          headers: { Authorization: `Bearer ${credentials.token}` },
+        });
+      } else {
+        // Otherwise, perform normal login
+        response = await axios.post(
+          "http://localhost:5000/api/users/login",
+          credentials
+        );
+        if (response.data.token) {
+          localStorage.setItem("token", response.data.token);
+       }
+      }
       return response.data;
-    } catch (error: any) {
+    } catch (error: any) {  
+      console.log(error)
+      localStorage.removeItem("token"); // Clear invalid token
       return rejectWithValue(error.response.data.message);
     }
   }
@@ -97,10 +115,12 @@ const authSlice = createSlice({
       })
       .addCase(
         login.fulfilled,
-        (state, action: PayloadAction<{ token: string }>) => {
+        (state, action: PayloadAction<{ token: string; user: User }>) => {
+          console.log(action.payload);
           state.loading = false;
           state.token = action.payload.token;
           state.isAuthenticated = true;
+          state.user = action.payload.user;
         }
       )
       .addCase(login.rejected, (state, action) => {

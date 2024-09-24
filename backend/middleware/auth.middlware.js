@@ -1,9 +1,10 @@
 const jwt = require("jsonwebtoken");
 
+// Middleware to verify JWT and role
 
 const authenticate = (req, res, next) => {
   const token = req.headers.authorization?.split(" ")[1];
-  // console.log("Token:", token);
+  console.log("Token:", token);
   if (!token) {
     return res
       .status(401)
@@ -29,6 +30,8 @@ const isAdmin = (req, res, next) => {
 
 // Middleware to allow only Doctors
 const isDoctor = (req, res, next) => {
+  // console.log(req.user.Role);
+  
   if (req.user.Role !== "Doctor") {
     return res.status(403).json({ message: "Access denied. Doctors only." });
   }
@@ -43,5 +46,6 @@ const isPatient = (req, res, next) => {
   next();
 };
 
-module.exports = {  isAdmin, isDoctor, isPatient , authenticate };
+module.exports = {  isAdmin, isDoctor, isPatient ,authenticate}
 
+module.exports = {  isAdmin, isDoctor, isPatient,authenticate };

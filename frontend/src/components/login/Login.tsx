@@ -8,6 +8,7 @@ import {
   resetForm,
 } from "../../features/formSlice";
 import { login } from "../../features/authSlice";
+import UserLocation from "../user/UserLocation";
 import {
   TextField,
   Button,
@@ -20,11 +21,12 @@ import {
   FormControlLabel,
 } from "@mui/material";
 import { Facebook, LinkedIn, Twitter } from "@mui/icons-material";
-import axios from "../../features/axiosConfig";
-import UserLocation from "../user/UserLocation";
+// import { AppDispatch } from "../../store/store";
+import axios from "axios";
 
 const LoginForm: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
+
   const formState = useSelector((state: RootState) => state.form);
   const navigate = useNavigate();
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -43,6 +45,12 @@ const LoginForm: React.FC = () => {
     }
     setFormErrors(errors);
     return Object.keys(errors).length === 0;
+  };
+
+  const [isLocationUpdated, setIsLocationUpdated] = useState(false);
+
+  const handleLocationUpdateComplete = () => {
+    setIsLocationUpdated(true);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -68,25 +76,26 @@ const LoginForm: React.FC = () => {
         localStorage.setItem("token", result.token);
 
         try {
-          const [doctorResponse, patientResponse] = await Promise.all([
-            axios.get("http://localhost:5000/api/users/check-doctor"),
-            axios.get("http://localhost:5000/api/users/check-patient"),
-          ]);
+          const response = await axios.get(
+            "http://localhost:5000/api/users/check-doctor",
+            {
+              headers: { Authorization: `Bearer ${result.token}` },
+            }
+          );
+          const response2 = await axios.get(
+            "http://localhost:5000/api/users/check-patient",
+            {
+              headers: { Authorization: `Bearer ${result.token}` },
+            }
+          );
 
-          const isDoctor = doctorResponse.data.isDoctor;
-          const isPatient = patientResponse.data.isPatient;
+          const isDoctor = response.data.isDoctor;
+          const isPatient = response2.data.isPatient;
           console.log("Is Doctor:", isDoctor);
           console.log("Is Patient:", isPatient);
 
-          if (isDoctor) {
-            setUserRole("Doctor");
-            setIsLoggedIn(true);
-          } else if (isPatient) {
-            setUserRole("Patient");
-            setIsLoggedIn(true);
-          } else {
-            setErrorMessage("Unknown user role");
-          }
+          setIsLoggedIn(true);
+          setUserRole(isDoctor ? "Doctor" : "Patient");
         } catch (error) {
           console.error("Error checking user status:", error);
           setErrorMessage("Error determining user type");
@@ -96,29 +105,27 @@ const LoginForm: React.FC = () => {
       } else {
         setErrorMessage("Login failed: No token received");
       }
-    } catch (error: any) {
+    } catch (error) {
       console.error("Login error:", error);
-      setErrorMessage(error.message || "An unexpected error occurred.");
+      setErrorMessage(
+        "Login failed. Please check your credentials and try again."
+      );
     } finally {
       setLoading(false);
     }
   };
 
-  const handleLocationUpdateComplete = () => {
-    navigate("/patientview");
-  };
-
   useEffect(() => {
-    if (isLoggedIn && userRole) {
+    if (isLoggedIn && isLocationUpdated) {
       if (userRole === "Patient") {
-        console.log("Patient logged in, waiting for location update");
+        console.log("Patient logged in, navigating to patient view");
+        navigate("/");
       } else if (userRole === "Doctor") {
         console.log("Doctor logged in, navigating to dashboard");
         navigate("/dashboard");
       }
     }
-  }, [isLoggedIn, userRole, navigate]);
-
+  }, [isLoggedIn, isLocationUpdated, userRole, navigate]);
   return (
     <Box
       sx={{
@@ -260,9 +267,7 @@ const LoginForm: React.FC = () => {
           </Stack>
         </Box>
       </Box>
-      {isLoggedIn && userRole === "Patient" && (
-        <UserLocation onComplete={handleLocationUpdateComplete} />
-      )}
+      {isLoggedIn && <UserLocation onComplete={handleLocationUpdateComplete} />}
     </Box>
   );
 };

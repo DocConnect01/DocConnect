@@ -1,14 +1,38 @@
-import React from 'react';
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Typography, Avatar } from '@mui/material';
+import React, { useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { CircularProgress, Typography, TableContainer, Table, TableHead, TableBody, TableRow, TableCell, Paper, Avatar } from '@mui/material';
+import { RootState, AppDispatch } from '../../store/store';
+import { fetchUsers } from '../../features/userSlice';
 
-const recentPatients = [
-  { name: 'Dawson Lane', visitId: 'OPD-2345', date: '5/7/21', gender: 'Male', disease: 'Diabetes', status: 'Out-Patient' },
-  { name: 'Albert Flores', visitId: 'IPD-2424', date: '5/7/21', gender: 'Male', disease: 'Diabetes', status: 'Out-Patient' },
-  { name: 'Ella Lucia', visitId: 'OPD-2345', date: '5/15/21', gender: 'Female', disease: 'Diabetes', status: 'Out-Patient' },
-  { name: 'Albert Flores', visitId: 'IPD-2424', date: '5/30/21', gender: 'Male', disease: 'Diabetes', status: 'Out-Patient' },
-];
+interface User {
+  UserID: number;
+  FirstName: string;
+  LastName: string;
+  Gender: string;
+  Disease: string;
+  PatientAppointments: Array<{
+    AppointmentID: number;
+    AppointmentDate: string;
+    Status: string;
+  }>;
+}
 
 const RecentPatients: React.FC = () => {
+  const dispatch = useDispatch<AppDispatch>();
+  const { users, loading, error } = useSelector((state: RootState) => state.users);
+
+  useEffect(() => {
+    dispatch(fetchUsers());
+  }, [dispatch]);
+
+  if (loading) {
+    return <CircularProgress />;
+  }
+
+  if (error) {
+    return <Typography color="error">{error}</Typography>;
+  }
+
   return (
     <>
       <Typography variant="h6" gutterBottom>
@@ -27,20 +51,22 @@ const RecentPatients: React.FC = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {recentPatients.map((patient, index) => (
-              <TableRow key={index}>
-                <TableCell component="th" scope="row">
-                  <div style={{ display: 'flex', alignItems: 'center' }}>
-                    <Avatar src={`https://i.pravatar.cc/150?img=${index + 20}`} sx={{ marginRight: 2 }} />
-                    {patient.name}
-                  </div>
-                </TableCell>
-                <TableCell>{patient.visitId}</TableCell>
-                <TableCell>{patient.date}</TableCell>
-                <TableCell>{patient.gender}</TableCell>
-                <TableCell>{patient.disease}</TableCell>
-                <TableCell>{patient.status}</TableCell>
-              </TableRow>
+            {(users as User[]).map((user, index) => (
+              user.PatientAppointments.map((appointment) => (
+                <TableRow key={appointment.AppointmentID}>
+                  <TableCell component="th" scope="row">
+                    <div style={{ display: 'flex', alignItems: 'center' }}>
+                      <Avatar src={`https://i.pravatar.cc/150?img=${index + 20}`} sx={{ marginRight: 2 }} />
+                      {`${user.FirstName} ${user.LastName}`}
+                    </div>
+                  </TableCell>
+                  <TableCell>{appointment.AppointmentID}</TableCell>
+                  <TableCell>{new Date(appointment.AppointmentDate).toLocaleDateString()}</TableCell>
+                  <TableCell>{user.Gender}</TableCell>
+                  <TableCell>{user.Disease}</TableCell>
+                  <TableCell>{appointment.Status}</TableCell>
+                </TableRow>
+              ))
             ))}
           </TableBody>
         </Table>

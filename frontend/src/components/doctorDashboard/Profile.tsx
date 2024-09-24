@@ -1,4 +1,8 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchDoctorById, updateDoctorProfile } from '../../features/doctorSlice';
+import { RootState, AppDispatch } from '../../store/store';
+import { jwtDecode } from 'jwt-decode';
 import {
   Avatar,
   Box,
@@ -6,162 +10,275 @@ import {
   CardContent,
   Container,
   Grid,
-  Rating,
   Tab,
   Tabs,
   Typography,
   Button,
+  TextField,
+  MenuItem,
 } from '@mui/material';
 import { styled } from '@mui/system';
+import Rating from '@mui/material/Rating';
 
-interface Review {
-  id: number;
-  name: string;
-  avatar: string;
-  occupation: string;
-  rating: number;
-  date: string;
-  comment: string;
-}
+// Styled Components
+import { Theme } from '@mui/material/styles';
 
-const ProfileAvatar = styled(Avatar)(({ theme }) => ({
+const ProfileAvatar = styled(Avatar)(({ theme }: { theme: Theme }) => ({
   width: theme.spacing(20),
   height: theme.spacing(20),
   margin: 'auto',
+  border: `4px solid ${theme.palette.primary.main}`,
 }));
 
-const StyledRating = styled(Rating)({
-  fontSize: '1.5rem',
-});
+const ProfileCard = styled(Card)(({ theme }: { theme: Theme }) => ({
+  padding: theme.spacing(3),
+  textAlign: 'center',
+  boxShadow: theme.shadows[4],
+}));
 
-const reviews: Review[] = [
-  {
-    id: 1,
-    name: 'Ronald Richards',
-    avatar: '/path/to/avatar1.jpg',
-    occupation: 'Founder',
-    rating: 5,
-    date: '8 Jun, 2021',
-    comment: 'Thank you to Dr. Stephen Conley and staff for a great experience right from the start. Everyone made me feel comfortable and the outcome was great. If you need heart surgery check out Dr. Stephen.',
-  },
-  {
-    id: 2,
-    name: 'Annette Black',
-    avatar: '/path/to/avatar2.jpg',
-    occupation: 'Teacher',
-    rating: 5,
-    date: '8 Jun, 2021',
-    comment: 'Dr. Stephen did a great job on my knee! After my injection I was able to walk again without pain. Before this injection I had 24 hour round the clock pain. Now, I can walk without any discomfort. Thank You Dr. Stephen Conley',
-  },
-  {
-    id: 3,
-    name: 'Angelina Jully',
-    avatar: '/path/to/avatar3.jpg',
-    occupation: 'Teacher',
-    rating: 5,
-    date: '8 Jun, 2021',
-    comment: 'Excellent cardiologist, my husband and I have both had surgery and ongoing care from him over the years, the medical technology used is state of the art as well, continue to highly recommend.',
-  },
-  {
-    id: 4,
-    name: 'Jane Cooper',
-    avatar: '/path/to/avatar4.jpg',
-    occupation: 'Teacher',
-    rating: 5,
-    date: '8 Jun, 2021',
-    comment: 'Excellent cardiologist, my husband and I have both had surgery and ongoing care from him over the years, the medical technology used is state of the art as well, continue to highly recommend.',
-  },
-];
+const ProfileSection = styled(Box)(({ theme }: { theme: Theme }) => ({
+  display: 'flex',
+  justifyContent: 'center',
+  marginBottom: theme.spacing(2),
+}));
+
+const TabSection = styled(Box)(({ theme }: { theme: Theme }) => ({
+  padding: theme.spacing(3),
+  borderTop: `1px solid ${theme.palette.divider}`,
+}));
 
 const DoctorProfile: React.FC = () => {
+  const dispatch: AppDispatch = useDispatch();
+  const { doctor, loading, error } = useSelector((state: RootState) => state.doctor);
+
+  const [editMode, setEditMode] = useState(false);
   const [tabValue, setTabValue] = React.useState(3);
+
+  // Local form state for profile fields
+  const [profileData, setProfileData] = useState({
+    FirstName: '',
+    LastName: '',
+    Speciality: '',
+    MeetingPrice: 0,
+    Bio: '',
+  });
+
+  const getUserIdFromToken = () => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      const decodedToken: any = jwtDecode(token);
+      return decodedToken.UserID; // Assuming the UserID is stored as 'id' in the token payload
+    }
+    return null;
+  };
+
+  useEffect(() => {
+    const userId = getUserIdFromToken();
+    if (userId) {
+      dispatch(fetchDoctorById(userId));
+    }
+  }, [dispatch]);
+
+  useEffect(() => {
+    if (doctor) {
+      setProfileData({
+        FirstName: doctor.FirstName,
+        LastName: doctor.LastName,
+        Speciality: doctor.Speciality,
+        MeetingPrice: parseFloat(doctor.MeetingPrice.toString()),
+        Bio: doctor.Bio,
+      });
+    }
+  }, [doctor]);
+
+
+
+const ProfileAvatar = styled(Avatar)({
+  width: 160,
+  height: 160,
+  margin: 'auto',
+  border: '4px solid #3f51b5',
+});
+
+const ProfileCard = styled(Card)({
+  padding: 16,
+  textAlign: 'center',
+  boxShadow: '0 4px 8px rgba(0,0,0,0.1)',
+});
+
+const ProfileSection = styled(Box)({
+  display: 'flex',
+  justifyContent: 'center',
+  marginBottom: 16,
+});
+
+const TabSection = styled(Box)({
+  padding: 16,
+  borderTop: '1px solid #ddd',
+});
+
 
   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
     setTabValue(newValue);
   };
 
-  return (
-    <Container maxWidth="lg">
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setProfileData({ ...profileData, [e.target.name]: e.target.value });
+  };
+
+  const handleEditProfileClick = () => {
+    setEditMode(true);
+  };
+
+  const handleCancelEdit = () => {
+    setEditMode(false);
+  };
+
+  const handleSubmit = () => {
+    if (doctor && doctor.id) {
+      dispatch(updateDoctorProfile({ id: doctor.id, ...profileData }));
+      setEditMode(false); // Close the form after submission
+    }
+  };
+
+  if (loading) return <Typography>Loading...</Typography>;
+  if (error) return <Typography color="error">Error: {error}</Typography>;
+
+  return doctor ? (
+    <Container maxWidth="lg" sx={{ py: 4 }}>
       <Grid container spacing={4}>
+        {/* Profile Section */}
         <Grid item xs={12} md={4}>
-          <Card>
+          <ProfileCard>
             <CardContent>
-              <ProfileAvatar alt="Dr. Stephen Conley" src="/path/to/doctor-avatar.jpg" />
-              <Typography variant="h5" align="center" gutterBottom>
-                Dr. Stephen Conley
-              </Typography>
-              <Typography variant="subtitle1" align="center" color="textSecondary">
-                Cardiologist
-              </Typography>
-              <Box display="flex" justifyContent="center" my={2}>
-                <Button variant="contained" color="primary">
-                  Edit Profile
-                </Button>
-              </Box>
-              <Box display="flex" alignItems="center" justifyContent="center">
-                <Typography variant="h6" component="span">
-                  146 Rates
-                </Typography>
-                <StyledRating value={5} readOnly />
-              </Box>
-              <Box mt={2}>
-                <Typography variant="subtitle1">Trust</Typography>
-                <Box width="100%" bgcolor="#e0e0e0" height={8} borderRadius={4}>
-                  <Box width="95%" bgcolor="#4caf50" height={8} borderRadius={4} />
-                </Box>
-                <Typography variant="body2" align="right">
-                  95%
-                </Typography>
-              </Box>
+              <ProfileAvatar
+                alt={`${doctor.FirstName} ${doctor.LastName}`}
+                src="/path/to/doctor-avatar.jpg"
+
+              />
+              {!editMode ? (
+                <>
+                  <Typography variant="h5" gutterBottom mt={2}>
+                    {`Dr. ${doctor.FirstName} ${doctor.LastName}`}
+                  </Typography>
+                  <Typography variant="subtitle1" color="textSecondary">
+                    {doctor.Speciality}
+                  </Typography>
+                  <ProfileSection>
+                    <Button variant="contained" color="primary" onClick={handleEditProfileClick}>
+                      Edit Profile
+                    </Button>
+                  </ProfileSection>
+                  <Box my={2}>
+                    <Typography variant="h6" component="div">
+                      Meeting Price: ${doctor.MeetingPrice}
+                    </Typography>
+                  </Box>
+                  <Box mt={2}>
+                    <Typography variant="subtitle1">Bio</Typography>
+                    <Typography variant="body2" color="textSecondary">
+                      {doctor.Bio}
+                    </Typography>
+                  </Box>
+                </>
+              ) : (
+                <>
+                  {/* Editable Form */}
+                  <TextField
+                    label="First Name"
+                    name="FirstName"
+                    value={profileData.FirstName}
+                    onChange={handleInputChange}
+                    fullWidth
+                    margin="normal"
+                  />
+                  <TextField
+                    label="Last Name"
+                    name="LastName"
+                    value={profileData.LastName}
+                    onChange={handleInputChange}
+                    fullWidth
+                    margin="normal"
+                  />
+                  <TextField
+                    select
+                    label="Speciality"
+                    name="Speciality"
+                    value={profileData.Speciality}
+                    onChange={handleInputChange}
+                    fullWidth
+                    margin="normal"
+                  >
+                    <MenuItem value="Cardiologist">Cardiologist</MenuItem>
+                    <MenuItem value="Dermatologist">Dermatologist</MenuItem>
+                    <MenuItem value="Pediatrician">Pediatrician</MenuItem>
+                    {/* Add more specialities here */}
+                  </TextField>
+                  <TextField
+                    label="Meeting Price"
+                    name="MeetingPrice"
+                    type="number"
+                    value={profileData.MeetingPrice}
+                    onChange={handleInputChange}
+                    fullWidth
+                    margin="normal"
+                  />
+                  <TextField
+                    label="Bio"
+                    name="Bio"
+                    value={profileData.Bio}
+                    onChange={handleInputChange}
+                    fullWidth
+                    multiline
+                    rows={4}
+                    margin="normal"
+                  />
+                  <Box mt={2} display="flex" justifyContent="space-between">
+                    <Button variant="contained" color="primary" onClick={handleSubmit}>
+                      Save Changes
+                    </Button>
+                    <Button variant="outlined" color="secondary" onClick={handleCancelEdit}>
+                      Cancel
+                    </Button>
+                  </Box>
+                </>
+              )}
             </CardContent>
-          </Card>
+          </ProfileCard>
         </Grid>
+
+        {/* Tab Section */}
         <Grid item xs={12} md={8}>
           <Box mb={2}>
-            <Tabs value={tabValue} onChange={handleTabChange} indicatorColor="primary" textColor="primary">
+            <Tabs
+              value={tabValue}
+              onChange={handleTabChange}
+              indicatorColor="primary"
+              textColor="primary"
+              variant="fullWidth"
+            >
               <Tab label="My Profile" />
               <Tab label="Change Password" />
-              <Tab label="Notification" />
+              <Tab label="Notifications" />
               <Tab label="Reviews" />
             </Tabs>
           </Box>
-          {tabValue === 3 && (
-            <Box>
-              <Typography variant="h6" gutterBottom>
-                Reviews
-              </Typography>
-              {reviews.map((review) => (
-                <Card key={review.id} sx={{ mb: 2 }}>
-                  <CardContent>
-                    <Grid container spacing={2}>
-                      <Grid item>
-                        <Avatar alt={review.name} src={review.avatar} />
-                      </Grid>
-                      <Grid item xs>
-                        <Typography variant="subtitle1">{review.name}</Typography>
-                        <Typography variant="body2" color="textSecondary">
-                          {review.occupation}
-                        </Typography>
-                      </Grid>
-                      <Grid item>
-                        <Rating value={review.rating} readOnly size="small" />
-                        <Typography variant="caption" display="block" align="right">
-                          {review.date}
-                        </Typography>
-                      </Grid>
-                    </Grid>
-                    <Typography variant="body2" paragraph sx={{ mt: 2 }}>
-                      {review.comment}
-                    </Typography>
-                  </CardContent>
-                </Card>
-              ))}
-            </Box>
-          )}
+          <TabSection>
+            {/* Render content based on selected tab */}
+            {tabValue === 3 && (
+              <Box>
+                <Typography variant="h6" gutterBottom>
+                  Reviews
+                </Typography>
+                {/* Reviews will be rendered here */}
+              </Box>
+            )}
+            {/* Add other tab content here */}
+          </TabSection>
         </Grid>
       </Grid>
     </Container>
-  );
+  ) : null;
 };
 
 export default DoctorProfile;

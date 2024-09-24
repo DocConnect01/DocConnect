@@ -17,21 +17,16 @@ exports.register = async (req, res) => {
     Bio,
     MeetingPrice,
     Latitude,
-    Longitude
+    Longitude,
   } = req.body;
 
-  // Check if role is either Doctor or Patient
   if (Role !== "Doctor" && Role !== "Patient") {
-    return res
-      .status(400)
-      .json({ message: "Invalid role. Only Doctor or Patient can register." });
+    return res.status(400).json({ message: "Invalid role. Only Doctor or Patient can register." });
   }
 
   try {
-    // Hash the password
     const hashedPassword = await bcrypt.hash(Password, 10);
 
-    // Create the user
     const newUser = await db.User.create({
       FirstName,
       LastName,
@@ -39,19 +34,18 @@ exports.register = async (req, res) => {
       Password: hashedPassword,
       Email,
       Role,
+      ...(Role === "Doctor" && { Speciality, Bio, MeetingPrice }),
       Speciality: Role === "Doctor" ? Speciality : null,
       Bio: Role === "Doctor" ? Bio : null,
       MeetingPrice: Role === "Doctor" ? MeetingPrice : null,
-      LocationLatitude : Latitude,
-      LocationLongitude : Longitude
+      LocationLatitude: Latitude,
+      LocationLongitude: Longitude,
     });
 
-    res
-      .status(201)
-      .json({ message: "User registered successfully", user: newUser });
+    res.status(201).json({ message: "User registered successfully", user: newUser });
   } catch (error) {
-    console.log(error);
-    res.status(500).json({ message: "Error registering user", error });
+    console.error("Registration error:", error);
+    res.status(500).json({ message: "Error registering user", error: error.message });
   }
 };
 
@@ -60,15 +54,16 @@ exports.login = async (req, res) => {
   const { Email, Username, Password } = req.body;
 
   if ((!Email && !Username) || !Password) {
-    return res
-      .status(400)
-      .json({ message: "Email or Username, and Password are required" });
+    return res.status(400).json({ message: "Email or Username, and Password are required" });
   }
 
   try {
     const user = await db.User.findOne({
       where: {
-        [Op.or]: [{ Email: Email || "" }, { Username: Username || "" }],
+        [Op.or]: [
+          { Email: Email || '' },
+          { Username: Username || '' }
+        ],
       },
     });
 
@@ -82,7 +77,7 @@ exports.login = async (req, res) => {
     }
 
     const token = jwt.sign(
-      { UserID: user.UserID, Role: user.Role },
+      { UserID: user.UserID, Role: user.Role , LocationLatitude: user.LocationLatitude, LocationLongitude: user.LocationLongitude},
       process.env.JWT_SECRET,
       { expiresIn: "10000000h" }
     );
@@ -94,5 +89,19 @@ exports.login = async (req, res) => {
   }
 };
 
+exports.session = async (req, res) => {
+  try {
+    const { authorization } = req.headers;
+    const token = authorization.split(" ")[1];
 
+    if (!token) {
+      return res.status(400).json({ message: "Token required" });
+    }
 
+    const session = jwt.decode(token, process.env.JWT_SECRET);
+
+    res.status(200).json(session);
+  } catch (error) {
+    console.log(error);
+  }
+};
