@@ -16,8 +16,13 @@ import doctorsSlice from '../features/HomeSlices/doctorsSlice';
 import mapReducer from '../features/HomeSlices/mapSlice';
 // import chatReducer from './slices/chatSlice';
 // import authReducer from './slices/authSlice';
+
+import userProfileReducer from '../features/userProfileSlice';
+
+  
 export const store = configureStore({
   reducer: {
+    userProfile: userProfileReducer,
     form: formReducer,
     users: userReducer, // Add the user reducer to the store
     doctor: doctorReducer,

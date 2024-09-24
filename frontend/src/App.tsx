@@ -21,8 +21,10 @@ import HelloPatient from "./components/patientview/View";
 import Home from "./components/Home/Home";
 import DoctorDetails from './components/Home/DoctorDetails';
 import ServiceDetails from './components/Home/ServiceDetails';
+import UserAccountProfile from "./components/Home/UserAccountProfile";
 
 import ChatRooms from "./components/doctorDashboard/ChatRooms";
+import UserProfileUpload from "./components/Home/UserProfileUpload";
 const theme = createTheme();
 
 // Layout for routes that include the sidebar
@@ -68,6 +70,8 @@ const App: React.FC = () => {
               <Route path="/chat" element={<ChatRooms />} />
               <Route path="/settings" element={<DoctorProfile />} />
               <Route path="/doctor/availability" element={<DoctorAvailability />} />
+              <Route path="/upload-profile" element={<UserProfileUpload />} />
+              <Route path="/account-profile" element={<UserAccountProfile />} />
             </Routes>
           </div>
         </BrowserRouter>

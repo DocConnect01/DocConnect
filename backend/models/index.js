@@ -107,7 +107,11 @@ db.ChatroomMessage.belongsTo(db.User, {
 });
 
 
+db.Media = require('./media.models')(sequelize);
 
+// Define associations between User and Media
+db.User.hasOne(db.Media, { foreignKey: 'UserID', as: 'ProfilePicture' });
+db.Media.belongsTo(db.User, { foreignKey: 'UserID', as: 'ProfilePicture' });
 
 // Define associations between models
 
