@@ -15,6 +15,8 @@ const createDoctorProfile = async (req, res) => {
       MeetingPrice,
     } = req.body;
 
+
+    
     const doctor = await db.User.create({
       FirstName,
       LastName,
@@ -40,10 +42,19 @@ const createDoctorProfile = async (req, res) => {
 
 const getDoctors = async (req, res) => {
   try {
-    const doctors = await db.User.findAll({ where: { Role: "Doctor" } });
-    return res.status(200).json(doctors);
+    const doctors = await db.User.findAll({
+      where: { Role: "Doctor" },
+      include: [{ model: db.Media, as: 'ProfilePicture', where: { UserID: db.Sequelize.col('User.UserID') }, required: false }],
+    });
+
+    const doctorsWithMedia = doctors.map(doctor => ({
+      ...doctor.toJSON(),
+      PhotoUrl: doctor.ProfilePicture ? doctor.ProfilePicture.url : null,
+    }));
+
+    return res.status(200).json(doctorsWithMedia);
   } catch (error) {
-    console.error("Error retrieving doctors:", error); // Added logging
+    console.error("Error retrieving doctors:", error);
     return res.status(500).json({ message: "Error retrieving doctors", error });
   }
 };
