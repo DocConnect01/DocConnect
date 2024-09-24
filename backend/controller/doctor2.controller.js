@@ -1,14 +1,27 @@
 const db = require('../models'); // Import the User model
 const { Op } = require('sequelize');
 
-
 const getAllDoctorsForHome = async (req, res) => {
   try {
     const doctors = await db.User.findAll({
       where: { Role: 'Doctor' },
       attributes: ['UserID', 'FirstName', 'LastName', 'Speciality', 'Bio', 'LocationLatitude', 'LocationLongitude', 'Email'],
+      attributes: ['UserID', 'FirstName', 'LastName', 'Speciality', 'Bio', 'LocationLatitude', 'LocationLongitude'],
+      include: [{ model: db.Media, as: 'ProfilePicture', required: false }],
     });
-    return res.status(200).json(doctors);
+
+    const doctorsWithMedia = doctors.map(doctor => ({
+      UserID: doctor.UserID,
+      FirstName: doctor.FirstName,
+      LastName: doctor.LastName,
+      Speciality: doctor.Speciality,
+      Bio: doctor.Bio,
+      LocationLatitude: doctor.LocationLatitude,
+      LocationLongitude: doctor.LocationLongitude,
+      imageUrl: doctor.ProfilePicture ? doctor.ProfilePicture.url : null,
+    }));
+
+    return res.status(200).json(doctorsWithMedia);
   } catch (error) {
     console.error('Error in getAllDoctorsForHome:', error);
     return res.status(500).json({ message: 'Error retrieving doctors', error: error.toString() });

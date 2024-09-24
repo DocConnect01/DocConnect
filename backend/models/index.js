@@ -107,7 +107,11 @@ db.ChatroomMessage.belongsTo(db.User, {
 });
 
 
+db.Media = require('./media.models')(sequelize);
 
+// Define associations between User and Media
+db.User.hasOne(db.Media, { foreignKey: 'UserID', as: 'ProfilePicture' });
+db.Media.belongsTo(db.User, { foreignKey: 'UserID', as: 'ProfilePicture' });
 
 // Define associations between models
 
@@ -140,13 +144,13 @@ try {
 } catch (error) {User
   console.error('Unable to connect to the database:', error);
 }
-//  sequelize.sync({ alter: true }) // alter to adjust existing tables if needed
-//    .then(() => {
-//      console.log('Database synced');
-//    })
-//    .catch((error) => {
-//      console.error('Error syncing database:', error);
-//    });
+// sequelize.sync({ alter : true }) // alter to adjust existing tables if needed
+//   .then(() => {
+//     console.log('Database synced');
+//   })
+//   .catch((error) => {
+//     console.error('Error syncing database:', error);
+//   });
 
 
 

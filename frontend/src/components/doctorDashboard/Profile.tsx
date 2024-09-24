@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchDoctorById, updateDoctorProfile } from '../../features/doctorSlice'; // Adjust the import paths
-import { RootState, AppDispatch } from '../../store/store'; // Adjust the import paths
+import { fetchDoctorById, updateDoctorProfile } from '../../features/doctorSlice';
+import { RootState, AppDispatch } from '../../store/store';
+import { jwtDecode } from 'jwt-decode';
 import {
   Avatar,
   Box,
@@ -62,8 +63,20 @@ const DoctorProfile: React.FC = () => {
     Bio: '',
   });
 
+  const getUserIdFromToken = () => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      const decodedToken: any = jwtDecode(token);
+      return decodedToken.UserID; // Assuming the UserID is stored as 'id' in the token payload
+    }
+    return null;
+  };
+
   useEffect(() => {
-    dispatch(fetchDoctorById(12)); // Fetch doctor with ID 12
+    const userId = getUserIdFromToken();
+    if (userId) {
+      dispatch(fetchDoctorById(userId));
+    }
   }, [dispatch]);
 
   useEffect(() => {

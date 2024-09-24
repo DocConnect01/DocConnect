@@ -16,6 +16,7 @@ import Statistics from './Statistics';
 import SocialMedia from './SocialMedia';
 import FindDoctor from './FindDoctor';
 import { setLocation } from '../../features/userLocationSlice';
+import { setShowMap } from '../../features/HomeSlices/mapSlice';
 
 // Fix for default marker icon
 import icon from 'leaflet/dist/images/marker-icon.png';
@@ -108,6 +109,7 @@ const Home: React.FC = () => {
   const { latitude, longitude } = useSelector((state: RootState) => state.userLocation);
   const { latitude: doctorLatitude, longitude: doctorLongitude } = useSelector((state: RootState) => state.userLocation.selectedDoctorLocation);
   const { latitude: searchedLatitude, longitude: searchedLongitude } = useSelector((state: RootState) => state.userLocation.searchedLocation);
+  const showMap = useSelector((state: RootState) => state.map.showMap);
   const [mapCenter, setMapCenter] = useState<[number, number] | null>(null);
   const [showReference, setShowReference] = useState(true);
 
@@ -134,6 +136,10 @@ const Home: React.FC = () => {
     setShowReference(!showReference);
   };
 
+  const handleToggleMap = () => {
+    dispatch(setShowMap(!showMap));
+  };
+
   return (
     <GradientBackground>
       <CssBaseline />
@@ -142,7 +148,7 @@ const Home: React.FC = () => {
         <Statistics />
       </Section>
       <Container maxWidth="xl">
-        {mapCenter && (
+        {showMap && mapCenter && (
           <MapWrapper id="user-location-map">
             <MapContainer center={mapCenter} zoom={13}>
               <TileLayer
@@ -158,7 +164,14 @@ const Home: React.FC = () => {
                 </Marker>
               )}
               {searchedLatitude && searchedLongitude && showReference && (
-                <Marker position={[searchedLatitude, searchedLongitude]} icon={customRedIcon}>
+                <Marker position={[searchedLatitude, searchedLongitude]} icon={new L.Icon({
+                  iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
+                  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+                  iconSize: [25, 41],
+                  iconAnchor: [12, 41],
+                  popupAnchor: [1, -34],
+                  shadowSize: [41, 41]
+                })}>
                   <Popup>Searched location</Popup>
                 </Marker>
               )}
@@ -166,7 +179,7 @@ const Home: React.FC = () => {
           </MapWrapper>
         )}
         <FocusedSection>
-          <FindDoctor onToggleReference={handleToggleReference} />
+          <FindDoctor onToggleReference={handleToggleReference} onToggleMap={handleToggleMap} />
         </FocusedSection>
         <Section>
           <AllServices />
