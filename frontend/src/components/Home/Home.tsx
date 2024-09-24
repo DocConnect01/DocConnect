@@ -15,7 +15,7 @@ import AllTestimonials from './AllTestimonials';
 import Statistics from './Statistics';
 import SocialMedia from './SocialMedia';
 import FindDoctor from './FindDoctor';
-import { setLocation } from '../../features/UserLocationSlice';
+import { setLocation } from '../../features/userLocationSlice';
 import { setShowMap } from '../../features/HomeSlices/mapSlice';
 
 // Fix for default marker icon

@@ -98,6 +98,10 @@ const AppointmentList: React.FC<AppointmentListProps> = ({ appointments }) => {
         {localAppointments.length ? (
           localAppointments.map((appointment: any, index: number) => {
             const { Status = "", createdAt, Patient } = appointment;
+            function getStatusColor(Status: any): import("@mui/types").OverridableStringUnion<"error" | "default" | "primary" | "secondary" | "info" | "success" | "warning", import("@mui/material").ChipPropsColorOverrides> | undefined {
+              throw new Error("Function not implemented.");
+            }
+
             return (
               <ListItem key={appointment.AppointmentID} divider>
                 <ListItemAvatar>
@@ -109,13 +113,7 @@ const AppointmentList: React.FC<AppointmentListProps> = ({ appointments }) => {
                 />
                 <Chip
                   label={Status}
-                  color={
-                    Status === "pending"
-                      ? "warning"
-                      : Status === "rejected"
-                      ? "error"
-                      : "success"
-                  }
+                  color={getStatusColor(Status)}
                   size="small"
                   onClick={(event) => handleClick(event, appointment)}
                 />

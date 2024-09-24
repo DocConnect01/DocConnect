@@ -32,6 +32,8 @@ const SearchResults: React.FC = () => {
       Bio={doctor.Bio}
       LocationLatitude={doctor.LocationLatitude || 0}
       LocationLongitude={doctor.LocationLongitude || 0}
+      Email={doctor.Email}
+     
     />
   </Grid>
 ))}

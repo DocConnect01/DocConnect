@@ -3,15 +3,15 @@ const { Op } = require('sequelize');
 
 exports.createChatRoom = async (req, res) => {
   try {
-    const { username } = req.params;
+    const { firstname } = req.params;
 
-    if (!username) {
+    if (!firstname) {
       return res.status(400).json({ message: 'Participant username is required' });
     }
 
     console.log('Current user:', req.user);
 
-    const participant = await User.findOne({ where: { Username: username } });
+    const participant = await User.findOne({ where: { FirstName: firstname } });
     if (!participant) {
       return res.status(404).json({ message: 'Participant not found' });
     }
