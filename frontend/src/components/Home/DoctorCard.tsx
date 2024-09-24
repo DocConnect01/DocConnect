@@ -52,9 +52,10 @@ const DoctorCard: React.FC<DoctorProps> = ({ UserID, FirstName, LastName, Specia
       LocationLongitude,
     };
     dispatch(setSelectedDoctor(doctor));
-    navigate('/doctor-details');
+    navigate(`/doctor-details/${UserID}`);
   };
 
+  
   const handleGPSClick = (e: React.MouseEvent) => {
     e.stopPropagation();
     console.log('Dispatching setSelectedDoctorLocation:', { latitude: LocationLatitude, longitude: LocationLongitude });

@@ -109,7 +109,29 @@ const deleteDoctorProfile = async (req, res) => {
   }
 };
 
+exports.getCurrentDoctor = async (req, res) => {
+  try {
+    const doctorId = req.user.id; // Assuming you have middleware that sets req.user
+    const doctor = await db.User.findOne({
+      where: { UserID: doctorId, Role: "Doctor" },
+      attributes: ['UserID', 'FirstName', 'LastName', 'Speciality', 'MeetingPrice', 'Bio']
+    });
+
+    if (!doctor) {
+      return res.status(404).json({ message: "Doctor not found" });
+    }
+
+    return res.status(200).json(doctor);
+  } catch (error) {
+    console.error('Error fetching current doctor:', error);
+    return res
+      .status(500)
+      .json({ message: "Error fetching doctor data", error: error.message });
+  }
+};
+
 module.exports = {
+  
   createDoctorProfile,
   getDoctors,
   getDoctorById,

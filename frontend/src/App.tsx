@@ -16,7 +16,6 @@ import DoctorAvailability from "./components/doctorDashboard/DoctorAvailability"
 import { useSelector } from "react-redux";
 import { RootState } from "./store/store";
 
-
 // Create theme
 import HelloPatient from "./components/patientview/View";
 import Home from "./components/Home/Home";
@@ -24,15 +23,13 @@ import DoctorDetails from './components/Home/DoctorDetails';
 import ServiceDetails from './components/Home/ServiceDetails';
 
 import ChatRooms from "./components/doctorDashboard/ChatRooms";
-// import { blue } from '@mui/material/colors';
 const theme = createTheme();
 
 // Layout for routes that include the sidebar
 const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
- 
-  const location = useLocation(); // Ensure useLocation is inside BrowserRouter
-  const Role=useSelector((state:RootState)=>state.Auth.user?.Role)
-  console.log(Role)
+  const location = useLocation();
+  const Role = useSelector((state: RootState) => state.Auth.user?.Role);
+  console.log(Role);
   return (
     <Box sx={{ display: "flex" }}>
       {location.pathname === "/dashboard" && <Sidebar />}
@@ -45,7 +42,6 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
 
 const App: React.FC = () => {
   const Role = useSelector((state: RootState) => state.Auth.user?.Role);
-  // console.log(Role);
 
   return (
     <Provider store={store}>
@@ -60,9 +56,8 @@ const App: React.FC = () => {
               <Route path="/blogs" element={<div>Blogs</div>} />
 
               <Route path="/" element={<Home />} />
-              <Route path="/doctor-details" element={<DoctorDetails />} />
+              <Route path="/doctor-details/:doctorId" element={<DoctorDetails />} />
               <Route path="/service-details" element={<ServiceDetails />} />
-              {/* <Route path="/" element={<div>Home </div>} /> */}
               <Route path="/services" element={<div>Services </div>} />
               <Route path="/help" element={<div>Help </div>} />
               <Route path="/blogs" element={<div>Blogs </div>} />
@@ -72,9 +67,8 @@ const App: React.FC = () => {
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/chat" element={<ChatRooms />} />
               <Route path="/settings" element={<DoctorProfile />} />
+              <Route path="/doctor/availability" element={<DoctorAvailability />} />
             </Routes>
-
-          
           </div>
         </BrowserRouter>
       </ThemeProvider>

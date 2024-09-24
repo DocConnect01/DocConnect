@@ -1,55 +1,56 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
-// Define the state type
 interface AppointmentsState {
   appointments: any[];
   loadingApp: boolean;
   errorApp: string | null;
 }
 
-// Initial state
 const initialState: AppointmentsState = {
   appointments: [],
   loadingApp: false,
   errorApp: null,
 };
 
-// Thunk to fetch appointments by userId
 export const fetchAppointmentsByUserId = createAsyncThunk(
   "appointments/fetchAppointmentsByUserId",
-  async (userId: string, { rejectWithValue }) => {
+  async (_, { rejectWithValue }) => {
     try {
       const token = localStorage.getItem("token");
-      const response = await axios.post(
+      const response = await axios.get(
         `http://localhost:5000/api/appointments/doctor`,
-        { id: userId }
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }
       );
       return response.data;
     } catch (error: any) {
-      return rejectWithValue(error.response.data);
+      return rejectWithValue(error.response ? error.response.data : error.message);
     }
   }
 );
 
-// Slice for managing appointments state
 const appointmentsSlice = createSlice({
   name: "appointments",
   initialState,
   reducers: {},
   extraReducers: (builder) => {
-    builder.addCase(fetchAppointmentsByUserId.pending, (state) => {
-      state.loadingApp = true;
-      state.errorApp = null;
-    });
-    builder.addCase(fetchAppointmentsByUserId.fulfilled, (state, action) => {
-      state.appointments = action.payload;
-      state.loadingApp = false;
-    });
-    builder.addCase(fetchAppointmentsByUserId.rejected, (state, action) => {
-      state.loadingApp = false;
-      state.errorApp = action.payload as string;
-    });
+    builder
+      .addCase(fetchAppointmentsByUserId.pending, (state) => {
+        state.loadingApp = true;
+        state.errorApp = null;
+      })
+      .addCase(fetchAppointmentsByUserId.fulfilled, (state, action) => {
+        state.appointments = action.payload;
+        state.loadingApp = false;
+      })
+      .addCase(fetchAppointmentsByUserId.rejected, (state, action) => {
+        state.loadingApp = false;
+        state.errorApp = action.payload as string;
+      });
   },
 });
 

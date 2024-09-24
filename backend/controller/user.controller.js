@@ -104,25 +104,24 @@ exports.getUsers = async (req, res) => {
 
 exports.updateStatus = async (req, res) => {
   const { id, status } = req.body;
-  console.log(id, status);
+  console.log('Updating appointment:', id, status);
   try {
-    const updatedAppointment = await db.Appointment.update(
-      { Status: status },
-      {
-        where: { AppointmentID: id },
-      }
-    );
-
-    if (updatedAppointment[0] === 0) {
+    const appointment = await db.Appointment.findByPk(id);
+    
+    if (!appointment) {
       return res.status(404).json({ message: "Appointment not found" });
     }
 
-    return res.status(200).json({ success: true });
+    appointment.Status = status;
+    await appointment.save();
+
+    console.log('Appointment updated successfully:', appointment);
+    return res.status(200).json({ success: true, appointment });
   } catch (error) {
-    console.log(error);
+    console.error('Error updating appointment status:', error);
     return res
       .status(500)
-      .json({ message: "Error updating appointment status", error });
+      .json({ message: "Error updating appointment status", error: error.message });
   }
 };
 
