@@ -7,7 +7,7 @@ const {authenticate} = require('../middleware/auth.middlware.js'); // Assuming y
 router.use(authenticate);
 
 // Create a new chat room
-router.post('/chatroom/:username', chatRoomController.createChatRoom);
+router.post('/chatroom/:firstname', chatRoomController.createChatRoom);
 
 // Get all chat rooms for the authenticated user
 router.get('/', chatRoomController.getAllChatRooms);

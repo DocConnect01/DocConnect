@@ -5,6 +5,7 @@ const getAllDoctorsForHome = async (req, res) => {
   try {
     const doctors = await db.User.findAll({
       where: { Role: 'Doctor' },
+      attributes: ['UserID', 'FirstName', 'LastName', 'Speciality', 'Bio', 'LocationLatitude', 'LocationLongitude', 'Email'],
       attributes: ['UserID', 'FirstName', 'LastName', 'Speciality', 'Bio', 'LocationLatitude', 'LocationLongitude'],
       include: [{ model: db.Media, as: 'ProfilePicture', required: false }],
     });

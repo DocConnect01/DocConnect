@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { List, ListItem, ListItemButton, ListItemText, Box, Typography, CircularProgress, IconButton } from '@mui/material';
 import axios from 'axios';
 import ChatMessages from './ChatMessages';
+import GoogleAuthButtons from './GoogleAuthButtons'; // Import GoogleAuthButtons for Google Meet link creation
 import CloseIcon from '@mui/icons-material/Close';
 import io from 'socket.io-client';
 
@@ -33,10 +34,11 @@ const ChatRooms: React.FC<ChatRoomsProps> = ({ onClose }) => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [isDoctor, setIsDoctor] = useState<boolean | null>(null);
+  const [meetLink, setMeetLink] = useState<string | null>(null);
 
-  const getrooomAndJoin = (ChatRoom: ChatRoom) => {
-    setSelectedRoom(ChatRoom.ChatroomID);
-    socket.emit('join', ChatRoom.ChatroomID);
+  const getRoomAndJoin = (chatRoom: ChatRoom) => {
+    setSelectedRoom(chatRoom.ChatroomID);
+    socket.emit('join', chatRoom.ChatroomID);
   };
 
   useEffect(() => {
@@ -50,7 +52,7 @@ const ChatRooms: React.FC<ChatRoomsProps> = ({ onClose }) => {
 
       try {
         const doctorResponse = await axios.get('http://localhost:5000/api/users/check-doctor', {
-          headers: { Authorization: `Bearer ${token}` }
+          headers: { Authorization: `Bearer ${token}` },
         });
         if (doctorResponse.data.isDoctor) {
           setIsDoctor(true);
@@ -58,7 +60,7 @@ const ChatRooms: React.FC<ChatRoomsProps> = ({ onClose }) => {
         }
 
         const patientResponse = await axios.get('http://localhost:5000/api/users/check-patient', {
-          headers: { Authorization: `Bearer ${token}` }
+          headers: { Authorization: `Bearer ${token}` },
         });
         if (patientResponse.data.isPatient) {
           setIsDoctor(false);
@@ -119,6 +121,24 @@ const ChatRooms: React.FC<ChatRoomsProps> = ({ onClose }) => {
     }
   };
 
+  const handleMeetLinkCreated = (link: string) => {
+    setMeetLink(link);
+    // Send the Meet link as a message in the chat
+    if (selectedRoom) {
+      const messageData = {
+        ChatroomID: selectedRoom,
+        MessageText: `New Google Meet link: ${link}`,
+        Sender: {
+          UserID: parseInt(localStorage.getItem('userId') || '0', 10),
+          Username: localStorage.getItem('Username') || '',
+          FirstName: localStorage.getItem('FirstName') || '',
+        },
+        SentAt: new Date().toISOString(),
+      };
+      socket.emit('chat_message', messageData);
+    }
+  };
+
   if (isDoctor === null) {
     return (
       <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
@@ -150,17 +170,12 @@ const ChatRooms: React.FC<ChatRoomsProps> = ({ onClose }) => {
         ) : (
           <List>
             {chatRooms.map((room) => (
-              <ListItem 
-                disablePadding 
-                key={room.ChatroomID}
-              >
+              <ListItem disablePadding key={room.ChatroomID}>
                 <ListItemButton
-                  onClick={() => getrooomAndJoin(room)}
+                  onClick={() => getRoomAndJoin(room)}
                   selected={selectedRoom === room.ChatroomID}
                 >
-                  <ListItemText 
-                    primary={getDisplayName(room)}
-                  />
+                  <ListItemText primary={getDisplayName(room)} />
                 </ListItemButton>
               </ListItem>
             ))}
@@ -170,8 +185,9 @@ const ChatRooms: React.FC<ChatRoomsProps> = ({ onClose }) => {
 
       {/* Chat Messages Section */}
       {selectedRoom ? (
-        <Box sx={{ flexGrow: 1 }}>
-          <ChatMessages socket={socket} roomId={selectedRoom} />
+        <Box sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
+          <ChatMessages socket={socket} roomId={selectedRoom} meetLink={meetLink} />
+          <GoogleAuthButtons onMeetLinkCreated={handleMeetLinkCreated} />
         </Box>
       ) : (
         <Box sx={{ flexGrow: 1, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>

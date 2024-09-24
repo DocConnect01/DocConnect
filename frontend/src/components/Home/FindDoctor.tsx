@@ -6,7 +6,7 @@ import { setName, setSpeciality, setAvailable, setNearMe, setPerimeter } from '.
 import { searchDoctors } from '../../features/HomeSlices/doctorsSlice';
 import SearchResults from './SearchResults';
 import LocationSearch, { SearchResult } from '../user/LocationSearch';
-import { setSearchedLocation, clearSearchedLocation } from '../../features/UserLocationSlice';
+import { setSearchedLocation, clearSearchedLocation } from '../../features/userLocationSlice';
 import { setShowMap } from '../../features/HomeSlices/mapSlice';
 
 interface FindDoctorProps {
@@ -48,8 +48,10 @@ const FindDoctor: React.FC<FindDoctorProps> = ({ onToggleReference, onToggleMap 
       longitude: searchLongitude,
       coords: {
         LocationLatitude: latitude ?? 0,
-        LocationLongitude: longitude ?? 0
-      }
+        LocationLongitude: longitude ?? 0,
+        
+      },
+      Email:""
     }));
 
     if (searchLatitude && searchLongitude) {

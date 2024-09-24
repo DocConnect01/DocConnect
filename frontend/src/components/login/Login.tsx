@@ -107,7 +107,7 @@ const LoginForm: React.FC = () => {
     if (isLoggedIn && isLocationUpdated) {
       if (userRole === "Patient") {
         console.log("Patient logged in, navigating to patient view");
-        navigate("/patientview");
+        navigate("/");
       } else if (userRole === "Doctor") {
         console.log("Doctor logged in, navigating to dashboard");
         navigate("/dashboard");

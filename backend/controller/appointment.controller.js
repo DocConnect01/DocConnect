@@ -1,3 +1,4 @@
+
 const db = require("../models"); // Make sure the correct path is used
 
 // Create a new Appointment
@@ -27,7 +28,7 @@ exports.createAppointment = async (req, res) => {
       DoctorID,
       AppointmentDate,
       DurationMinutes,
-      Status: 'pending' 
+ 
     });
 
     console.log('Appointment created successfully:', newAppointment);
@@ -136,6 +137,3 @@ exports.getAppointmentsByUserId = async (req, res) => {
       .json({ message: "Error getting appointments", error: error.message });
   }
 };
-
-
-

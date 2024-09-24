@@ -10,6 +10,7 @@
     imageUrl: string;
     LocationLatitude: number;
     LocationLongitude: number;
+    Email: any;
   }
 
   interface DoctorsState {
@@ -42,6 +43,7 @@
       latitude?: number;
       longitude?: number;
       coords: { LocationLatitude: number; LocationLongitude: number };
+      Email: any;
     }, { rejectWithValue }) => {
       try {
         const token = localStorage.getItem('token');
