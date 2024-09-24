@@ -240,7 +240,7 @@ const PatientProfile: React.FC = () => {
         <DialogTitle id="delete-dialog-title">Delete Account</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            Are you sure you want to delete your account? This action cannot be
+            {/* Are you sure you want to delete your account? This action cannot be */}
             undone.
           </DialogContentText>
         </DialogContent>
