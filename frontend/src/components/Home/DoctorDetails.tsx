@@ -3,10 +3,11 @@ import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { RootState } from '../../store/store';
-import { Doctor } from '../../features/HomeSlices/doctorsSlice';
-import { Box, Container, Typography, Button, Grid, TextField, Paper } from '@mui/material';
+import { SelectedDoctor } from '../../features/HomeSlices/selectedDoctorSlice';
+import { Box, Container, Typography, Grid, Paper } from '@mui/material';
 import { styled } from '@mui/system';
-
+import AppointmentBooking from './AppointmentBooking';
+import { Button } from '@mui/material';
 const HeroWrapper = styled(Box)(({ theme }) => ({
   backgroundColor: theme.palette.background.paper,
   padding: theme.spacing(5, 0),
@@ -45,8 +46,9 @@ const AppointmentPaper = styled(Paper)(({ theme }) => ({
 }));
 
 const DoctorDetails: React.FC = () => {
-  const selectedDoctor = useSelector<RootState, Doctor | null>(state => state.selectedDoctor);
+  // const selectedDoctor = useSelector<RootState, Doctor | null>(state => state.selectedDoctor);
   const navigate = useNavigate();
+  const selectedDoctor = useSelector<RootState, SelectedDoctor | null>(state => state.selectedDoctor);
 
   if (!selectedDoctor) {
     return <Typography>No doctor selected</Typography>;
@@ -100,36 +102,7 @@ const DoctorDetails: React.FC = () => {
           </Grid>
           <Grid item xs={12} md={5}>
             <AppointmentPaper elevation={3}>
-              <Typography variant="h4" gutterBottom sx={{ fontWeight: 'bold', color: '#1976d2' }}>
-                Book Appointment
-              </Typography>
-              <TextField fullWidth label="Name" margin="normal" variant="outlined" />
-              <TextField fullWidth label="Email" margin="normal" variant="outlined" />
-              <TextField fullWidth label="Phone" margin="normal" variant="outlined" />
-              <TextField
-                fullWidth
-                label="Preferred Date"
-                type="date"
-                InputLabelProps={{ shrink: true }}
-                margin="normal"
-                variant="outlined"
-              />
-              <TextField
-                fullWidth
-                label="Description"
-                multiline
-                rows={4}
-                margin="normal"
-                variant="outlined"
-              />
-              <Button
-                variant="contained"
-                color="primary"
-                fullWidth
-                sx={{ mt: 2, py: 1.5, fontSize: '1.1rem', fontWeight: 'bold' }}
-              >
-                BOOK APPOINTMENT
-              </Button>
+              <AppointmentBooking doctor={selectedDoctor} />
             </AppointmentPaper>
           </Grid>
         </Grid>

@@ -125,4 +125,3 @@ exports.updateStatus = async (req, res) => {
       .json({ message: "Error updating appointment status", error });
   }
 };
-

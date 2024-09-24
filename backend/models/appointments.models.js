@@ -34,18 +34,14 @@ module.exports = (sequelize) => {
     Status: {
       type: DataTypes.ENUM('pending', 'confirmed', 'rejected'),
       allowNull: false,
-      defaultValue: 'pending' 
-    },
-    
+      defaultValue: 'pending'
+    }
   }, {
     timestamps: true,
     createdAt: 'createdAt',
-    updatedAt: 'updatedAt'
+    updatedAt: 'updatedAt',
+    tableName: 'appointments'
   });
 
   return Appointment;
 };
-
-
-
-
