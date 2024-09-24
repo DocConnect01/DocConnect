@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import React, { useState, useEffect } from "react";
+import { useDispatch } from "react-redux";
 import {
   List,
   ListItem,
@@ -10,9 +10,14 @@ import {
   Chip,
   Menu,
   MenuItem,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Button,
 } from "@mui/material";
-import { RootState, AppDispatch } from "../../store/store";
-import { fetchUsers, updateStatus } from "../../features/userSlice";
+import { AppDispatch } from "../../store/store";
+import { updateStatus } from "../../features/userSlice";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 
@@ -20,25 +25,23 @@ dayjs.extend(relativeTime);
 
 const statusOptions = ["rejected", "confirmed", "pending"];
 
-const AppointmentList: React.FC = () => {
+interface AppointmentListProps {
+  appointments: any[];
+}
+
+const AppointmentList: React.FC<AppointmentListProps> = ({ appointments }) => {
   const dispatch = useDispatch<AppDispatch>();
   const now = dayjs();
 
+  const [localAppointments, setLocalAppointments] = useState(appointments);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [selectedStatus, setSelectedStatus] = useState<string>("");
   const [selectedAppointment, setSelectedAppointment] = useState<any>(null);
-
-  const { users, loading, error } = useSelector(
-    (state: RootState) => state.users
-  );
+  const [openDialog, setOpenDialog] = useState(false);
 
   useEffect(() => {
-    dispatch(fetchUsers());
-  }, [dispatch]);
-
-  if (loading) return <Typography>Loading appointments...</Typography>;
-  if (error)
-    return <Typography>Error loading appointments: {error}</Typography>;
+    setLocalAppointments(appointments);
+  }, [appointments]);
 
   const handleClick = (
     event: React.MouseEvent<HTMLElement>,
@@ -46,24 +49,44 @@ const AppointmentList: React.FC = () => {
   ) => {
     setAnchorEl(event.currentTarget);
     setSelectedAppointment(appointment);
-    const latestStatus =
-      appointment.PatientAppointments?.slice(-1)[0]?.Status || "";
-    setSelectedStatus(latestStatus);
+    setSelectedStatus(appointment.Status || "");
   };
 
   const handleClose = () => setAnchorEl(null);
 
   const handleChangeStatus = async (status: string) => {
     if (selectedAppointment) {
-      const latestAppointmentID =
-        selectedAppointment.PatientAppointments?.slice(-1)[0]?.AppointmentID;
-      if (latestAppointmentID) {
-        await dispatch(updateStatus({ id: latestAppointmentID, status }));
-        dispatch(fetchUsers());
-        setSelectedStatus(status);
+      if (status === "confirmed") {
+        setOpenDialog(true);
+      } else {
+        const result = await dispatch(updateStatus({ id: selectedAppointment.AppointmentID, status }));
+        if (result.meta.requestStatus === 'fulfilled') {
+          updateLocalAppointment(selectedAppointment.AppointmentID, status);
+          setSelectedStatus(status);
+          handleClose();
+        }
+      }
+    }
+  };
+
+  const handleConfirmAppointment = async () => {
+    if (selectedAppointment) {
+      const result = await dispatch(updateStatus({ id: selectedAppointment.AppointmentID, status: "confirmed" }));
+      if (result.meta.requestStatus === 'fulfilled') {
+        updateLocalAppointment(selectedAppointment.AppointmentID, "confirmed");
+        setSelectedStatus("confirmed");
+        setOpenDialog(false);
         handleClose();
       }
     }
+  };
+
+  const updateLocalAppointment = (appointmentId: number, newStatus: string) => {
+    setLocalAppointments(prevAppointments =>
+      prevAppointments.map(app =>
+        app.AppointmentID === appointmentId ? { ...app, Status: newStatus } : app
+      )
+    );
   };
 
   return (
@@ -72,18 +95,16 @@ const AppointmentList: React.FC = () => {
         Appointment Requests
       </Typography>
       <List>
-        {users.length ? (
-          users.map((appointment: any, index: number) => {
-            const latestAppointment =
-              appointment.PatientAppointments?.slice(-1)[0] || {};
-            const { Status = "", createdAt } = latestAppointment;
+        {localAppointments.length ? (
+          localAppointments.map((appointment: any, index: number) => {
+            const { Status = "", createdAt, Patient } = appointment;
             return (
-              <ListItem key={index} divider>
+              <ListItem key={appointment.AppointmentID} divider>
                 <ListItemAvatar>
                   <Avatar src={`https://i.pravatar.cc/150?img=${index + 1}`} />
                 </ListItemAvatar>
                 <ListItemText
-                  primary={`${appointment.FirstName} ${appointment.LastName}`}
+                  primary={`${Patient.FirstName} ${Patient.LastName}`}
                   secondary={createdAt ? now.from(createdAt) : null}
                 />
                 <Chip
@@ -105,13 +126,38 @@ const AppointmentList: React.FC = () => {
           <Typography>No appointments found</Typography>
         )}
       </List>
-      <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleClose}>
+      <Menu
+        anchorEl={anchorEl}
+        open={Boolean(anchorEl)}
+        onClose={handleClose}
+      >
         {statusOptions.map((status) => (
-          <MenuItem key={status} onClick={() => handleChangeStatus(status)}>
+          <MenuItem
+            key={status}
+            onClick={() => handleChangeStatus(status)}
+            selected={status === selectedStatus}
+          >
             {status}
           </MenuItem>
         ))}
       </Menu>
+      <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
+        <DialogTitle>Confirm Appointment</DialogTitle>
+        <DialogContent>
+          {selectedAppointment && (
+            <Typography>
+              Are you sure you want to confirm the appointment for{" "}
+              {selectedAppointment.Patient.FirstName} {selectedAppointment.Patient.LastName}?
+            </Typography>
+          )}
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setOpenDialog(false)}>Cancel</Button>
+          <Button onClick={handleConfirmAppointment} color="primary">
+            Confirm
+          </Button>
+        </DialogActions>
+      </Dialog>
     </>
   );
 };

@@ -1,8 +1,21 @@
 import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Typography, Avatar, CircularProgress } from '@mui/material';
-import { RootState, AppDispatch } from "../../store/store";
-import { fetchUsers } from "../../features/userSlice";
+import { CircularProgress, Typography, TableContainer, Table, TableHead, TableBody, TableRow, TableCell, Paper, Avatar } from '@mui/material';
+import { RootState, AppDispatch } from '../../store/store';
+import { fetchUsers } from '../../features/userSlice';
+
+interface User {
+  UserID: number;
+  FirstName: string;
+  LastName: string;
+  Gender: string;
+  Disease: string;
+  PatientAppointments: Array<{
+    AppointmentID: number;
+    AppointmentDate: string;
+    Status: string;
+  }>;
+}
 
 const RecentPatients: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -38,8 +51,8 @@ const RecentPatients: React.FC = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {users.map((user, index) => (
-              user.PatientAppointments.map((appointment: any) => (
+            {(users as User[]).map((user, index) => (
+              user.PatientAppointments.map((appointment) => (
                 <TableRow key={appointment.AppointmentID}>
                   <TableCell component="th" scope="row">
                     <div style={{ display: 'flex', alignItems: 'center' }}>

@@ -115,25 +115,25 @@ exports.deleteAppointment = async (req, res) => {
 };
 
 exports.getAppointmentsByUserId = async (req, res) => {
-  const userId = req.body.id;
-  console.log(userId);
   try {
+    const doctorId = req.user.UserID;
     const appointments = await db.Appointment.findAll({
-      where: { doctorId: userId },
+      where: { DoctorID: doctorId },
       include: [
         {
           model: db.User,
           as: "Patient",
+          attributes: ['UserID', 'FirstName', 'LastName', 'Email']
         },
       ],
+      order: [['AppointmentDate', 'ASC']]
     });
-
     return res.status(200).json(appointments);
   } catch (error) {
-    console.log(error);
+    console.error(error);
     return res
       .status(500)
-      .json({ message: "Error getting appointments", error });
+      .json({ message: "Error getting appointments", error: error.message });
   }
 };
 

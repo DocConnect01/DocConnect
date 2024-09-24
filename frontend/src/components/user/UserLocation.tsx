@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../store/store';
-import { setLocation, setLoading, setError } from '../../features/userLocationSlice';
+import { setLocation, setLoading, setError } from '../../features/UserLocationSlice';
 import axios from 'axios';
 
 const UserLocation: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {

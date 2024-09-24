@@ -2,7 +2,7 @@ import { configureStore } from "@reduxjs/toolkit";
 import formReducer from "../features/formSlice";
 import userReducer from '../features/userSlice'; // Import your user slice
 import doctorReducer from '../features/doctorSlice'; // Import your doctor slice
-import userLocationReducer from "../features/userLocationSlice";
+import userLocationReducer from "../features/UserLocationSlice";
 import contactFormReducer from "../features/contactFormSlice";
 import authReducer from "../features/authSlice"; // Import your auth slice
 import sessionReducer from '../features/sessionSlice'; // Import your session slice
@@ -13,7 +13,7 @@ import testimonialsReducer from '../features/HomeSlices/testimonialsSlice';
 import selectedDoctorReducer from '../features/HomeSlices/selectedDoctorSlice';
 import selectedServiceReducer from '../features/HomeSlices/selectedServiceSlice';
 import doctorsSlice from '../features/HomeSlices/doctorsSlice';
-
+import mapReducer from '../features/HomeSlices/mapSlice';
 // import chatReducer from './slices/chatSlice';
 // import authReducer from './slices/authSlice';
 export const store = configureStore({
@@ -34,6 +34,7 @@ export const store = configureStore({
     selectedDoctor: selectedDoctorReducer,
     selectedService: selectedServiceReducer,
     doctors: doctorsSlice,
+    map: mapReducer,
   },
 });
 
