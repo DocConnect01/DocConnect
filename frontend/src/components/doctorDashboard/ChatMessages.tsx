@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { Box, Typography, TextField, Button, List, ListItem, ListItemText, Paper, Avatar, Divider } from '@mui/material';
+import { Box, Typography, TextField, Button, List, ListItem, ListItemText, Paper, Avatar, Divider, Link } from '@mui/material';
 import { Send as SendIcon } from '@mui/icons-material';
 import axios from 'axios';
 
@@ -21,9 +21,10 @@ interface Message {
 interface ChatMessagesProps {
   roomId: number;
   socket: any;
+  meetLink: string | null;
 }
 
-const ChatMessages: React.FC<ChatMessagesProps> = ({ roomId, socket }) => {
+const ChatMessages: React.FC<ChatMessagesProps> = ({ roomId, socket, meetLink }) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [newMessage, setNewMessage] = useState('');
   const messagesEndRef = useRef<null | HTMLDivElement>(null);
@@ -67,12 +68,12 @@ const ChatMessages: React.FC<ChatMessagesProps> = ({ roomId, socket }) => {
         FirstName: localStorage.getItem('FirstName') || '',
       },
       SentAt: new Date().toISOString(),
-      MessageID: `temp-${Date.now()}`,
+      MessageID: `temp-${Date.now()}`,  // Temporary ID before server confirmation
     };
 
     try {
-      socket.emit('chat_message', messageData);
-      setNewMessage('');
+      socket.emit('chat_message', messageData);  // Send message to socket
+      setNewMessage('');  // Clear input after sending
       setMessages(prevMessages => [...prevMessages, messageData as Message]);
 
       const response = await axios.post("http://localhost:5000/api/chats/message", {
@@ -85,6 +86,7 @@ const ChatMessages: React.FC<ChatMessagesProps> = ({ roomId, socket }) => {
         }
       });
 
+      // Update message with the correct MessageID returned by the server
       setMessages(prevMessages =>
         prevMessages.map(msg => 
           msg.MessageID === messageData.MessageID ? { ...msg, MessageID: response.data.MessageID } : msg
@@ -92,7 +94,7 @@ const ChatMessages: React.FC<ChatMessagesProps> = ({ roomId, socket }) => {
       );
     } catch (error) {
       console.error('Error sending message:', error);
-      setMessages(prevMessages => prevMessages.filter(msg => msg.MessageID !== messageData.MessageID));
+      setMessages(prevMessages => prevMessages.filter(msg => msg.MessageID !== messageData.MessageID));  // Remove failed messages
     }
   };
 
@@ -101,6 +103,13 @@ const ChatMessages: React.FC<ChatMessagesProps> = ({ roomId, socket }) => {
       <Typography variant="h6" sx={{ p: 2, borderBottom: 1, borderColor: 'divider' }}>
         Chat Room #{roomId}
       </Typography>
+      {meetLink && (
+        <Box sx={{ p: 2, bgcolor: 'info.light', color: 'info.contrastText' }}>
+          <Typography variant="body2">
+            Google Meet Link: <Link href={meetLink} target="_blank" rel="noopener noreferrer">{meetLink}</Link>
+          </Typography>
+        </Box>
+      )}
       <List sx={{ flex: 1, overflow: 'auto', p: 2 }}>
         {messages.map((message, index) => {
           const isSender = message.Sender.UserID === parseInt(localStorage.getItem('userId') || '0', 10);
@@ -117,6 +126,7 @@ const ChatMessages: React.FC<ChatMessagesProps> = ({ roomId, socket }) => {
               >
                 <Avatar sx={{ bgcolor: 'primary.main', mr: isSender ? 0 : 2, ml: isSender ? 2 : 0 }}>
                   {message.Sender.FirstName[0]}
+                  //this will be replaced with  the image avatar in chatroom messages
                 </Avatar>
                 <Box
                   sx={{
@@ -171,7 +181,7 @@ const ChatMessages: React.FC<ChatMessagesProps> = ({ roomId, socket }) => {
           }}
           multiline
           maxRows={4}
-          inputProps={{
+          InputProps={{
             endAdornment: (
               <Button
                 variant="contained"

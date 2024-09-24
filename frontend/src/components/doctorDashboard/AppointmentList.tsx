@@ -66,6 +66,19 @@ const AppointmentList: React.FC = () => {
     }
   };
 
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case "pending":
+        return "warning";
+      case "rejected":
+        return "error";
+      case "confirmed":
+        return "success";
+      default:
+        return "default";
+    }
+  };
+
   return (
     <>
       <Typography variant="h6" gutterBottom>
@@ -88,13 +101,7 @@ const AppointmentList: React.FC = () => {
                 />
                 <Chip
                   label={Status}
-                  color={
-                    Status === "pending"
-                      ? "warning"
-                      : Status === "rejected"
-                      ? "error"
-                      : "success"
-                  }
+                  color={getStatusColor(Status)}
                   size="small"
                   onClick={(event) => handleClick(event, appointment)}
                 />

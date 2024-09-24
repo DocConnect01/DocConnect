@@ -64,7 +64,8 @@ const AppointmentBooking: React.FC<AppointmentBookingProps> = ({ doctor }) => {
       const appointmentData = {
         DoctorID: doctor.UserID,
         AppointmentDate: appointmentDate.toISOString(),
-        DurationMinutes: 60, // Set duration to 1 hour
+        DurationMinutes: 60,
+        Status: 'pending'
       };
   
       try {
