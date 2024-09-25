@@ -65,8 +65,6 @@ const Navbar: React.FC = () => {
           >
             Contact Us
           </Button>
-         
-          
           {!token && (
             <>
               <Button
@@ -96,41 +94,43 @@ const Navbar: React.FC = () => {
             </>
           )}
           {token && (
-            <Button
-              onClick={handleLogout}
-              sx={{
-                color: '#fff',
-                '&:hover': {
-                  backgroundColor: 'rgba(255, 255, 255, 0.1)',
-                },
-              }}
-            >
-              Logout
-            </Button>
+            <>
+              <Button
+                onClick={handleLogout}
+                sx={{
+                  color: '#fff',
+                  '&:hover': {
+                    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                  },
+                }}
+              >
+                Logout
+              </Button>
+              <Button
+                onClick={handleMessagesClick}
+                sx={{
+                  color: '#fff',
+                  '&:hover': {
+                    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                  },
+                }}
+              >
+                Messages
+              </Button>
+              <Button
+                component={Link}
+                to="/account-profile"
+                sx={{
+                  color: '#fff',
+                  '&:hover': {
+                    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                  },
+                }}
+              >
+                Profile
+              </Button>
+            </>
           )}
-          <Button
-            onClick={handleMessagesClick}
-            sx={{
-              color: '#fff',
-              '&:hover': {
-                backgroundColor: 'rgba(255, 255, 255, 0.1)',
-              },
-            }}
-          >
-            Messages
-          </Button>
-          <Button
-            component={Link}
-            to="/account-profile"
-            sx={{
-              color: '#fff',
-              '&:hover': {
-                backgroundColor: 'rgba(255, 255, 255, 0.1)',
-              },
-            }}
-          >
-            Profile
-          </Button>
         </Box>
         <IconButton
           edge="start"
