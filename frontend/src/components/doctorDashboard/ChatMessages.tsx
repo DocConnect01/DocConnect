@@ -124,9 +124,8 @@ const ChatMessages: React.FC<ChatMessagesProps> = ({ roomId, socket, meetLink })
                   flexDirection: isSender ? 'row-reverse' : 'row',
                 }}
               >
-                <Avatar sx={{ bgcolor: 'primary.main', mr: isSender ? 0 : 2, ml: isSender ? 2 : 0 }}>
-                  {message.Sender.FirstName[0]}
-                  //this will be replaced with  the image avatar in chatroom messages
+                <Avatar sx={{ bgcolor: 'primary.main', color: 'white', fontSize: '1.5rem', mr: isSender ? 0 : 2, ml: isSender ? 2 : 0 }}>
+                  {message.Sender.FirstName[0]} {/* First letter of the sender's first name */}
                 </Avatar>
                 <Box
                   sx={{

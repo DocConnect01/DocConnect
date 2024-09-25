@@ -9,6 +9,7 @@ import SettingsIcon from '@mui/icons-material/Settings';
 import ArticleIcon from '@mui/icons-material/Article';
 import PersonIcon from '@mui/icons-material/Person';
 import CloseIcon from '@mui/icons-material/Close';
+import HomeIcon from '@mui/icons-material/Home';
 import { useNavigate } from 'react-router-dom';
 import ChatRooms from './ChatRooms';
 
@@ -65,14 +66,16 @@ const Sidebar: React.FC = () => {
       {/* Menu Items */}
       <List>
         {[
+          { text: 'Home', icon: <HomeIcon />, onClick: () => navigate('/') },
           { text: 'Overview', icon: <DashboardIcon />, onClick: () => navigate('/dashboard') },
           { text: 'Appointment', icon: <EventIcon />, onClick: () => navigate('/appointments') },
           { text: 'My Patients', icon: <PersonIcon /> },
-          { text: 'Schedule Timings', icon: <EventIcon />,onClick: () => navigate('/doctorAvailability') },
+          { text: 'Schedule Timings', icon: <EventIcon />,onClick: () => navigate('/doctor/availability') },
           { text: 'Payments', icon: <PaymentIcon /> },
           { text: 'Message', icon: <MessageIcon />, onClick: () => navigate('/chat') },
           { text: 'Blog', icon: <ArticleIcon /> },        // New Blog item
           { text: 'Settings', icon: <SettingsIcon />, onClick: () => navigate('/settings') },
+
         ].map((item, index) => (
           <ListItemButton
             key={item.text}

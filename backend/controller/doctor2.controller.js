@@ -30,44 +30,56 @@ const getAllDoctorsForHome = async (req, res) => {
  
 
   
-  const searchDoctors = async (req, res) => {
-    try {
-      const { name, speciality, available, nearMe, perimeter, latitude, longitude , coords } = req.body;
-      const userLocation = coords ;
-  
-      let whereClause = { Role: 'Doctor' };
-  
-      if (name) whereClause.FirstName = { [Op.like]: `%${name}%` };
-      if (speciality) whereClause.Speciality = { [Op.like]: `%${speciality}%` };
-      if (available) whereClause.Available = true;
-  
-      const doctors = await db.User.findAll({
-        where: whereClause,
-        attributes: ['UserID', 'FirstName', 'LastName', 'Speciality', 'Bio', 'LocationLatitude', 'LocationLongitude'],
+const searchDoctors = async (req, res) => {
+  try {
+    const { name, speciality, available, nearMe, perimeter, latitude, longitude, coords } = req.body;
+    const userLocation = coords;
+
+    let whereClause = { Role: 'Doctor' };
+
+    if (name) whereClause.FirstName = { [Op.like]: `%${name}%` };
+    if (speciality) whereClause.Speciality = { [Op.like]: `%${speciality}%` };
+    if (available) whereClause.Available = true;
+
+    const doctors = await db.User.findAll({
+      where: whereClause,
+      attributes: ['UserID', 'FirstName', 'LastName', 'Speciality', 'Bio', 'LocationLatitude', 'LocationLongitude'],
+      include: [{ model: db.Media, as: 'ProfilePicture', required: false }],
+    });
+
+    let filteredDoctors = doctors;
+
+    const searchLatitude = latitude || userLocation.LocationLatitude;
+    const searchLongitude = longitude || userLocation.LocationLongitude;
+
+    if (searchLatitude && searchLongitude && (nearMe || perimeter !== null)) {
+      const searchPerimeter = nearMe ? 20 : perimeter;
+      filteredDoctors = doctors.filter(doctor => {
+        if (doctor.LocationLatitude && doctor.LocationLongitude) {
+          const distance = calculateDistance(searchLatitude, searchLongitude, doctor.LocationLatitude, doctor.LocationLongitude);
+          return searchPerimeter === null || distance <= searchPerimeter;
+        }
+        return false;
       });
-  
-      let filteredDoctors = doctors;
-  
-      const searchLatitude = latitude || userLocation.LocationLatitude;
-      const searchLongitude = longitude || userLocation.LocationLongitude;
-  
-      if (searchLatitude && searchLongitude && (nearMe || perimeter !== null)) {
-        const searchPerimeter = nearMe ? 20 : perimeter;
-        filteredDoctors = doctors.filter(doctor => {
-          if (doctor.LocationLatitude && doctor.LocationLongitude) {
-            const distance = calculateDistance(searchLatitude, searchLongitude, doctor.LocationLatitude, doctor.LocationLongitude);
-            return searchPerimeter === null || distance <= searchPerimeter;
-          }
-          return false;
-        });
-      }
-  
-      return res.status(200).json(filteredDoctors);
-    } catch (error) {
-      console.error('Error in searchDoctors:', error);
-      return res.status(500).json({ message: 'Error searching doctors', error: error.toString() });
     }
-  };
+
+    const doctorsWithMedia = filteredDoctors.map(doctor => ({
+      UserID: doctor.UserID,
+      FirstName: doctor.FirstName,
+      LastName: doctor.LastName,
+      Speciality: doctor.Speciality,
+      Bio: doctor.Bio,
+      LocationLatitude: doctor.LocationLatitude,
+      LocationLongitude: doctor.LocationLongitude,
+      imageUrl: doctor.ProfilePicture ? doctor.ProfilePicture.url : null,
+    }));
+
+    return res.status(200).json(doctorsWithMedia);
+  } catch (error) {
+    console.error('Error in searchDoctors:', error);
+    return res.status(500).json({ message: 'Error searching doctors', error: error.toString() });
+  }
+};
   
   function calculateDistance(lat1, lon1, lat2, lon2) {
     const R = 6371; 

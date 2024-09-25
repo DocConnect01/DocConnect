@@ -19,7 +19,6 @@ const AppointmentBooking: React.FC<AppointmentBookingProps> = ({ doctor }) => {
   const [selectedMonth, setSelectedMonth] = useState<string>('');
   const [selectedDay, setSelectedDay] = useState<string>('');
   const [selectedTime, setSelectedTime] = useState<string>('');
-
   useEffect(() => {
     const fetchAvailableSlots = async () => {
       if (doctor.UserID) {
@@ -27,6 +26,7 @@ const AppointmentBooking: React.FC<AppointmentBookingProps> = ({ doctor }) => {
           const response = await axios.get<AvailableSlot[]>(`http://localhost:5000/api/availability/slots/${doctor.UserID}`);
           console.log('Available slots:', response.data);
           setAvailableSlots(response.data);
+
         } catch (error) {
           console.error('Failed to fetch available slots', error);
         }
